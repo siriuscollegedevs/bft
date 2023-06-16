@@ -1,5 +1,13 @@
-const Login = () => {
-	return <div className="Login"></div>;
-};
+import StaticHeader from '../header/static'
+import LoginForm from './form'
 
-export default Login;
+const Login = () => {
+  return (
+    <>
+      <StaticHeader />
+      <LoginForm />
+    </>
+  )
+}
+
+export default Login
