@@ -1,5 +1,13 @@
+import StaticHeader from '../header/static'
+import LoginForm from './form'
+
 const Login = () => {
-  return <div className="Login"></div>
+  return (
+    <>
+      <StaticHeader />
+      <LoginForm />
+    </>
+  )
 }
 
 export default Login
