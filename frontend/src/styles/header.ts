@@ -38,7 +38,10 @@ export const CustomButton = styled(Button)<{ isActive: boolean }>`
   ${({ isActive }) =>
     isActive &&
     `
-    background-color: white !important;
+  &:hover {
+    background-color: white;
+  }
+    background-color: white;
     color: #000000;
   `}
 `

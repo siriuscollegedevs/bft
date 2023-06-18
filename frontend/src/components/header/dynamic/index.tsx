@@ -12,10 +12,9 @@ import {
   CustomExitButton
 } from '../../../styles/header'
 
-const name = 'Руководитель'
-
-const DynamicHeader = () => {
+export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')
+  const name = 'Руководитель'
 
   const handleButtonClick = (buttonName: string) => {
     setActiveButton(buttonName)
@@ -33,7 +32,7 @@ const DynamicHeader = () => {
           <CustomButton isActive={activeButton === 'directories'} onClick={() => handleButtonClick('directories')}>
             Справочники
           </CustomButton>
-          <CustomButton isActive={activeButton === 'requests'} onClick={() => handleButtonClick('requests')}>
+          <CustomButton isActive={activeButton === 'admissions'} onClick={() => handleButtonClick('admissions')}>
             Заявки
           </CustomButton>
           <Box sx={{ flexGrow: 1 }} />
@@ -49,5 +48,3 @@ const DynamicHeader = () => {
     </Box>
   )
 }
-
-export default DynamicHeader

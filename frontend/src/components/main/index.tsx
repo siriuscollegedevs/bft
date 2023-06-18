@@ -1,7 +1,7 @@
-import DynamicHeader from '../header/dynamic'
-import ButtonGroup from './button-group'
+import { DynamicHeader } from '../header/dynamic'
+import { ButtonGroup } from './button-group'
 
-const Main = () => {
+export const Main = () => {
   return (
     <>
       <DynamicHeader />
@@ -9,5 +9,3 @@ const Main = () => {
     </>
   )
 }
-
-export default Main

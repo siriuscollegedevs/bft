@@ -5,15 +5,27 @@ import { Container, List, ListItemText } from '@mui/material'
 import { ReactComponent as ArrowIcon } from '../../../assets/arrow.svg'
 import { useEffect } from 'react'
 
-export default function GroupOrientation() {
-  const availableObjects = ['Наименование 1', 'Наименование 2', 'Наименование 3', 'Наименование 4', 'Наименование 5']
+export const ButtonGroup = () => {
+
+  //TODO
+  const roles = {
+    manager: 'manager',
+    sb: 'sb'
+  }
+
+  const availableObjects = [
+    { id: 1, name: 'Наименование 1' },
+    { id: 2, name: 'Наименование 2' },
+    { id: 3, name: 'Наименование 3' },
+    { id: 4, name: 'Наименование 4' },
+    { id: 5, name: 'Наименование 5' }
+  ]
 
   const [role, setRole] = React.useState('')
 
   useEffect(() => {
     // Fetch
-    const userRole = 'sb'
-    setRole(userRole)
+    setRole(roles.manager)
   }, [])
 
   return (
@@ -39,7 +51,7 @@ export default function GroupOrientation() {
           gap: '15px'
         }}
       >
-        {role === 'manager' && (
+        {role === roles.manager && (
           <>
             <CustomButton variant="outlined">
               Справочники
@@ -51,7 +63,7 @@ export default function GroupOrientation() {
             </CustomButton>
           </>
         )}
-        {role === 'sb' && (
+        {role === roles.sb && (
           <>
             <CustomButton variant="outlined">
               Заявки
@@ -64,9 +76,9 @@ export default function GroupOrientation() {
             >
               Доступные объекты
               <List component="div">
-                {availableObjects.map((object, index) => (
-                  <CustomListItem key={index}>
-                    <ListItemText primary={object} />
+                {availableObjects.map(object => (
+                  <CustomListItem key={object.id}>
+                    <ListItemText primary={object.name} />
                   </CustomListItem>
                 ))}
               </List>
