@@ -1,7 +1,7 @@
 import { AppBar, Box, Toolbar } from '@mui/material'
-import Logo from '../../logo'
+import { Logo } from '../../logo'
 
-const StaticHeader = () => {
+export const StaticHeader = () => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -12,5 +12,3 @@ const StaticHeader = () => {
     </Box>
   )
 }
-
-export default StaticHeader

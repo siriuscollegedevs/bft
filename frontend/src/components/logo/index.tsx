@@ -5,12 +5,10 @@ type LogoProps = {
   size: number
 }
 
-const Logo = ({ size }: LogoProps) => {
+export const Logo = ({ size }: LogoProps) => {
   return (
     <>
       <SvgIcon component={LogoIcon} style={{ fontSize: size }} />
     </>
   )
 }
-
-export default Logo

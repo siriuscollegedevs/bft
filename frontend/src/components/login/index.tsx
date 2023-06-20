@@ -1,7 +1,7 @@
-import StaticHeader from '../header/static'
-import LoginForm from './form'
+import { StaticHeader } from '../header/static'
+import { LoginForm } from './form'
 
-const Login = () => {
+export const Login = () => {
   return (
     <>
       <StaticHeader />
@@ -9,5 +9,3 @@ const Login = () => {
     </>
   )
 }
-
-export default Login

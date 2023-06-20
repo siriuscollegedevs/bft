@@ -1,6 +1,6 @@
 import { Button, Container, FormControl, TextField, Typography } from '@mui/material'
 
-const LoginForm = () => {
+export const LoginForm = () => {
   return (
     <>
       <Container fixed>
@@ -58,5 +58,3 @@ const LoginForm = () => {
     </>
   )
 }
-
-export default LoginForm
