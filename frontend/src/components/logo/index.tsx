@@ -5,7 +5,7 @@ type LogoProps = {
   size: number
 }
 
-const Logo: React.FC<LogoProps> = ({ size }: LogoProps) => {
+const Logo = ({ size }: LogoProps) => {
   return (
     <>
       <SvgIcon component={LogoIcon} style={{ fontSize: size }} />
