@@ -1,16 +1,20 @@
-import { Route, Routes, BrowserRouter } from 'react-router-dom';
-import Login from './components/login';
+import { Route, Routes, BrowserRouter } from 'react-router-dom'
+import { ThemeProvider } from '@mui/material'
+import { Classic } from './styles/theme'
+import { Login } from './components/login'
+import { Main } from './components/main'
 
-function App() {
-	return (
-		<>
-			<BrowserRouter>
-				<Routes>
-					<Route path="/login" element={<Login />} />
-				</Routes>
-			</BrowserRouter>
-		</>
-	);
+export function App() {
+  return (
+    <>
+      <ThemeProvider theme={Classic}>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/access" element={<Main />} />
+          </Routes>
+        </BrowserRouter>
+      </ThemeProvider>
+    </>
+  )
 }
-
-export default App;
