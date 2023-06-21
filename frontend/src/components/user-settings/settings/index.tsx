@@ -1,4 +1,4 @@
-import { Container, FormControl } from '@mui/material'
+import { Container, FormControl, FormHelperText } from '@mui/material'
 import Box from '@mui/material/Box'
 import { CustomDefaultButton, CustomFormControl } from '../../../styles/settings'
 import { CustomTypography } from '../../../styles/header'
@@ -30,6 +30,14 @@ export const UserSettings = () => {
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showRepeatPassword, setShowRepeatPassword] = useState(false)
 
+  const [passwordMatch, setPasswordMatch] = useState(true)
+
+  const [formSubmitted, setFormSubmitted] = useState(false)
+
+  const [oldPassword, setOldPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [repeatPassword, setRepeatPassword] = useState('')
+
   const handleClickShowOldPassword = () => {
     setShowOldPassword(!showOldPassword)
   }
@@ -44,6 +52,18 @@ export const UserSettings = () => {
 
   const handleMouseDownPassword = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
+  }
+
+  const handleSave = () => {
+    setFormSubmitted(true)
+
+    if (newPassword !== repeatPassword) {
+      setPasswordMatch(false)
+      return
+    } else {
+      setPasswordMatch(true)
+      return
+    }
   }
 
   return (
@@ -74,7 +94,7 @@ export const UserSettings = () => {
             }}
           >
             {role !== roles.administrator && (
-              <FormControl sx={{ m: 1, width: '85%' }} variant="outlined" focused>
+              <FormControl sx={{ m: 1, width: '85%' }} variant="outlined" focused error={formSubmitted && !oldPassword}>
                 <InputLabel htmlFor="outlined-adornment-password">Старый пароль</InputLabel>
                 <OutlinedInput
                   id="old-password"
@@ -95,11 +115,19 @@ export const UserSettings = () => {
                     </InputAdornment>
                   }
                   label="Старый пароль"
+                  value={oldPassword}
+                  onChange={e => setOldPassword(e.target.value)}
+                  required
                 />
+                {formSubmitted && !oldPassword && (
+                  <FormHelperText error sx={{ ml: 0 }}>
+                    Это поле обязательно.
+                  </FormHelperText>
+                )}
               </FormControl>
             )}
 
-            <FormControl sx={{ m: 1, width: '85%' }} variant="outlined" focused>
+            <FormControl sx={{ m: 1, width: '85%' }} variant="outlined" focused error={formSubmitted && !newPassword}>
               <InputLabel htmlFor="outlined-adornment-password">Новый пароль</InputLabel>
               <OutlinedInput
                 id="new-password"
@@ -120,10 +148,23 @@ export const UserSettings = () => {
                   </InputAdornment>
                 }
                 label="Новый пароль"
+                value={newPassword}
+                onChange={e => setNewPassword(e.target.value)}
+                required
               />
+              {formSubmitted && !newPassword && (
+                <FormHelperText error sx={{ ml: 0 }}>
+                  Это поле обязательно.
+                </FormHelperText>
+              )}
             </FormControl>
 
-            <FormControl sx={{ m: 1, width: '85%' }} variant="outlined" focused>
+            <FormControl
+              sx={{ m: 1, width: '85%' }}
+              variant="outlined"
+              focused
+              error={formSubmitted && !repeatPassword}
+            >
               <InputLabel htmlFor="outlined-adornment-password">Новый пароль</InputLabel>
               <OutlinedInput
                 id="new-password-repeat"
@@ -144,11 +185,24 @@ export const UserSettings = () => {
                   </InputAdornment>
                 }
                 label="Новый пароль"
+                value={repeatPassword}
+                onChange={e => setRepeatPassword(e.target.value)}
+                required
               />
+              {formSubmitted && !repeatPassword && (
+                <FormHelperText error sx={{ ml: 0 }}>
+                  Это поле обязательно.
+                </FormHelperText>
+              )}
+              {!passwordMatch && (
+                <FormHelperText error sx={{ ml: 0 }}>
+                  Пароли не совпадают.
+                </FormHelperText>
+              )}
             </FormControl>
           </Box>
 
-          <CustomDefaultButton variant="contained" color="primary">
+          <CustomDefaultButton variant="contained" color="primary" onClick={handleSave}>
             Сохранить
           </CustomDefaultButton>
         </CustomFormControl>
