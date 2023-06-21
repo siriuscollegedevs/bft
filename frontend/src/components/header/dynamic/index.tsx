@@ -30,7 +30,7 @@ export const DynamicHeader = () => {
     <Box sx={{ flexGrow: 1 }}>
       <CustomAppBar position="static">
         <CustomToolbar>
-          <HeaderLogo color="inherit" disableRipple>
+          <HeaderLogo color="inherit" disableRipple onClick={() => navigate('/access')}>
             <LogoIcon />
           </HeaderLogo>
           <CustomTypography>{`Доступ.${name}`}</CustomTypography>
