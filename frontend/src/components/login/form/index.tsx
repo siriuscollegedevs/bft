@@ -1,7 +1,14 @@
-import { Button, Container, FormControl, TextField, Typography } from '@mui/material'
+import { FormControl, Typography } from '@mui/material'
 import { useState } from 'react'
 import { useLoginMutation } from '../../../__data__/service/api'
 import { useNavigate } from 'react-router-dom'
+import {
+  LoginButton,
+  PasswordTextField,
+  SignInContainer,
+  SignInTextField,
+  TitleTypography
+} from '../../../styles/login'
 
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
@@ -24,28 +31,10 @@ export const LoginForm = () => {
       {isLoading ? (
         <Typography>Loading</Typography>
       ) : (
-        <Container fixed>
-          <FormControl
-            className="sign-in"
-            color="primary"
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              height: 450,
-              width: 600,
-              margin: 'auto',
-              border: '1.5px solid',
-              borderColor: '#49547D',
-              borderRadius: '20px',
-              flexDirection: 'column',
-              marginTop: '220px'
-            }}
-          >
-            <Typography variant="h4" sx={{ marginTop: '30px', marginBottom: '62px' }}>
-              Авторизация
-            </Typography>
-
-            <TextField
+        <SignInContainer fixed>
+          <FormControl className="sign-in" color="primary">
+            <TitleTypography variant="h4">Авторизация</TitleTypography>
+            <SignInTextField
               id="sign-in-login"
               label="Логин"
               InputLabelProps={{
@@ -57,10 +46,8 @@ export const LoginForm = () => {
               error={isError}
               onChange={e => setLogin(e.target.value)}
               placeholder="Введите логин"
-              sx={{ width: 485, marginBottom: '45px', color: 'white' }}
             />
-
-            <TextField
+            <PasswordTextField
               id="sign-in-password"
               label="Пароль"
               InputLabelProps={{
@@ -72,20 +59,12 @@ export const LoginForm = () => {
               error={isError}
               onChange={e => setPassword(e.target.value)}
               placeholder="Введите пароль"
-              sx={{ width: 485, marginBottom: '67px' }}
             />
-
-            <Button
-              type="submit"
-              onClick={handleLogin}
-              variant="contained"
-              color="primary"
-              sx={{ height: 50, width: 170 }}
-            >
+            <LoginButton type="submit" onClick={handleLogin} variant="contained" color="primary">
               Войти
-            </Button>
+            </LoginButton>
           </FormControl>
-        </Container>
+        </SignInContainer>
       )}
     </>
   )
