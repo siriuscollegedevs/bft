@@ -32,7 +32,7 @@ export const LoginForm = () => {
         <Typography>Loading</Typography>
       ) : (
         <SignInContainer fixed>
-          <FormControl className="sign-in" color="primary">
+          <FormControl className="sign-in" color="primary" sx={{ alignItems: 'center' }}>
             <TitleTypography variant="h4">Авторизация</TitleTypography>
             <SignInTextField
               id="sign-in-login"

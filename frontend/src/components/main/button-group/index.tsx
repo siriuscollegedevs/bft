@@ -6,7 +6,6 @@ import { ReactComponent as ArrowIcon } from '../../../assets/arrow.svg'
 import { useEffect } from 'react'
 
 export const ButtonGroup = () => {
-
   //TODO
   const roles = {
     manager: 'manager',
