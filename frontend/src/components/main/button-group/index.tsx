@@ -6,7 +6,6 @@ import { ReactComponent as ArrowIcon } from '../../../assets/arrow.svg'
 import { useEffect } from 'react'
 
 export const ButtonGroup = () => {
-
   //TODO
   const roles = {
     manager: 'manager',
@@ -45,7 +44,6 @@ export const ButtonGroup = () => {
       <Box
         sx={{
           display: 'flex',
-          alignItem: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
           gap: '15px'
