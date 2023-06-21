@@ -159,6 +159,11 @@ export const UserSettings = () => {
                   Это поле обязательно.
                 </FormHelperText>
               )}
+                {formSubmitted && oldPassword === newPassword && (
+                    <FormHelperText error sx={{ ml: 0 }}>
+                        Новый пароль не должен повторять старый.
+                    </FormHelperText>
+                )}
             </FormControl>
 
             <FormControl
