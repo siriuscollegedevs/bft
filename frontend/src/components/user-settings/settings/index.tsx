@@ -32,6 +32,7 @@ export const UserSettings = () => {
   const [showRepeatPassword, setShowRepeatPassword] = useState(false)
 
   const [passwordMatch, setPasswordMatch] = useState(true)
+  const [passwordRegex, setPasswordRegex] = useState(true)
 
   const [formSubmitted, setFormSubmitted] = useState(false)
 
@@ -58,12 +59,20 @@ export const UserSettings = () => {
   const handleSave = () => {
     setFormSubmitted(true)
 
+    const regex = /^(?=.*[A-Z])(?=.*\d).{8,}$/
+
+    if (!regex.test(newPassword)) {
+      setPasswordRegex(false)
+      return
+    } else {
+      setPasswordRegex(true)
+    }
+
     if (newPassword !== repeatPassword) {
       setPasswordMatch(false)
       return
     } else {
       setPasswordMatch(true)
-      return
     }
   }
 
@@ -159,11 +168,16 @@ export const UserSettings = () => {
                   Это поле обязательно.
                 </FormHelperText>
               )}
-                {formSubmitted && oldPassword === newPassword && (
-                    <FormHelperText error sx={{ ml: 0 }}>
-                        Новый пароль не должен повторять старый.
-                    </FormHelperText>
-                )}
+              {formSubmitted && oldPassword === newPassword && (
+                <FormHelperText error sx={{ ml: 0 }}>
+                  Новый пароль не должен повторять старый.
+                </FormHelperText>
+              )}
+              {!passwordRegex && (
+                <FormHelperText error sx={{ ml: 0 }}>
+                  Пароль должен содержать как минимум 8 символов, включая хотя бы одну заглавную букву и одну цифру.
+                </FormHelperText>
+              )}
             </FormControl>
 
             <FormControl
