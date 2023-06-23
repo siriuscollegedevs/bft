@@ -31,6 +31,7 @@
     "quotes": ["error", "single"],
     "react/react-in-jsx-scope": "off",
     "no-duplicate-imports": "error",
-    "import/no-default-export": "error"
+    "import/no-default-export": "error",
+    "react/no-array-index-key": "error"
   }
 }
