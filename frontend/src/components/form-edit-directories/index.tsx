@@ -2,7 +2,7 @@ import { FormAccount } from './form-account'
 import { DynamicHeader } from '../header/dynamic'
 import { BackButton } from '../button-back'
 import { Container } from '@mui/material'
-import { CustomDefaultButton, CustomFormControl } from '../../styles/settings'
+import { CustomFormControl } from '../../styles/settings'
 import { CustomTypography } from '../../styles/header'
 import Box from '@mui/material/Box'
 import * as React from 'react'
@@ -43,17 +43,16 @@ export const FormEditDirectories = () => {
               justifyContent: 'center',
               flexDirection: 'column',
               gap: '25px',
-              width: '100%'
+              width: '100%',
+              '& .MuiFormHelperText-root': {
+                marginLeft: 0
+              }
             }}
           >
             {location.pathname === '/accounts' && <FormAccount />}
             {location.pathname === '/objects' && <FormObject />}
             {location.pathname === '/employees' && <FormEmployee />}
           </Box>
-
-          <CustomDefaultButton variant="contained" color="primary">
-            Сохранить
-          </CustomDefaultButton>
         </CustomFormControl>
       </Container>
     </>
