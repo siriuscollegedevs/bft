@@ -61,7 +61,16 @@ export const ShortcutButtons = ({ buttonNames }: ButtonNames) => {
     <ButtonGroup>
       {filteredIcons({ buttonNames }).map(icon => (
         <Tooltip title={icon.nameRu} placement="top" key={icon.name}>
-          <IconButton disableRipple={true} sx={{ padding: 0, paddingLeft: '5px', margin: '50px' }}>
+          <IconButton
+            disableRipple={true}
+            sx={{
+              padding: 0,
+              paddingLeft: '5px',
+              ':first-child': {
+                paddingLeft: '0px'
+              }
+            }}
+          >
             {icon.node}
           </IconButton>
         </Tooltip>
