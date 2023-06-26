@@ -33,7 +33,7 @@ export const ShortcutButtons = ({ buttonNames }: ButtonNames) => {
   return (
     <ButtonGroup>
       {buttonNames.map(name => (
-        <IconButton key={name} disableRipple={true} sx={{ padding: 0, borderLeft: '10px' }}>
+        <IconButton key={name} disableRipple={true} sx={{ padding: 0, paddingLeft: '5px' }}>
           {iconMapping[name]}
         </IconButton>
       ))}

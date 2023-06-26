@@ -13,7 +13,7 @@ export function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/access" element={<Main />} />
-            <Route path="/test" element={<ShortcutButtons buttonNames={['edit', 'history', 'trash']} />} />
+            <Route path="/test" element={<ShortcutButtons buttonNames={['edit', 'cancel']} />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
