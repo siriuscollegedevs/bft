@@ -3,6 +3,7 @@ import { ThemeProvider } from '@mui/material'
 import { Classic } from './styles/theme'
 import { Login } from './components/login'
 import { Main } from './components/main'
+import { AdvancedSearch } from './components/advanced-search'
 
 export function App() {
   return (
@@ -12,6 +13,7 @@ export function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/access" element={<Main />} />
+            <Route path="/directories/advanced-search" element={<AdvancedSearch />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
