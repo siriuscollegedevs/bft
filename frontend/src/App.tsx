@@ -17,9 +17,9 @@ export function App() {
             <Route path="/access" element={<Main />} />
             <Route path="/change-password" element={<Settings />} />
             <Route path="/directories" element={<MainDirectories />} />
-            <Route path="/accounts" element={<FormEditDirectories />} />
-            <Route path="/objects" element={<FormEditDirectories />} />
-            <Route path="/employees" element={<FormEditDirectories />} />
+            <Route path="/accounts/:id" element={<FormEditDirectories />} />
+            <Route path="/objects/:id" element={<FormEditDirectories />} />
+            <Route path="/employees/:id" element={<FormEditDirectories />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

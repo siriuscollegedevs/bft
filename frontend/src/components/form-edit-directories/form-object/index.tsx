@@ -26,8 +26,8 @@ export const FormObject = () => {
         value={fieldObject}
         onChange={e => setFieldObject(e.target.value)}
         sx={{ m: 1, width: '85%' }}
-        error={error}
-        helperText={error && 'Это поле обязательно.'}
+        error={error && !fieldObject}
+        helperText={error && !fieldObject && 'Это поле обязательно.'}
       />
       <CustomDefaultButton variant="contained" color="primary" onClick={handleSubmit}>
         Сохранить

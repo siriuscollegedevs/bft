@@ -108,8 +108,8 @@ export const FormEmployee = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={errors.surname}
-        helperText={errors.surname && 'Это поле обязательно.'}
+        error={!fields.surname && errors.surname}
+        helperText={!fields.surname && errors.surname && 'Это поле обязательно.'}
         value={fields.surname}
         onChange={e => handleFieldChange('surname', e.target.value)}
       />
@@ -120,8 +120,8 @@ export const FormEmployee = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={errors.name}
-        helperText={errors.name && 'Это поле обязательно.'}
+        error={!fields.name && errors.name}
+        helperText={!fields.name && errors.name && 'Это поле обязательно.'}
         value={fields.name}
         onChange={e => handleFieldChange('name', e.target.value)}
       />
@@ -132,13 +132,13 @@ export const FormEmployee = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={errors.patronymic}
-        helperText={errors.patronymic && 'Это поле обязательно.'}
+        error={!fields.patronymic && errors.patronymic}
+        helperText={!fields.patronymic && errors.patronymic && 'Это поле обязательно.'}
         value={fields.patronymic}
         onChange={e => handleFieldChange('patronymic', e.target.value)}
       />
       <FormControl sx={{ m: 1, width: '85%' }} focused required>
-        <InputLabel id="demo-multiple-checkbox-label" error={errors.fundObject}>
+        <InputLabel id="demo-multiple-checkbox-label" error={errors.fundObject && !objectName}>
           Объект(-ы) Фонда
         </InputLabel>
         <Select
@@ -150,7 +150,7 @@ export const FormEmployee = () => {
           input={<OutlinedInput label="Объект(-ы) Фонда" />}
           renderValue={selected => selected.join(', ')}
           MenuProps={MenuProps}
-          error={errors.fundObject}
+          error={errors.fundObject && !objectName}
         >
           {fundObjectsName.map(object => (
             <MenuItem key={object.id} value={object.name}>
@@ -159,7 +159,7 @@ export const FormEmployee = () => {
             </MenuItem>
           ))}
         </Select>
-        {errors.fundObject && <FormHelperText error>Выберите хотя бы один Объект Фонда.</FormHelperText>}
+        {errors.fundObject && !objectName && <FormHelperText error>Выберите хотя бы один Объект Фонда.</FormHelperText>}
       </FormControl>
       <CustomDefaultButton variant="contained" color="primary" onClick={handleSubmit}>
         Сохранить

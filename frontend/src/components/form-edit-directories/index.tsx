@@ -8,10 +8,16 @@ import Box from '@mui/material/Box'
 import * as React from 'react'
 import { FormObject } from './form-object'
 import { FormEmployee } from './form-employee'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 
 export const FormEditDirectories = () => {
+
   const location = useLocation()
+    const { id } = useParams();
+
+    const objectUrl = `/objects/${id}`;
+    const accountUrl = `/accounts/${id}`;
+    const employeeUrl = `/employees/${id}`;
 
   return (
     <>
@@ -30,9 +36,9 @@ export const FormEditDirectories = () => {
       >
         <CustomFormControl color="primary">
           <CustomTypography variant="h6" sx={{ color: 'black' }}>
-            {location.pathname === '/accounts' && 'Учетная запись'}
-            {location.pathname === '/objects' && 'Объект Фонда'}
-            {location.pathname === '/employees' && 'Закрепление сотрудника за объектами Фонда'}
+            {location.pathname === accountUrl && 'Учетная запись'}
+            {location.pathname === objectUrl && 'Объект Фонда'}
+            {location.pathname === employeeUrl && 'Закрепление сотрудника за объектами Фонда'}
           </CustomTypography>
 
           <Box
@@ -49,9 +55,9 @@ export const FormEditDirectories = () => {
               }
             }}
           >
-            {location.pathname === '/accounts' && <FormAccount />}
-            {location.pathname === '/objects' && <FormObject />}
-            {location.pathname === '/employees' && <FormEmployee />}
+            {location.pathname === accountUrl && <FormAccount />}
+            {location.pathname === objectUrl && <FormObject />}
+            {location.pathname === employeeUrl && <FormEmployee />}
           </Box>
         </CustomFormControl>
       </Container>

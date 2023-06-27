@@ -92,8 +92,8 @@ export const FormAccount = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={errors.surname}
-        helperText={errors.surname && 'Это поле обязательно.'}
+        error={!fields.surname && errors.surname}
+        helperText={!fields.surname && errors.surname && 'Это поле обязательно.'}
         value={fields.surname}
         onChange={e => handleFieldChange('surname', e.target.value)}
       />
@@ -104,8 +104,8 @@ export const FormAccount = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={errors.name}
-        helperText={errors.name && 'Это поле обязательно.'}
+        error={!fields.name && errors.name}
+        helperText={!fields.name && errors.name && 'Это поле обязательно.'}
         value={fields.name}
         onChange={e => handleFieldChange('name', e.target.value)}
       />
@@ -116,8 +116,8 @@ export const FormAccount = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={errors.patronymic}
-        helperText={errors.patronymic && 'Это поле обязательно.'}
+        error={!fields.patronymic && errors.patronymic}
+        helperText={!fields.patronymic && errors.patronymic && 'Это поле обязательно.'}
         value={fields.patronymic}
         onChange={e => handleFieldChange('patronymic', e.target.value)}
       />
@@ -128,8 +128,8 @@ export const FormAccount = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={errors.login}
-        helperText={errors.login && 'Это поле обязательно.'}
+        error={!fields.login && errors.login}
+        helperText={!fields.login && errors.login && 'Это поле обязательно.'}
         value={fields.login}
         onChange={e => handleFieldChange('login', e.target.value)}
       />
@@ -155,8 +155,8 @@ export const FormAccount = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={errors.password}
-        helperText={errors.password && 'Это поле обязательно.'}
+        error={!fields.password && errors.password}
+        helperText={!fields.password && errors.password && 'Это поле обязательно.'}
         value={fields.password}
         onChange={e => handleFieldChange('password', e.target.value)}
       />
