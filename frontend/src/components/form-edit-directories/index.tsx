@@ -11,13 +11,12 @@ import { FormEmployee } from './form-employee'
 import { useLocation, useParams } from 'react-router-dom'
 
 export const FormEditDirectories = () => {
-
   const location = useLocation()
-    const { id } = useParams();
+  const { id } = useParams()
 
-    const objectUrl = `/objects/${id}`;
-    const accountUrl = `/accounts/${id}`;
-    const employeeUrl = `/employees/${id}`;
+  const objectUrl = `/objects/${id}`
+  const accountUrl = `/accounts/${id}`
+  const employeeUrl = `/employees/${id}`
 
   return (
     <>
