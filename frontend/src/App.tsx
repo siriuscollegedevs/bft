@@ -13,7 +13,7 @@ export function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/access" element={<Main />} />
-            <Route path="/change-password" element={<Settings />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
