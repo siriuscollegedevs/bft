@@ -1,6 +1,4 @@
 import { FormAccount } from './form-account'
-import { DynamicHeader } from '../header/dynamic'
-import { BackButton } from '../button-back'
 import { Container } from '@mui/material'
 import { CustomFormControl } from '../../styles/settings'
 import { CustomTypography } from '../../styles/header'
@@ -20,8 +18,6 @@ export const FormEditDirectories = () => {
 
   return (
     <>
-      <DynamicHeader />
-      <BackButton />
       <Container
         fixed
         sx={{

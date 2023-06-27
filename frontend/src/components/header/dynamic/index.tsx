@@ -19,7 +19,7 @@ export const DynamicHeader = () => {
   const navigate = useNavigate()
 
   const handleSettingsButtonClick = () => {
-    navigate('/change-password')
+    navigate('/settings')
   }
 
   const handleButtonClick = (buttonName: string) => {
