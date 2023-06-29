@@ -4,7 +4,7 @@ import Switch from '@mui/material/Switch'
 import { CustomTypography } from '../../styles/header'
 import * as React from 'react'
 import { DynamicHeader } from '../header/dynamic'
-import { SearchField } from './search-field'
+import { SearchField } from '../search-field'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 type IsSwitchProps = {
@@ -95,4 +95,3 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSwitch }) => {
     </>
   )
 }
-
