@@ -44,22 +44,15 @@ const iconMapping: IconMapping = {
   }
 }
 
-const filteredIcons = ({ buttonNames }: ButtonNames) => {
-  return Object.keys(iconMapping)
-    .filter(key => buttonNames.includes(key as ButtonName))
-    .map(key => ({ ...iconMapping[key as ButtonName], name: key }))
-}
-
 export const ShortcutButtons = ({ buttonNames }: ButtonNames) => {
-
   if (buttonNames.length === 0 || buttonNames.length > 3) {
     return <h6>Error</h6>
   }
 
   return (
     <ButtonGroup>
-      {filteredIcons({ buttonNames }).map(icon => (
-        <Tooltip title={icon.nameRu} placement="top" key={icon.name}>
+      {buttonNames.map(title => (
+        <Tooltip title={iconMapping[title].nameRu} placement="top" key={title}>
           <IconButton
             disableRipple={true}
             sx={{
@@ -70,7 +63,7 @@ export const ShortcutButtons = ({ buttonNames }: ButtonNames) => {
               }
             }}
           >
-            {icon.node}
+            {iconMapping[title].node}
           </IconButton>
         </Tooltip>
       ))}
