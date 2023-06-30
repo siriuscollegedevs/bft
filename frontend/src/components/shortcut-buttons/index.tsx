@@ -6,54 +6,53 @@ import { ReactComponent as TrashIcon } from '../../assets/trash.svg'
 import { ReactComponent as CancelIcon } from '../../assets/cancel.svg'
 import { ReactComponent as ToRepayIcon } from '../../assets/toRepay.svg'
 
+type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
+
 type ButtonNames = {
-  buttonNames: string[]
+  buttonNames: ButtonName[]
 }
 
-type IconMapping = {
-  name: string
+type IconMappingItem = {
   nameRu: string
   node: React.ReactNode
 }
 
-const iconMapping: IconMapping[] = [
-  {
-    name: 'edit',
+type IconMapping = {
+  [key in ButtonName]: IconMappingItem
+}
+
+const iconMapping: IconMapping = {
+  edit: {
     nameRu: 'Редактирование',
     node: <EditIcon />
   },
-  {
-    name: 'history',
+  history: {
     nameRu: 'История',
     node: <HistoryIcon />
   },
-  {
-    name: 'trash',
+  trash: {
     nameRu: 'Удаление',
     node: <TrashIcon />
   },
-  {
-    name: 'cancel',
+  cancel: {
     nameRu: 'Аннулирование',
     node: <CancelIcon />
   },
-  {
-    name: 'toRepay',
+  toRepay: {
     nameRu: 'Погашение',
     node: <ToRepayIcon />
   }
-]
-
-const checkButtonNames = ({ buttonNames }: ButtonNames) => {
-  return buttonNames.length < 4 && buttonNames.length > 0
 }
 
 const filteredIcons = ({ buttonNames }: ButtonNames) => {
-  return iconMapping.filter(icon => buttonNames.includes(icon.name))
+  return Object.keys(iconMapping)
+    .filter(key => buttonNames.includes(key as ButtonName))
+    .map(key => ({ ...iconMapping[key as ButtonName], name: key }))
 }
 
 export const ShortcutButtons = ({ buttonNames }: ButtonNames) => {
-  if (!checkButtonNames({ buttonNames })) {
+
+  if (buttonNames.length === 0 || buttonNames.length > 3) {
     return <h6>Error</h6>
   }
 
