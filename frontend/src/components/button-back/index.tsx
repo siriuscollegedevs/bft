@@ -5,12 +5,8 @@ import { ReactComponent as ArrowIcon } from '../../assets/arrow.svg'
 export const BackButton = () => {
   const navigate = useNavigate()
 
-  const handleGoBack = () => {
-    navigate(-1)
-  }
-
   return (
-    <CustomFab color="primary" aria-label="back" onClick={handleGoBack}>
+    <CustomFab color="primary" aria-label="back" onClick={() => navigate(-1)}>
       <ArrowIcon />
     </CustomFab>
   )
