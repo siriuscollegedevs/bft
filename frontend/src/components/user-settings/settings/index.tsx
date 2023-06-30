@@ -86,7 +86,8 @@ export const UserSettings = () => {
           alignItem: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
-          mt: '150px'
+          mt: '150px',
+          mb: '150px'
         }}
       >
         <CustomFormControl color="primary">
@@ -105,7 +106,13 @@ export const UserSettings = () => {
             }}
           >
             {role !== roles.administrator && (
-              <FormControl sx={{ m: 1, width: '85%' }} variant="outlined" focused error={formSubmitted && !oldPassword}>
+              <FormControl
+                sx={{ m: 1, width: '85%' }}
+                variant="outlined"
+                focused
+                required
+                error={formSubmitted && !oldPassword}
+              >
                 <InputLabel htmlFor="outlined-adornment-password">Старый пароль</InputLabel>
                 <OutlinedInput
                   id="old-password"
@@ -138,7 +145,13 @@ export const UserSettings = () => {
               </FormControl>
             )}
 
-            <FormControl sx={{ m: 1, width: '85%' }} variant="outlined" focused error={formSubmitted && !newPassword}>
+            <FormControl
+              sx={{ m: 1, width: '85%' }}
+              variant="outlined"
+              focused
+              required
+              error={formSubmitted && !newPassword}
+            >
               <InputLabel htmlFor="outlined-adornment-password">Новый пароль</InputLabel>
               <OutlinedInput
                 id="new-password"
@@ -185,6 +198,7 @@ export const UserSettings = () => {
               variant="outlined"
               focused
               error={formSubmitted && !repeatPassword}
+              required
             >
               <InputLabel htmlFor="outlined-adornment-password">Новый пароль</InputLabel>
               <OutlinedInput
