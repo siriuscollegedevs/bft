@@ -64,7 +64,6 @@ export const FormAccount = () => {
   }
 
   const handleSubmit = () => {
-    let hasErrors = false
     const newErrors: Errors = {
       surname: false,
       name: false,
@@ -76,7 +75,6 @@ export const FormAccount = () => {
     Object.entries(fields).forEach(([field, value]) => {
       if (value.trim() === '') {
         newErrors[field as keyof Fields] = true
-        hasErrors = true
       }
     })
 

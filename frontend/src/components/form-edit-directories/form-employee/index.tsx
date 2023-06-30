@@ -23,12 +23,10 @@ type Errors = {
 }
 
 export const FormEmployee = () => {
-  const ITEM_HEIGHT = 48
-  const ITEM_PADDING_TOP = 8
   const MenuProps = {
     PaperProps: {
       style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        maxHeight: 224,
         width: 250
       }
     }
@@ -67,7 +65,6 @@ export const FormEmployee = () => {
   }
 
   const handleSubmit = () => {
-    let hasErrors = false
     const newErrors: Errors = {
       surname: false,
       name: false,
@@ -78,24 +75,15 @@ export const FormEmployee = () => {
     Object.entries(fields).forEach(([field, value]) => {
       if (value.trim() === '') {
         newErrors[field as keyof Fields] = true
-        hasErrors = true
       }
     })
 
-    if (objectName.length === 0) {
-      newErrors.fundObject = true
-      hasErrors = true
-    } else {
-      newErrors.fundObject = false
-    }
+    newErrors.fundObject = objectName.length === 0;
 
     setErrors(newErrors)
   }
 
-  const handleChange = (event: SelectChangeEvent<typeof objectName>) => {
-    const {
-      target: { value }
-    } = event
+  const handleChange = ({ target: { value } }: SelectChangeEvent<typeof objectName>) => {
     setObjectName(typeof value === 'string' ? value.split(',') : value)
   }
 
