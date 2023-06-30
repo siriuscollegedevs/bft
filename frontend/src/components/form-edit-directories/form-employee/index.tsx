@@ -78,7 +78,7 @@ export const FormEmployee = () => {
       }
     })
 
-    newErrors.fundObject = objectName.length === 0;
+    newErrors.fundObject = objectName.length === 0
 
     setErrors(newErrors)
   }
