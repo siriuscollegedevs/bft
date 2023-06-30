@@ -38,7 +38,12 @@ export const DynamicHeader = () => {
             Заявки
           </CustomButton>
           <Box sx={{ flexGrow: 1 }} />
-          <CustomSettingsButton aria-label="setting" color="inherit" disableRipple onClick={() => navigate('/settings')}>
+          <CustomSettingsButton
+            aria-label="setting"
+            color="inherit"
+            disableRipple
+            onClick={() => navigate('/settings')}
+          >
             <SettingsIcon />
           </CustomSettingsButton>
           <CustomTypography>{`${name} ${name[0]}.${name[0]}.`}</CustomTypography>
