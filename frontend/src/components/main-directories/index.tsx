@@ -4,15 +4,11 @@ import { CustomButton } from '../../styles/button-group'
 import { Container } from '@mui/material'
 import { ReactComponent as ArrowIcon } from '../../assets/arrow.svg'
 import { useNavigate } from 'react-router-dom'
-import { BackButton } from '../button-back'
-import { DynamicHeader } from '../header/dynamic'
 
 export const MainDirectories = () => {
   const navigate = useNavigate()
   return (
     <>
-      <DynamicHeader />
-      <BackButton />
       <Container
         sx={{
           display: 'flex',
