@@ -49,10 +49,6 @@ export const DynamicHeader = () => {
     }
   }, [location.pathname])
 
-  const handleSettingsButtonClick = () => {
-    navigate('/settings')
-  }
-
   const handleButtonClick = (buttonName: string) => {
     setActiveButton(buttonName)
     navigate(`/${buttonName}`)
@@ -78,7 +74,7 @@ export const DynamicHeader = () => {
             </>
           )}
           <Box sx={{ flexGrow: 1 }} />
-          <CustomSettingsButton aria-label="setting" color="inherit" disableRipple onClick={handleSettingsButtonClick}>
+          <CustomSettingsButton aria-label="setting" color="inherit" disableRipple onClick={() => navigate('/settings')}>
             <SettingsIcon />
           </CustomSettingsButton>
           <CustomTypography>{`${name} ${name[0]}.${name[0]}.`}</CustomTypography>
