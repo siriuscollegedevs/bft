@@ -8,7 +8,7 @@ export const CustomButton = styled(Button)`
   justify-content: space-between;
   text-transform: none;
 
-  border: 1px solid #49547d;
+  border: 1.5px solid #49547d;
   font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 500;
@@ -18,7 +18,7 @@ export const CustomButton = styled(Button)`
 
   &:hover {
     background-color: #dbdde5;
-    border: 1px solid transparent;
+    border: 1.5px solid transparent;
   }
 
   && .MuiTouchRipple-child {
@@ -26,7 +26,7 @@ export const CustomButton = styled(Button)`
   }
 
   &&.Mui-disabled {
-    border: 1px solid #49547d;
+    border: 1.5px solid #49547d;
     background: transparent;
     color: black;
   }

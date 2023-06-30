@@ -44,7 +44,6 @@ export const ButtonGroup = () => {
       <Box
         sx={{
           display: 'flex',
-          alignItem: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
           gap: '15px'

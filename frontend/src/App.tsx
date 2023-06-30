@@ -3,6 +3,7 @@ import { ThemeProvider } from '@mui/material'
 import { Classic } from './styles/theme'
 import { Login } from './components/login'
 import { Main } from './components/main'
+import { Settings } from './components/user-settings'
 
 export function App() {
   return (
@@ -12,6 +13,7 @@ export function App() {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/access" element={<Main />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

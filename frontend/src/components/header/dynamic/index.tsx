@@ -11,10 +11,12 @@ import {
   CustomSettingsButton,
   CustomExitButton
 } from '../../../styles/header'
+import { useNavigate } from 'react-router-dom'
 
 export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')
   const name = 'Руководитель'
+  const navigate = useNavigate()
 
   const handleButtonClick = (buttonName: string) => {
     setActiveButton(buttonName)
@@ -24,7 +26,7 @@ export const DynamicHeader = () => {
     <Box sx={{ flexGrow: 1 }}>
       <CustomAppBar position="static">
         <CustomToolbar>
-          <HeaderLogo color="inherit" disableRipple>
+          <HeaderLogo color="inherit" disableRipple onClick={() => navigate('/access')}>
             <LogoIcon />
           </HeaderLogo>
           <CustomTypography>{`Доступ.${name}`}</CustomTypography>
@@ -36,7 +38,7 @@ export const DynamicHeader = () => {
             Заявки
           </CustomButton>
           <Box sx={{ flexGrow: 1 }} />
-          <CustomSettingsButton aria-label="setting" color="inherit" disableRipple>
+          <CustomSettingsButton aria-label="setting" color="inherit" disableRipple onClick={() => navigate('/settings')}>
             <SettingsIcon />
           </CustomSettingsButton>
           <CustomTypography>{`${name} ${name[0]}.${name[0]}.`}</CustomTypography>
