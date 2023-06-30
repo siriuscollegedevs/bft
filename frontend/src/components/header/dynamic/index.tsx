@@ -11,32 +11,68 @@ import {
   CustomSettingsButton,
   CustomExitButton
 } from '../../../styles/header'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 
 export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')
-  const name = 'Руководитель'
+  const [role, setRole] = React.useState('')
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const name = 'Иванов'
+
+  //TODO
+  const roles = {
+    admin: 'Администратор',
+    manager: 'Руководитель',
+    sb: 'Сотрудник СБ',
+    security: 'Сотрудник охраны'
+  }
+
+  useEffect(() => {
+    setRole(roles.manager)
+  }, [])
+
+  useEffect(() => {
+    const currentPath = location.pathname
+
+    const directoriesPaths = ['directories', 'accounts', 'objects', 'employees']
+    const admissionsPath = 'admissions'
+
+    if (directoriesPaths.some(path => currentPath.includes(path))) {
+      setActiveButton('directories')
+    } else if (currentPath.includes(admissionsPath)) {
+      setActiveButton('admissions')
+    } else {
+      setActiveButton('')
+    }
+  }, [location.pathname])
 
   const handleButtonClick = (buttonName: string) => {
     setActiveButton(buttonName)
+    navigate(`/${buttonName}`)
   }
 
   return (
     <Box sx={{ flexGrow: 1 }}>
       <CustomAppBar position="static">
         <CustomToolbar>
-          <HeaderLogo color="inherit" disableRipple onClick={() => navigate('/access')}>
+          <HeaderLogo color="inherit" disableRipple onClick={() => navigate('/navigation')}>
             <LogoIcon />
           </HeaderLogo>
-          <CustomTypography>{`Доступ.${name}`}</CustomTypography>
+          <CustomTypography>{`Доступ.${role}`}</CustomTypography>
           <Box sx={{ flexGrow: 1 }} />
-          <CustomButton isActive={activeButton === 'directories'} onClick={() => handleButtonClick('directories')}>
-            Справочники
-          </CustomButton>
-          <CustomButton isActive={activeButton === 'admissions'} onClick={() => handleButtonClick('admissions')}>
-            Заявки
-          </CustomButton>
+          {role === roles.manager && (
+            <>
+              <CustomButton isActive={activeButton === 'directories'} onClick={() => handleButtonClick('directories')}>
+                Справочники
+              </CustomButton>
+              <CustomButton isActive={activeButton === 'admissions'} onClick={() => handleButtonClick('admissions')}>
+                Заявки
+              </CustomButton>
+            </>
+          )}
           <Box sx={{ flexGrow: 1 }} />
           <CustomSettingsButton
             aria-label="setting"
@@ -47,7 +83,7 @@ export const DynamicHeader = () => {
             <SettingsIcon />
           </CustomSettingsButton>
           <CustomTypography>{`${name} ${name[0]}.${name[0]}.`}</CustomTypography>
-          <CustomExitButton color="inherit" variant="contained">
+          <CustomExitButton color="inherit" variant="contained" onClick={() => navigate('/')}>
             Выход
           </CustomExitButton>
         </CustomToolbar>
@@ -55,3 +91,5 @@ export const DynamicHeader = () => {
     </Box>
   )
 }
+
+//TODO сделать адекватный выход(когда будет api)
