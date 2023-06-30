@@ -58,7 +58,7 @@ export const DynamicHeader = () => {
     <Box sx={{ flexGrow: 1 }}>
       <CustomAppBar position="static">
         <CustomToolbar>
-          <HeaderLogo color="inherit" disableRipple onClick={() => navigate('/access')}>
+          <HeaderLogo color="inherit" disableRipple onClick={() => navigate('/navigation')}>
             <LogoIcon />
           </HeaderLogo>
           <CustomTypography>{`Доступ.${role}`}</CustomTypography>
@@ -74,11 +74,16 @@ export const DynamicHeader = () => {
             </>
           )}
           <Box sx={{ flexGrow: 1 }} />
-          <CustomSettingsButton aria-label="setting" color="inherit" disableRipple onClick={() => navigate('/settings')}>
+          <CustomSettingsButton
+            aria-label="setting"
+            color="inherit"
+            disableRipple
+            onClick={() => navigate('/settings')}
+          >
             <SettingsIcon />
           </CustomSettingsButton>
           <CustomTypography>{`${name} ${name[0]}.${name[0]}.`}</CustomTypography>
-          <CustomExitButton color="inherit" variant="contained" onClick={() => navigate('/login')}>
+          <CustomExitButton color="inherit" variant="contained" onClick={() => navigate('/')}>
             Выход
           </CustomExitButton>
         </CustomToolbar>

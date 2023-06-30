@@ -13,8 +13,8 @@ import { BackButton } from './components/button-back'
 export function App() {
   function Header() {
     const location = useLocation()
-    const isLoginRoute = location.pathname === '/login'
-    const isAccessRoute = location.pathname === '/access'
+    const isLoginRoute = location.pathname === '/'
+    const isAccessRoute = location.pathname === '/navigation'
     const showBackButton = !isLoginRoute && !isAccessRoute
 
     return (
@@ -31,8 +31,8 @@ export function App() {
         <BrowserRouter>
           <Header />
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/access" element={<Main />} />
+            <Route path="/" element={<Login />} />
+            <Route path="/navigation" element={<Main />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/directories" element={<MainDirectories />} />
             <Route path="/accounts/:id" element={<FormEditDirectories />} />

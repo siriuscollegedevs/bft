@@ -3,7 +3,6 @@ import FormControlLabel from '@mui/material/FormControlLabel'
 import Switch from '@mui/material/Switch'
 import { CustomTypography } from '../../styles/header'
 import * as React from 'react'
-import { DynamicHeader } from '../header/dynamic'
 import { SearchField } from '../search-field'
 import { useNavigate, useLocation } from 'react-router-dom'
 
@@ -54,7 +53,6 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSwitch }) => {
 
   return (
     <>
-      <DynamicHeader />
       <Container
         maxWidth={false}
         disableGutters
