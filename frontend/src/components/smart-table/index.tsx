@@ -12,7 +12,7 @@ const collapsibleTable = (currentURL: string) => {
   return collapsibleURLs.some(url => currentURL.startsWith(url))
 }
 
-export const Table = () => {
+export const SmartTable = () => {
   const currentURL = useLocation().pathname
 
   switch (true) {
