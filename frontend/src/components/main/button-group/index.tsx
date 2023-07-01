@@ -4,6 +4,7 @@ import { CustomButton, CustomListItem } from '../../../styles/button-group'
 import { Container, List, ListItemText } from '@mui/material'
 import { ReactComponent as ArrowIcon } from '../../../assets/arrow.svg'
 import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export const ButtonGroup = () => {
   //TODO
@@ -21,7 +22,7 @@ export const ButtonGroup = () => {
   ]
 
   const [role, setRole] = React.useState('')
-
+  const navigate = useNavigate()
   useEffect(() => {
     // Fetch
     setRole(roles.manager)
@@ -44,7 +45,6 @@ export const ButtonGroup = () => {
       <Box
         sx={{
           display: 'flex',
-          alignItem: 'center',
           justifyContent: 'center',
           flexDirection: 'column',
           gap: '15px'
@@ -52,7 +52,7 @@ export const ButtonGroup = () => {
       >
         {role === roles.manager && (
           <>
-            <CustomButton variant="outlined">
+            <CustomButton variant="outlined" onClick={() => navigate('/directories')}>
               Справочники
               <ArrowIcon />
             </CustomButton>
