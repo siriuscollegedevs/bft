@@ -9,7 +9,7 @@ import { FormEditDirectories } from './components/form-edit-directories'
 import { DynamicHeader } from './components/header/dynamic'
 import { StaticHeader } from './components/header/static'
 import { BackButton } from './components/button-back'
-import { SmartTable } from './components/smart-table'
+import { SmartTabel } from './components/smart-tabel'
 
 export function App() {
   function Header() {
@@ -39,7 +39,8 @@ export function App() {
             <Route path="/accounts/:id" element={<FormEditDirectories />} />
             <Route path="/objects/:id" element={<FormEditDirectories />} />
             <Route path="/employees/:id" element={<FormEditDirectories />} />
-            <Route path="/accounts" element={<SmartTable />} />
+            <Route path="/objects" element={<SmartTabel />} />
+            <Route path="/admissions" element={<SmartTabel />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
