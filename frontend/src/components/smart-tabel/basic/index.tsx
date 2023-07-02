@@ -3,7 +3,8 @@ import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableRow from '@mui/material/TableRow'
-import { ShortcutButtons } from '../../shortcut-buttons'
+import { ButtonNames, ShortcutButtons } from '../../shortcut-buttons'
+import { Box } from '@mui/material'
 
 function createData(name: string, number: number) {
   return { name, number }
@@ -17,7 +18,7 @@ type URL = {
   currentURL: CurrentURL
 }
 
-export const Basic = ({ currentURL }: URL) => {
+export const Basic = ({ currentURL, buttonNames }: URL & ButtonNames) => {
   const objectsURL = currentURL === '/objects'
 
   return (
@@ -32,7 +33,7 @@ export const Basic = ({ currentURL }: URL) => {
                     {row.name}
                   </TableCell>
                   <TableCell align="right">
-                    <ShortcutButtons buttonNames={['edit', 'history', 'trash']} />
+                    <ShortcutButtons buttonNames={buttonNames} />
                   </TableCell>
                 </>
               ) : (
@@ -44,7 +45,9 @@ export const Basic = ({ currentURL }: URL) => {
                     {'#' + row.number}
                   </TableCell>
                   <TableCell align="right">
-                    <ShortcutButtons buttonNames={['edit', 'cancel', 'toRepay']} />
+                    <Box display="flex" alignItems="center" justifyContent="flex-end">
+                      <ShortcutButtons buttonNames={buttonNames} />
+                    </Box>
                   </TableCell>
                 </>
               )}

@@ -8,7 +8,7 @@ import { ReactComponent as ToRepayIcon } from '../../assets/toRepay.svg'
 
 type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
 
-type ButtonNames = {
+export type ButtonNames = {
   buttonNames: ButtonName[]
 }
 
