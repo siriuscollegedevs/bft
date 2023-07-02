@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom'
 import { Basic, CurrentURL } from './basic'
-import { Collapsible } from './collapsible'
+import { Collapsible, URL } from './collapsible'
 import { ButtonNames } from '../shortcut-buttons'
 
 const basicURLs = ['/objects', '/admissions']
@@ -13,7 +13,7 @@ export const SmartTabel = ({ buttonNames }: ButtonNames) => {
     case basicURLs.includes(currentURL):
       return <Basic currentURL={currentURL as CurrentURL} buttonNames={buttonNames} />
     case collapsibleURLs.some(url => currentURL.startsWith(url)):
-      return <Collapsible buttonNames={buttonNames} />
+      return <Collapsible currentURL={currentURL as URL} buttonNames={buttonNames} />
     default:
       return <h6>Error urls</h6>
   }
