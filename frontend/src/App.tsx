@@ -39,8 +39,6 @@ export function App() {
             <Route path="/accounts/:id" element={<FormEditDirectories />} />
             <Route path="/objects/:id" element={<FormEditDirectories />} />
             <Route path="/employees/:id" element={<FormEditDirectories />} />
-            <Route path="/objects" element={<SmartTabel buttonNames={['cancel']} />} />
-            <Route path="/admissions/" element={<SmartTabel buttonNames={['cancel', 'edit']} />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
