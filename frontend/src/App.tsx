@@ -9,7 +9,6 @@ import { FormEditDirectories } from './components/form-edit-directories'
 import { DynamicHeader } from './components/header/dynamic'
 import { StaticHeader } from './components/header/static'
 import { BackButton } from './components/button-back'
-import { SmartTabel } from './components/smart-tabel'
 
 export function App() {
   function Header() {
