@@ -8,7 +8,7 @@ import { ReactComponent as ToRepayIcon } from '../../assets/toRepay.svg'
 
 type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
 
-type ButtonNames = {
+export type ButtonNames = {
   buttonNames: ButtonName[]
 }
 
@@ -57,10 +57,12 @@ export const ShortcutButtons = ({ buttonNames }: ButtonNames) => {
             disableRipple={true}
             sx={{
               padding: 0,
-              paddingLeft: '5px',
+              marginLeft: '5px',
               ':first-child': {
-                paddingLeft: '0px'
-              }
+                marginLeft: '0px'
+              },
+              height: '35px',
+              width: '35px'
             }}
           >
             {iconMapping[title].node}
