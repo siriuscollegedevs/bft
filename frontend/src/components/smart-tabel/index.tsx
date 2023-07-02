@@ -13,7 +13,7 @@ export const SmartTabel = ({ buttonNames }: ButtonNames) => {
     case basicURLs.includes(currentURL):
       return <Basic currentURL={currentURL as CurrentURL} buttonNames={buttonNames} />
     case collapsibleURLs.some(url => currentURL.startsWith(url)):
-      return <Collapsible />
+      return <Collapsible buttonNames={buttonNames} />
     default:
       return <h6>Error urls</h6>
   }

@@ -33,7 +33,9 @@ export const Basic = ({ currentURL, buttonNames }: URL & ButtonNames) => {
                     {row.name}
                   </TableCell>
                   <TableCell align="right">
-                    <ShortcutButtons buttonNames={buttonNames} />
+                    <Box display="flex" alignItems="center" justifyContent="flex-end">
+                      <ShortcutButtons buttonNames={buttonNames} />
+                    </Box>
                   </TableCell>
                 </>
               ) : (
