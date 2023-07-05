@@ -16,8 +16,8 @@ TYPE_CHOICES_RECORD = (
     ('for_long_time', 'временный')
 )
 TYPE_CHOICES_ACCOUNT = (
-    ('Administrator', 'Администратор'),
+    ('administrator', 'Администратор'),
     ('manager', 'Руководитель СБ'),
-    ('Specialist', 'Специалист СБ'),
+    ('specialist', 'Специалист СБ'),
     ('security_officer', 'Сотрудник охраны')
 )

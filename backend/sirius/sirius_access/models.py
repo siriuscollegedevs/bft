@@ -70,12 +70,12 @@ def is_positive(number: int):
 
 
 class ObjectHistory( UUIDMixin, models.Model):
-    virsion = models.IntegerField(default=0, validators=[is_positive], verbose_name='Версия')
+    version = models.IntegerField(default=0, validators=[is_positive], verbose_name='Версия')
     name = models.CharField(max_length=40, verbose_name='Название')
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Действие совершено')
     object = models.ForeignKey(Object, on_delete=models.PROTECT, verbose_name='Объект Фонда')
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT, verbose_name='Изменен пользователем')
-    action = models.CharField(max_length=10, choices=HISTORY_CHOICES, verbose_name='Сщвершенное действие')
+    action = models.CharField(max_length=10, choices=HISTORY_CHOICES, verbose_name='Совершенное действие')
 
     class Meta:
         db_table = 'objects_history'
@@ -86,8 +86,9 @@ class RecordHistory(UUIDMixin, models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES_RECORD, verbose_name='статус')
     car_number = models.CharField(max_length=20, null=True, blank=True, verbose_name='Автомобильный номер')
     car_brand  = models.CharField(max_length=20, null=True, blank=True, verbose_name='Марка')
+    car_model = models.CharField(max_length=20, null=True, blank=True, verbose_name='Модель')
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT, verbose_name='Изменен пользователем')
-    record = models.ForeignKey(Record, on_delete=models.PROTECT, verbose_name='Заявка')
+    record = models.ForeignKey(Record, on_delete=models.PROTECT, verbose_name='Запись')
     object = models.ForeignKey(Object, on_delete=models.PROTECT, verbose_name='Объект')
     type = models.CharField(max_length=13, choices=TYPE_CHOICES_RECORD, verbose_name='Тип заявки')
     first_name = models.CharField(max_length=20, null=True, blank=True, verbose_name='Имя')
