@@ -1,6 +1,6 @@
 import { FormControl, Typography } from '@mui/material'
 import { useState } from 'react'
-import { useLoginMutation } from '../../../__data__/service/api'
+import { useLoginMutation } from '../../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import {
   LoginButton,
