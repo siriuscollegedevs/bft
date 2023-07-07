@@ -9,6 +9,12 @@ from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import AccessToken
 
 
+def get_user(request):
+        access_token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
+        token = AccessToken(access_token)
+        user = User.objects.get(id=token.payload['user_id'])
+        return Account.objects.get(user=user)
+
 class GetObjects(APIView):
     status 
 
@@ -33,13 +39,6 @@ class ObjectApiView(APIView):
                 return False
         return True
 
-    @staticmethod
-    def get_user(request):
-        access_token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
-        token = AccessToken(access_token)
-        user = User.objects.get(id=token.payload['user_id'])
-        return Account.objects.get(user=user)
-
     def get(self, _, ObjectId):
         try:
             obj = Object.objects.get(id=ObjectId)
@@ -58,7 +57,7 @@ class ObjectApiView(APIView):
                 with transaction.atomic():
                     obj = Object.objects.create(status='active')
                     ObjectHistory.objects.create(
-                        object=obj, name=name, modified_by=self.get_user(request), action='created')
+                        object=obj, name=name, modified_by=get_user(request), action='created')
                 return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -72,7 +71,7 @@ class ObjectApiView(APIView):
                 obj.save()
                 name = obj.get_info().name
                 ObjectHistory.objects.create(
-                    object=obj, name=name, modified_by=self.get_user(request), action='deleted')
+                    object=obj, name=name, modified_by=get_user(request), action='deleted')
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -88,7 +87,7 @@ class ObjectApiView(APIView):
                     obj = Object.objects.get(id=serializer.validated_data['id'])
                     version = obj.get_info().version + 1
                     ObjectHistory.objects.create(
-                        object=obj, name=name, modified_by=self.get_user(request), action='modified', version=version)
+                        object=obj, name=name, modified_by=get_user(request), action='modified', version=version)
                     return Response(status=status.HTTP_200_OK)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
