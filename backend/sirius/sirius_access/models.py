@@ -15,13 +15,13 @@ class UUIDMixin(models.Model):
 class Object(UUIDMixin, models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='статус')
 
+    def get_info(self):
+            return ObjectHistory.objects.filter(object=self).order_by('-timestamp').first()
+
     class Meta:
         verbose_name = 'Объект Фонда'
         verbose_name_plural = 'Объекты Фонда'
         db_table =  'objects'
-
-    def __str__(self) -> str:
-        return str(self.id)
 
 
 class Account(UUIDMixin, models.Model):
