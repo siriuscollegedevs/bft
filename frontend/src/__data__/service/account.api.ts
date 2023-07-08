@@ -54,6 +54,9 @@ export const apiAccount = createApi({
     getAllAccounts: builder.query<Accounts[], void>({
       query: () => '/accounts'
     }),
+    getAllArchiveAccounts: builder.query<Accounts[], void>({
+      query: () => '/accounts/archive'
+    }),
     createAccount: builder.mutation<void, Account>({
       query: (accountData: Account) => ({
         url: '/account',
@@ -123,6 +126,7 @@ export const apiAccount = createApi({
 
 export const {
   useGetAllAccountsQuery,
+  useGetAllArchiveAccountsQuery,
   useCreateAccountMutation,
   useGetAccountByIdQuery,
   useUpdateAccountByIdMutation,
