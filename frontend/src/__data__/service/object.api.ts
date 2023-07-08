@@ -31,7 +31,7 @@ export const apiObject = createApi({
     getAllArchiveObjects: builder.query<Objects[], void>({
       query: () => '/objects/archive'
     }),
-    createObject: builder.query<void, soloObject>({
+    createObject: builder.mutation<void, soloObject>({
       query: (objectData: soloObject) => ({
         url: '/object',
         method: 'POST',
@@ -43,7 +43,7 @@ export const apiObject = createApi({
     getObjectById: builder.query<{ name: string }, string>({
       query: (objectId: string) => `/object/${objectId}`
     }),
-    updateObjectById: builder.query<void, { objectId: string; objectData: soloObject }>({
+    updateObjectById: builder.mutation<void, { objectId: string; objectData: soloObject }>({
       query: ({ objectId, objectData }) => ({
         url: `/object/${objectId}`,
         method: 'PUT',
@@ -63,3 +63,13 @@ export const apiObject = createApi({
     })
   })
 })
+
+export const {
+  useGetAllObjectsQuery,
+  useGetAllArchiveObjectsQuery,
+  useCreateObjectMutation,
+  useGetObjectByIdQuery,
+  useUpdateObjectByIdMutation,
+  useDeleteObjectByIdMutation,
+  useGetObjectHistoryByIdQuery
+} = apiObject
