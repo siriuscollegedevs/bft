@@ -1,12 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Accounts, Account, AccountHistory, ExpandSearchRequestBody, ChangePasswordData } from '../../types/api'
-
-const baseAPI = 'https://test.com'
+import { config } from '../config'
 
 export const apiAccount = createApi({
   reducerPath: 'apiAccount',
   baseQuery: fetchBaseQuery({
-    baseUrl: baseAPI
+    baseUrl: config.baseAPI
   }),
   endpoints: builder => ({
     getAllAccounts: builder.query<Accounts[], void>({

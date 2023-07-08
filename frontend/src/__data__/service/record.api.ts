@@ -1,12 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { Status, Human, Car, RequestHistory } from '../../types/api'
-
-const baseAPI = 'https://test.com'
+import { config } from '../config'
 
 export const apiRecord = createApi({
   reducerPath: 'apiRecord',
   baseQuery: fetchBaseQuery({
-    baseUrl: baseAPI
+    baseUrl: config.baseAPI
   }),
   endpoints: builder => ({
     changeRecordStatusById: builder.mutation<void, { recordId: string; recordStatus: Status }>({

@@ -1,12 +1,11 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { ObjectHistory, Objects, soloObject } from '../../types/api'
-
-const baseAPI = 'https://test.com'
+import { config } from '../config'
 
 export const apiObject = createApi({
   reducerPath: 'apiObject',
   baseQuery: fetchBaseQuery({
-    baseUrl: baseAPI
+    baseUrl: config.baseAPI
   }),
   endpoints: builder => ({
     getAllObjects: builder.query<Objects[], void>({
