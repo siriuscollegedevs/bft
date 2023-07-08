@@ -1,23 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { ObjectHistory, Objects, soloObject } from '../../types/api'
 
 const baseAPI = 'https://test.com'
-
-type Objects = {
-  id: string
-  name: string
-}
-
-type soloObject = {
-  name: string
-}
-
-type ObjectHistory = {
-  name: string
-  version: number
-  timestamp: string
-  action: string
-  modified_by: string
-}
 
 export const apiObject = createApi({
   reducerPath: 'apiObject',

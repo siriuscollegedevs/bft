@@ -1,49 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { Accounts, Account, AccountHistory, ExpandSearchRequestBody, ChangePasswordData } from '../../types/api'
 
 const baseAPI = 'https://test.com'
-
-type Accounts = {
-  id: string
-  role: string
-  first_name: string
-  surname: string
-  last_name: string
-  username: string
-}
-
-type Account = {
-  role: string
-  first_name: string
-  surname: string
-  last_name: string
-  username: string
-  password: string
-}
-
-type ExpandSearchRequestBody = {
-  role?: string
-  first_name?: string
-  surname?: string
-  last_name?: string
-  username?: string
-}
-
-type ChangePasswordData = {
-  status: string
-  current_password: string
-  new_password: string
-}
-
-type AccountHistory = {
-  role: string
-  first_name: string
-  surname: string
-  last_name: string
-  username: string
-  timestamp: string
-  action: string
-  modified_by: string
-}
 
 export const apiAccount = createApi({
   reducerPath: 'apiAccount',

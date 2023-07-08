@@ -1,44 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { Requests, RequestHistory, SearchOfRequest } from '../../types/api'
 
 const baseAPI = 'https://test.com'
-
-type Requests = {
-  id: string
-  timestemp: string
-  code: string
-}
-
-type RequestHistory = {
-  id: string
-  timestemp: string
-  status: string
-  car_number: string
-  car_brand: string
-  car_model: string
-  modified_by: string
-  object: string
-  type: string
-  first_name: string
-  surname: string
-  last_name: string
-  from_date: string
-  to_date: string
-  note: string
-}
-
-type SearchOfRequest = {
-  car_number: string
-  car_brand: string
-  car_model: string
-  object: string
-  type: string
-  first_name: string
-  surname: string
-  last_name: string
-  from_date: string
-  to_date: string
-  note: string
-}
 
 export const apiRequest = createApi({
   reducerPath: 'apiRequest',
