@@ -5,8 +5,10 @@ import { apiAccount } from './service/account.api'
 import { apiObject } from './service/object.api'
 import { apiRequest } from './service/request.api'
 import { apiRecord } from './service/record.api'
+import { authReducer } from '../states/auth'
 
 const rootReducer = combineReducers({
+  auth: authReducer,
   [apiAuth.reducerPath]: apiAuth.reducer,
   [apiAccount.reducerPath]: apiAccount.reducer,
   [apiObject.reducerPath]: apiObject.reducer,

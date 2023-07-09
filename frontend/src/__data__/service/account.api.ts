@@ -1,12 +1,28 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Accounts, Account, AccountHistory, ExpandSearchRequestBody, ChangePasswordData } from '../../types/api'
+import {
+  Accounts,
+  Account,
+  AccountHistory,
+  ExpandSearchRequestBody,
+  ChangePasswordData,
+  RootState
+} from '../../types/api'
 import { config } from '../config'
+
+const baseQuery = fetchBaseQuery({
+  baseUrl: config.baseAPI,
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.token
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`)
+    }
+    return headers
+  }
+})
 
 export const apiAccount = createApi({
   reducerPath: 'apiAccount',
-  baseQuery: fetchBaseQuery({
-    baseUrl: config.baseAPI
-  }),
+  baseQuery,
   endpoints: builder => ({
     getAllAccounts: builder.query<Accounts[], void>({
       query: () => '/accounts'

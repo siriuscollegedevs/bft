@@ -1,3 +1,5 @@
+import { AuthState } from '../../states/auth'
+
 export type Accounts = {
   id: string
   role: string
@@ -126,4 +128,8 @@ export type SearchOfRequest = {
   from_date: string
   to_date: string
   note: string
+}
+
+export type RootState = {
+  auth: AuthState
 }

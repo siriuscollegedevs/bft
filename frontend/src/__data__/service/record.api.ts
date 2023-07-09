@@ -1,12 +1,21 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Status, Human, Car, RequestHistory } from '../../types/api'
+import { Status, Human, Car, RequestHistory, RootState } from '../../types/api'
 import { config } from '../config'
+
+const baseQuery = fetchBaseQuery({
+  baseUrl: config.baseAPI,
+  prepareHeaders: (headers, { getState }) => {
+    const token = (getState() as RootState).auth.token
+    if (token) {
+      headers.set('Authorization', `Bearer ${token}`)
+    }
+    return headers
+  }
+})
 
 export const apiRecord = createApi({
   reducerPath: 'apiRecord',
-  baseQuery: fetchBaseQuery({
-    baseUrl: config.baseAPI
-  }),
+  baseQuery,
   endpoints: builder => ({
     changeRecordStatusById: builder.mutation<void, { recordId: string; recordStatus: Status }>({
       query: ({ recordId, recordStatus }) => ({
