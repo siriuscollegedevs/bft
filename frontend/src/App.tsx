@@ -39,18 +39,6 @@ export function App() {
             <Route path="/accounts/:id" element={<FormEditDirectories />} />
             <Route path="/objects/:id" element={<FormEditDirectories />} />
             <Route path="/employees/:id" element={<FormEditDirectories />} />
-            <Route
-              path="/employees"
-              element={
-                <SmartTable
-                  buttonNames={[]}
-                  size={{
-                    width: '',
-                    height: ''
-                  }}
-                />
-              }
-            />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
