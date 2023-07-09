@@ -9,7 +9,7 @@ import { FormEditDirectories } from './components/form-edit-directories'
 import { DynamicHeader } from './components/header/dynamic'
 import { StaticHeader } from './components/header/static'
 import { BackButton } from './components/button-back'
-import { SmartTabel } from './components/smart-table'
+import { SmartTable } from './components/smart-table'
 
 export function App() {
   function Header() {
@@ -42,7 +42,7 @@ export function App() {
             <Route
               path="/employees"
               element={
-                <SmartTabel
+                <SmartTable
                   buttonNames={[]}
                   size={{
                     width: '',

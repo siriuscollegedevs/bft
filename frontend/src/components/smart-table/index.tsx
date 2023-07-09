@@ -11,7 +11,7 @@ export type Size = {
   height: string
 }
 
-export const SmartTabel = ({ buttonNames, size }: ButtonNames & { size: Size }) => {
+export const SmartTable = ({ buttonNames, size }: ButtonNames & { size: Size }) => {
   const currentURL = useLocation().pathname
 
   switch (true) {
