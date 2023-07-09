@@ -7,6 +7,8 @@ from . import serializers
 from django.db.models import F
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import AccessToken
+from drf_spectacular.utils import extend_schema, inline_serializer
+from rest_framework import serializers as ser
 
 
 def get_user(request):
@@ -18,6 +20,10 @@ def get_user(request):
 class GetObjects(APIView):
     status 
 
+    @extend_schema(responses={
+            status.HTTP_200_OK:serializers.ObjectSerializer(many=True), 
+            status.HTTP_401_UNAUTHORIZED : None
+        })
     def get(self, _):
         res = []
         for obj in Object.objects.filter(status=self.status):
@@ -30,25 +36,17 @@ class GetArchiveObjects(GetObjects):
 class GetActualObjects(GetObjects):
     status = 'active'
 
-class ObjectApiView(APIView):
-    
-    @staticmethod
-    def check_name(name):
-        for obj in Object.objects.filter(status='active'):
-            if obj.get_info().name == name:
-                return False
-        return True
-
-    def get(self, _, ObjectId):
-        try:
-            obj = Object.objects.get(id=ObjectId)
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        name = obj.get_info().name
-        return Response(serializers.ObjectSerializer({'name': name}).data)
-
+class PostObject(APIView):
+    @extend_schema(responses={
+        status.HTTP_201_CREATED: None,
+        status.HTTP_401_UNAUTHORIZED : None,
+        status.HTTP_400_BAD_REQUEST : None
+    }, request=inline_serializer(
+        name='object_name',
+           fields={'name': ser.CharField(),}
+       ))
     def post(self, request):
-        serializer = serializers.ObjectSerializer(data=request.data)
+        serializer = serializers.ObjectSerializer(data=request.data, request_type='post')
         if serializer.is_valid(raise_exception=True):
             name = serializer.validated_data['name']
             if not self.check_name(name):
@@ -63,6 +61,36 @@ class ObjectApiView(APIView):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+class ObjectApiView(APIView):
+    
+    @staticmethod
+    def check_name(name):
+        for obj in Object.objects.filter(status='active'):
+            if obj.get_info().name == name:
+                return False
+        return True
+
+    @extend_schema(responses={
+        status.HTTP_201_CREATED: inline_serializer(
+        name='object_name',
+           fields={'name': ser.CharField(),}
+       ),
+        status.HTTP_401_UNAUTHORIZED : None,
+        status.HTTP_400_BAD_REQUEST : None
+    })
+    def get(self, _, ObjectId):
+        try:
+            obj = Object.objects.get(id=ObjectId)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        name = obj.get_info().name
+        return Response(serializers.ObjectSerializer({'name': name}).data)
+
+    @extend_schema(responses={
+        status.HTTP_204_NO_CONTENT : None,
+        status.HTTP_401_UNAUTHORIZED : None,
+        status.HTTP_400_BAD_REQUEST : None
+    })
     def delete(self, request, ObjectId):
         try:
             with transaction.atomic():
@@ -76,15 +104,23 @@ class ObjectApiView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    def put(self, request):
-        serializer = serializers.ObjectPutSerializer(data=request.data)
+    @extend_schema(responses={
+        status.HTTP_200_OK : None,
+        status.HTTP_401_UNAUTHORIZED : None,
+        status.HTTP_400_BAD_REQUEST : None
+    }, request=inline_serializer(
+        name='object_name',
+           fields={'name': ser.CharField(),}
+       ))
+    def put(self, request, ObjectId):
+        serializer = serializers.ObjectSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             name = serializer.validated_data['name']
             if not self.check_name(name):
                 return Response(status=status.HTTP_409_CONFLICT)
             try:
                 with transaction.atomic():
-                    obj = Object.objects.get(id=serializer.validated_data['id'])
+                    obj = Object.objects.get(id=ObjectId)
                     version = obj.get_info().version + 1
                     ObjectHistory.objects.create(
                         object=obj, name=name, modified_by=get_user(request), action='modified', version=version)
@@ -95,6 +131,11 @@ class ObjectApiView(APIView):
 
 
 class ObjectHistoryApiView(APIView):
+    @extend_schema(responses={
+        status.HTTP_200_OK : serializers.ObjectHistorySerializer,
+        status.HTTP_401_UNAUTHORIZED : None,
+        status.HTTP_400_BAD_REQUEST : None
+    })
     def get(self, _, ObjectId):
         try:
             obj = Object.objects.get(id=ObjectId)
