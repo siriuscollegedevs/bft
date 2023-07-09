@@ -5,6 +5,7 @@ import TableContainer from '@mui/material/TableContainer'
 import TableRow from '@mui/material/TableRow'
 import { ButtonNames, ShortcutButtons } from '../../shortcut-buttons'
 import { Box } from '@mui/material'
+import { Size } from '..'
 
 function createData(name: string, number: number) {
   return { name, number }
@@ -18,12 +19,12 @@ type URL = {
   currentURL: CurrentURL
 }
 
-export const Basic = ({ currentURL, buttonNames }: URL & ButtonNames) => {
+export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { size: Size }) => {
   const objectsURL = currentURL === '/objects'
 
   return (
-    <TableContainer sx={{ width: '1008px', height: '490px' }}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    <TableContainer sx={{ width: size.width, height: size.height }}>
+      <Table aria-label="simple table">
         <TableBody>
           {rows.map(row => (
             <TableRow key={row.name}>

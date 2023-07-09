@@ -4,6 +4,7 @@ import { ButtonNames } from '../../shortcut-buttons'
 
 import { rowsAccounts, rowsEmployees, rowsAdmissions, DataAccount, DataAdmission, DataEmployee } from './smoke'
 import { Row } from './row'
+import { Size } from '..'
 
 export type myURL =
   | '/accounts'
@@ -28,7 +29,11 @@ export const itsAdmissions = ({ currentURL }: { currentURL: myURL }): boolean =>
 export const itsAdmissionsView = ({ currentURL }: { currentURL: myURL }): boolean =>
   currentURL.startsWith('/admissions/view')
 
-export const Collapsible = ({ currentURL, buttonNames }: { currentURL: myURL } & ButtonNames) => {
+export const Collapsible = ({
+  currentURL,
+  buttonNames,
+  size
+}: { currentURL: myURL } & ButtonNames & { size: Size }) => {
   const filteredRows: CommonData[] = itsAcccount({ currentURL })
     ? rowsAccounts
     : itsEmployees({ currentURL })
@@ -38,7 +43,7 @@ export const Collapsible = ({ currentURL, buttonNames }: { currentURL: myURL } &
     : []
 
   return (
-    <TableContainer sx={{ width: '1008px', height: '491px' }}>
+    <TableContainer sx={{ width: size.width, height: size.height }}>
       <Table aria-label="collapsible table">
         <TableBody>
           {filteredRows.map(row => (
