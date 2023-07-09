@@ -1,9 +1,5 @@
-
 import { createContext } from 'react'
 
-// type Acccount = {
-    
-// }
-
-
-export const currentUser = createContext<Array<any>>([])
+export const accountsContext = createContext<any>([])
+export const objectsContext = createContext<any>([])
+export const requestsContext = createContext<any>([])
