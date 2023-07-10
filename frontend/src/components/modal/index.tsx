@@ -2,16 +2,13 @@ import * as React from 'react'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
 import { Cards, CardsContainer, InfoCards, ListEntries, ModalContainer } from '../../styles/modal'
-import { useLocation } from 'react-router-dom'
-import { DataAccounts, DataAdmissions, DataEmployees, DataObject } from '../smart-table/history-table/smoke'
+import { Row } from '../smart-table/history-table'
 
-export type CommonData = DataAccounts | DataObject | DataEmployees | DataAdmissions
 
 type Props = {
-  id: string
   open: boolean
-  handleClose: (flag: boolean) => void
-  data: CommonData
+  handleClose: () => void
+  selectedRow: Row
 }
 
 const actionTranslations: { [key: string]: string } = {
@@ -28,10 +25,14 @@ const keyTranslations: { [key: string]: string } = {
   last_name: 'Отчество',
   username: 'Логин',
   objects: 'Объект(-ы)',
+  object: 'Объект(-ы)',
   type: 'Тип',
   from_date: 'Дата',
   to_date: 'Дата',
-  note: 'Примечание'
+  note: 'Примечание',
+  car_number: 'Гос.номер',
+  car_brand: 'Марка',
+  car_model: 'Модель'
 }
 
 const getActionTranslation = (action: string): string => {
@@ -42,35 +43,19 @@ const getKeyTranslation = (key: string): string => {
   return keyTranslations[key] || key
 }
 
-export const BasicModal = ({ id, open, handleClose, data }: Props): JSX.Element => {
-  const location = useLocation()
-  const filteredEntries = Object.entries(data).filter(([key]) => {
-    if (location.pathname.startsWith('/accounts/')) {
-      return key === 'first_name' || key === 'surname' || key === 'last_name' || key === 'username'
-    } else if (location.pathname.startsWith('/objects/')) {
-      return key === 'name'
-    } else if (location.pathname.startsWith('/employees/')) {
-      return key === 'first_name' || key === 'surname' || key === 'last_name' || key === 'username' || key === 'objects'
-    } else if (location.pathname.startsWith('/admissions/')) {
-      return (
-        key === 'first_name' ||
-        key === 'surname' ||
-        key === 'last_name' ||
-        key === 'type' ||
-        key === 'from_date' ||
-        key === 'to_date' ||
-        key === 'note'
-      )
-    }
-    return key === 'name'
-  })
+const formatValue = (value: string | string[]) => {
+  if (Array.isArray(value)) {
+    return value.join(', ')
+  }
+  return value
+}
 
-  const objectsValue = filteredEntries.find(([key]) => key === 'objects')?.[1]
-  const objectsString = Array.isArray(objectsValue) ? objectsValue.join(', ') : ''
-
+export const BasicModal = ({ open, handleClose, selectedRow }: Props): JSX.Element => {
+  if (!selectedRow) {
+    return <></>
+  }
   return (
     <Modal
-      id={id}
       open={open}
       onClose={handleClose}
       aria-labelledby="modal-modal-title"
@@ -83,7 +68,7 @@ export const BasicModal = ({ id, open, handleClose, data }: Props): JSX.Element 
           component="h2"
           sx={{ textAlign: 'center', marginBottom: '25px' }}
         >
-          {getActionTranslation(data.action)}
+          {getActionTranslation(selectedRow.action)}
         </Typography>
         <CardsContainer>
           <Cards>
@@ -91,20 +76,23 @@ export const BasicModal = ({ id, open, handleClose, data }: Props): JSX.Element 
               Данные до изменений
             </Typography>
             <InfoCards>
-              {filteredEntries.map(([key, value]) => (
-                <React.Fragment key={key}>
-                  {data.action === 'cancel' && key === 'note' && (
-                    <ListEntries>
-                      {getKeyTranslation(key)}: {value}
-                    </ListEntries>
-                  )}
-                  {data.action === 'edit' && (
-                    <ListEntries>
-                      {getKeyTranslation(key)}: {value}
-                    </ListEntries>
-                  )}
-                </React.Fragment>
-              ))}
+              <>
+                {selectedRow.data &&
+                  Object.entries(selectedRow.data).map(([key, value]) => (
+                    <React.Fragment key={key}>
+                      {selectedRow.action === 'cancel' && key === 'note' && (
+                        <ListEntries>
+                          {getKeyTranslation(key)}: {formatValue(value)}
+                        </ListEntries>
+                      )}
+                        {selectedRow.action === 'edit' && (
+                            <ListEntries>
+                                {getKeyTranslation(key)}: {formatValue(value)}
+                            </ListEntries>
+                        )}
+                    </React.Fragment>
+                  ))}
+              </>
             </InfoCards>
           </Cards>
           <Cards>
@@ -112,20 +100,23 @@ export const BasicModal = ({ id, open, handleClose, data }: Props): JSX.Element 
               Данные после изменений
             </Typography>
             <InfoCards>
-              {filteredEntries.map(([key, value]) => (
-                <React.Fragment key={key}>
-                  {data.action === 'cancel' && key === 'note' && (
-                    <ListEntries>
-                      {getKeyTranslation(key)}: {value}
-                    </ListEntries>
-                  )}
-                  {data.action === 'edit' && (
-                    <ListEntries>
-                      {getKeyTranslation(key)}: {value}
-                    </ListEntries>
-                  )}
-                </React.Fragment>
-              ))}
+              <>
+                {selectedRow.data &&
+                  Object.entries(selectedRow.data).map(([key, value]) => (
+                    <React.Fragment key={key}>
+                        {selectedRow.action === 'cancel' && key === 'note' && (
+                            <ListEntries>
+                                {getKeyTranslation(key)}: {formatValue(value)}
+                            </ListEntries>
+                        )}
+                        {selectedRow.action === 'edit' && (
+                            <ListEntries>
+                                {getKeyTranslation(key)}: {formatValue(value)}
+                            </ListEntries>
+                        )}
+                    </React.Fragment>
+                  ))}
+              </>
             </InfoCards>
           </Cards>
         </CardsContainer>
