@@ -26,19 +26,23 @@ class Object(UUIDMixin, models.Model):
 
 class Account(UUIDMixin, models.Model):
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='статус')
+    user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    def get_last_version(self):
+        return AccountHistory.objects.filter(account=self).order_by('-timestamp').first()
+    
+    def get_info(self):
+        fields = ['role', 'first_name', 'last_name', 'surname', 'username']
+        return {key : self.get_last_version().__dict__[key] for key in self.get_last_version().__dict__ if key in fields}
 
     class Meta:
         verbose_name = 'Аккаунт'
         verbose_name_plural = 'Аккаунты'
         db_table =  'accounts'
 
-    def __str__(self):
-        for acc in AccountHistory.objects.filter(account=self).order_by('-timestamp'):
-            return acc.user.username
-
 
 class Request(UUIDMixin, models.Model):
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES_REQUEST, verbose_name='статус')
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, verbose_name='статус')
 
     class Meta:
         verbose_name = 'Заявка'
@@ -69,13 +73,13 @@ def is_positive(number: int):
         raise ValidationError(f'Version {number} is less then zero')
 
 
-class ObjectHistory( UUIDMixin, models.Model):
+class ObjectHistory(UUIDMixin, models.Model):
     version = models.IntegerField(default=0, validators=[is_positive], verbose_name='Версия')
     name = models.CharField(max_length=40, verbose_name='Название')
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Действие совершено')
     object = models.ForeignKey(Object, on_delete=models.PROTECT, verbose_name='Объект Фонда')
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT, verbose_name='Изменен пользователем')
-    action = models.CharField(max_length=10, choices=HISTORY_CHOICES, verbose_name='Совершенное действие')
+    action = models.CharField(max_length=CHOICE_FIELD_LEN, choices=HISTORY_CHOICES, verbose_name='Совершенное действие')
 
     class Meta:
         db_table = 'objects_history'
@@ -83,7 +87,7 @@ class ObjectHistory( UUIDMixin, models.Model):
 
 class RecordHistory(UUIDMixin, models.Model):
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Действие совершено')
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES_RECORD, verbose_name='статус')
+    action = models.CharField(max_length=CHOICE_FIELD_LEN, choices=ACTION_CHOICES_RECORD, verbose_name='статус')
     car_number = models.CharField(max_length=20, null=True, blank=True, verbose_name='Автомобильный номер')
     car_brand  = models.CharField(max_length=20, null=True, blank=True, verbose_name='Марка')
     car_model = models.CharField(max_length=20, null=True, blank=True, verbose_name='Модель')
@@ -105,14 +109,22 @@ class RecordHistory(UUIDMixin, models.Model):
 class AccountHistory(UUIDMixin, models.Model):
     user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True, verbose_name='Действие совершено')
-    type = models.CharField(max_length=16, choices=TYPE_CHOICES_ACCOUNT, verbose_name='Тип аккаунта')
+    role = models.CharField(max_length=16, choices=TYPE_CHOICES_ACCOUNT, verbose_name='Тип аккаунта')
     account = models.ForeignKey(Account, on_delete=models.CASCADE, verbose_name='Аккаунт', related_name='modified')
     first_name = models.CharField(max_length=20, null=True, blank=True, verbose_name='Имя')
     last_name = models.CharField(max_length=20, null=True, blank=True, verbose_name='Фамилия')
     surname = models.CharField(max_length=20, null=True, blank=True, verbose_name='Отчество')
     position = models.CharField(max_length=20, verbose_name='Должность')
-    action = models.CharField(max_length=10, choices=HISTORY_CHOICES, verbose_name='Совершенное действие')
+    action = models.CharField(max_length=CHOICE_FIELD_LEN, choices=ACCOUNT_HISTORY_CHOICES, verbose_name='Совершенное действие')
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT, verbose_name='Изменен пользователем', related_name='modifier')
+    username = models.CharField(max_length=40)
+
+    def to_dict(self):
+        info = {key : self.__dict__[key] for key in self.__dict__ if key not in ['_state', 'account', 'id']}
+        info['id'] = self.account.id
+        info['modified_by'] = self.modified_by.user.username
+        info['username'] = self.account.user.username
+        return info
 
     class Meta:
         db_table = 'accounts_history'
