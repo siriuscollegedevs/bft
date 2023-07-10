@@ -1,6 +1,6 @@
 import { FormControl, Typography } from '@mui/material'
 import { useState } from 'react'
-import { useLoginMutation } from '../../../__data__/service/api'
+import { useLoginMutation } from '../../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import {
   LoginButton,
@@ -18,8 +18,8 @@ export const LoginForm = () => {
 
   const handleLogin = async () => {
     try {
-      const { data } = await loginMutation({ login, password }).unwrap()
-      return data.success ? navigate('/main-page') : null
+      const response = await loginMutation({ username: login, password: password }).unwrap()
+      return response ? navigate('/main-page') : null
     } catch (error) {
       console.log(error)
     }
