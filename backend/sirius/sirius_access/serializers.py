@@ -29,7 +29,7 @@ class ObjectHistorySerializer(serializers.Serializer):
 class AccountSerializer(UUIDMixin, serializers.Serializer):
     role = serializers.CharField(max_length=20)
     first_name = serializers.CharField(max_length=30, required=False)
-    surname = serializers.CharField(max_length=30, required=False)
+    surname = serializers.CharField(max_length=30, required=False, allow_blank=True)
     last_name = serializers.CharField(max_length=30)
     username = serializers.CharField(max_length=30)
     modified_by = serializers.CharField(max_length=40, required=False)
@@ -53,19 +53,17 @@ class AccountSerializer(UUIDMixin, serializers.Serializer):
         if self.request_type == 'post':
             if value:
                 return value 
-            else:
-                raise serializers.ValidationError
+            raise serializers.ValidationError
         return value
 
     def validate_id(self, value):
         if self.request_type == 'post':
             if value:
                 raise serializers.ValidationError
-            else:
-                return value
+            return value
         return value
     
 class ChangePasswordSerializer(serializers.Serializer):
     status = serializers.CharField(max_length=50)
-    current_password = serializers.CharField(max_length=70, required=False)
+    current_password = serializers.CharField(max_length=70, required=False, allow_blank=True)
     new_password = serializers.CharField(max_length=70, trim_whitespace=False)
