@@ -24,6 +24,12 @@ TYPE_CHOICES_ACCOUNT = (
     ('security_officer', 'Сотрудник охраны')
 )
 
+# MODEL'S FIELDS LEN
 CHOICE_FIELD_LEN = 20
 DEFAULT_LEN = 50
 NAMES_LEN = 20
+
+#VALUE SETS FOR REQUESTS AND RESPONSES
+GET_ACCOUNTS_FIELDS = ('id', 'role', 'first_name', 'surname', 'last_name', 'username')
+ACCOUNT_GET_REQUEST_FIELDS = ('role', 'first_name', 'surname', 'last_name', 'username', 'password')
+GET_ACCOUNT_FIELDS = ('role', 'first_name', 'surname', 'last_name', 'username')
