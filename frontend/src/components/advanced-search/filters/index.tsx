@@ -65,7 +65,7 @@ export const Filters = () => {
             }}
             focused
             color="primary"
-            sx={{ marginLeft: '80px', height: '100%', width: '485px', alignSelf: 'center',marginTop: '20px'}}
+            sx={{ marginLeft: '80px', height: '100%', width: '485px', alignSelf: 'center', marginTop: '20px' }}
           />
         </FormControl>
       ))}

@@ -4,7 +4,6 @@ import { Filters } from './filters'
 export const AdvancedSearch = () => {
   return (
     <>
-      <DynamicHeader />
       <Filters />
     </>
   )
