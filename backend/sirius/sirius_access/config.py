@@ -1,9 +1,11 @@
 # fields choices
 STATUS_CHOICES = (('active', 'Активен'), ('outdated', 'Неактивен'))
-STATUS_CHOICES_REQUEST = (('active', 'Активна'), ('outdated', 'Неактивна'))
+
 HISTORY_CHOICES = (('delited', 'Удален'), ('modified',
                    'Изменен'), ('created', 'Создан'))
-STATUS_CHOICES_RECORD = (
+ACCOUNT_HISTORY_CHOICES = (('delited', 'Удален'), ('modified',
+                   'Изменен'), ('created', 'Создан'), ('password_changed', 'Изменен пароль'))
+ACTION_CHOICES_RECORD = (
     ('deleted', 'Удалена'),
     ('canceled', 'Аннулирована'),
     ('outdated', 'Истек срок действия'),
@@ -21,3 +23,5 @@ TYPE_CHOICES_ACCOUNT = (
     ('specialist', 'Специалист СБ'),
     ('security_officer', 'Сотрудник охраны')
 )
+
+CHOICE_FIELD_LEN = 20
