@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
-from .config import ACCOUNT_TYPES
+from .config import ACCOUNT_TYPES, DEFAULT_LEN, NAMES_LEN, ACTION_ACCOUNT_LEN, ACCOUNT_TYPE_LEN, DEFAULT_ACTION_LEN
 
 class UUIDMixin(serializers.Serializer):
     id = serializers.UUIDField(required=False)
 
 class ObjectSerializer(UUIDMixin, serializers.Serializer):
-    name = serializers.CharField(max_length=60)
+    name = serializers.CharField(max_length=DEFAULT_LEN)
 
 @extend_schema_serializer(
     examples = [
@@ -21,19 +21,19 @@ class ObjectSerializer(UUIDMixin, serializers.Serializer):
             })])
 class ObjectHistorySerializer(serializers.Serializer):
     version = serializers.IntegerField()
-    name = serializers.CharField(max_length=40)
+    name = serializers.CharField(max_length=DEFAULT_LEN)
     timestamp = serializers.DateTimeField()
-    modified_by = serializers.CharField(max_length=40)
-    action = serializers.CharField(max_length=10)
+    modified_by = serializers.CharField(max_length=DEFAULT_LEN)
+    action = serializers.CharField(max_length=DEFAULT_ACTION_LEN)
 
 class AccountSerializer(UUIDMixin, serializers.Serializer):
-    role = serializers.CharField(max_length=20)
-    first_name = serializers.CharField(max_length=30, required=False)
-    surname = serializers.CharField(max_length=30, required=False, allow_blank=True)
-    last_name = serializers.CharField(max_length=30)
-    username = serializers.CharField(max_length=30)
-    modified_by = serializers.CharField(max_length=40, required=False)
-    action = serializers.CharField(max_length=20, required=False)
+    role = serializers.CharField(max_length=ACCOUNT_TYPE_LEN)
+    first_name = serializers.CharField(max_length=NAMES_LEN, required=False)
+    surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
+    last_name = serializers.CharField(max_length=NAMES_LEN)
+    username = serializers.CharField(max_length=NAMES_LEN)
+    modified_by = serializers.CharField(max_length=DEFAULT_LEN, required=False)
+    action = serializers.CharField(max_length=ACTION_ACCOUNT_LEN, required=False)
     password = serializers.CharField(trim_whitespace=False, max_length=128, required=False)
     timestamp = serializers.DateTimeField(required=False)
 
@@ -69,9 +69,9 @@ class AccountSerializer(UUIDMixin, serializers.Serializer):
         return serializers.ValidationError
     
 class ChangePasswordSerializer(serializers.Serializer):
-    status = serializers.CharField(max_length=50)
-    current_password = serializers.CharField(max_length=70, required=False, allow_blank=True)
-    new_password = serializers.CharField(max_length=70, trim_whitespace=False)
+    status = serializers.CharField(max_length=ACCOUNT_TYPE_LEN)
+    current_password = serializers.CharField(max_length=DEFAULT_LEN, required=False, allow_blank=True)
+    new_password = serializers.CharField(max_length=DEFAULT_LEN, trim_whitespace=False)
 
     def validate_status(self, value):
         if value in ACCOUNT_TYPES:

@@ -12,7 +12,7 @@ class UUIDMixin(models.Model):
         abstract = True
 
 class Object(UUIDMixin, models.Model):
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
 
     def get_info(self):
             return ObjectHistory.objects.filter(object=self).order_by('-timestamp').first()
@@ -22,7 +22,7 @@ class Object(UUIDMixin, models.Model):
 
 
 class Account(UUIDMixin, models.Model):
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
     user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def get_last_version(self):
@@ -37,7 +37,7 @@ class Account(UUIDMixin, models.Model):
 
 
 class Request(UUIDMixin, models.Model):
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
 
     class Meta:
         db_table = 'requests'
@@ -70,7 +70,7 @@ class ObjectHistory(UUIDMixin, models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     object = models.ForeignKey(Object, on_delete=models.PROTECT)
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT)
-    action = models.CharField(max_length=CHOICE_FIELD_LEN, choices=HISTORY_CHOICES)
+    action = models.CharField(max_length=DEFAULT_ACTION_LEN, choices=HISTORY_CHOICES)
 
     class Meta:
         db_table = 'objects_history'
@@ -78,14 +78,14 @@ class ObjectHistory(UUIDMixin, models.Model):
 
 class RecordHistory(UUIDMixin, models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
-    action = models.CharField(max_length=CHOICE_FIELD_LEN, choices=ACTION_CHOICES_RECORD)
+    action = models.CharField(max_length=ACTION_RECORD_LEN, choices=ACTION_CHOICES_RECORD)
     car_number = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     car_brand  = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     car_model = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT)
     record = models.ForeignKey(Record, on_delete=models.PROTECT)
     object = models.ForeignKey(Object, on_delete=models.PROTECT)
-    type = models.CharField(max_length=13, choices=TYPE_CHOICES_RECORD)
+    type = models.CharField(max_length=RECORD_TYPE_LEN, choices=TYPE_CHOICES_RECORD)
     first_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     last_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     surname = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
@@ -100,13 +100,13 @@ class RecordHistory(UUIDMixin, models.Model):
 class AccountHistory(UUIDMixin, models.Model):
     user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
-    role = models.CharField(max_length=CHOICE_FIELD_LEN, choices=TYPE_CHOICES_ACCOUNT)
+    role = models.CharField(max_length=ACCOUNT_TYPE_LEN, choices=TYPE_CHOICES_ACCOUNT)
     account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='modified')
     first_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     last_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     surname = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     position = models.CharField(max_length=NAMES_LEN)
-    action = models.CharField(max_length=CHOICE_FIELD_LEN, choices=ACCOUNT_HISTORY_CHOICES)
+    action = models.CharField(max_length=ACTION_ACCOUNT_LEN, choices=ACCOUNT_HISTORY_CHOICES)
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT, related_name='modifier')
     username = models.CharField(max_length=DEFAULT_LEN)
 
