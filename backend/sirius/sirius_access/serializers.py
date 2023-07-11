@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
-
+from .config import ACCOUNT_TYPES
 
 class UUIDMixin(serializers.Serializer):
     id = serializers.UUIDField(required=False)
@@ -63,7 +63,17 @@ class AccountSerializer(UUIDMixin, serializers.Serializer):
             return value
         return value
     
+    def validate_role(self, value):
+        if value in ACCOUNT_TYPES:
+            return value
+        return serializers.ValidationError
+    
 class ChangePasswordSerializer(serializers.Serializer):
     status = serializers.CharField(max_length=50)
     current_password = serializers.CharField(max_length=70, required=False, allow_blank=True)
     new_password = serializers.CharField(max_length=70, trim_whitespace=False)
+
+    def validate_status(self, value):
+        if value in ACCOUNT_TYPES:
+            return value
+        return serializers.ValidationError

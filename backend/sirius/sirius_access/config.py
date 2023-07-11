@@ -33,3 +33,5 @@ NAMES_LEN = 20
 GET_ACCOUNTS_FIELDS = ('id', 'role', 'first_name', 'surname', 'last_name', 'username')
 ACCOUNT_GET_REQUEST_FIELDS = ('role', 'first_name', 'surname', 'last_name', 'username', 'password')
 GET_ACCOUNT_FIELDS = ('role', 'first_name', 'surname', 'last_name', 'username')
+
+ACCOUNT_TYPES = ('administrator', 'manager', 'specialist', 'security_officer')
