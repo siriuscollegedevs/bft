@@ -35,21 +35,6 @@ class Account(UUIDMixin, models.Model):
     class Meta:
         db_table =  'accounts'
 
-
-class Request(UUIDMixin, models.Model):
-    status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
-
-    class Meta:
-        db_table = 'requests'
-
-
-class Record(UUIDMixin, models.Model):
-    request = models.ForeignKey(Request, on_delete=models.PROTECT)
-
-    class Meta:
-        db_table =  'records'
-
-
 class AccountToObject(UUIDMixin, models.Model):
     account = models.ForeignKey(Account, on_delete=models.PROTECT)
     object = models.ForeignKey(Object, on_delete=models.PROTECT)
@@ -74,28 +59,6 @@ class ObjectHistory(UUIDMixin, models.Model):
 
     class Meta:
         db_table = 'objects_history'
-
-
-class RecordHistory(UUIDMixin, models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True)
-    action = models.CharField(max_length=ACTION_RECORD_LEN, choices=ACTION_CHOICES_RECORD)
-    car_number = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
-    car_brand  = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
-    car_model = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
-    modified_by = models.ForeignKey(Account, on_delete=models.PROTECT)
-    record = models.ForeignKey(Record, on_delete=models.PROTECT)
-    object = models.ForeignKey(Object, on_delete=models.PROTECT)
-    type = models.CharField(max_length=RECORD_TYPE_LEN, choices=TYPE_CHOICES_RECORD)
-    first_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
-    last_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
-    surname = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
-    from_date = models.DateTimeField(null=True, blank=True)
-    to_date  = models.DateTimeField()
-    note = models.TextField()
-
-    class Meta:
-        db_table = 'records_history'
-
 
 class AccountHistory(UUIDMixin, models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)

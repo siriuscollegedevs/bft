@@ -190,8 +190,6 @@ class PostAccount(APIView):
                 with transaction.atomic():
                     new_user = User.objects.create_user(username=data['username'], password=data['password'])
                     new_user.save()
-                    new_account = Account(status='active', user=new_user)
-                    new_account.save()
                     new_account = Account.objects.create(status='active', user=new_user)
                     account_history_data = {key: data[key] for key in data if key != 'password'}
                     AccountHistory.objects.create(action='created', account=new_account, modified_by=get_user(request), **account_history_data)
