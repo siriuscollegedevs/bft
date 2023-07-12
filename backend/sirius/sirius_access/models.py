@@ -98,7 +98,6 @@ class RecordHistory(UUIDMixin, models.Model):
 
 
 class AccountHistory(UUIDMixin, models.Model):
-    user = models.OneToOneField(AUTH_USER_MODEL, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     role = models.CharField(max_length=ACCOUNT_TYPE_LEN, choices=TYPE_CHOICES_ACCOUNT)
     account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='modified')
