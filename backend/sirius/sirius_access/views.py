@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import AccessToken
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
+from .config import *
 
 
 def get_user(request):
@@ -155,14 +156,14 @@ class GetAccounts(APIView):
     status 
 
     @extend_schema(responses={
-            status.HTTP_200_OK:serializers.AccountSerializer(many=True, fields=('id', 'role', 'first_name', 'surname', 'last_name', 'username')), 
+            status.HTTP_200_OK:serializers.AccountSerializer(many=True, fields=GET_ACCOUNTS_FIELDS), 
             status.HTTP_401_UNAUTHORIZED : None
         })
     def get(self, _):
         res = []
         for account in Account.objects.filter(status=self.status):
             res.append(account.get_last_version().to_dict())
-        return Response(serializers.AccountSerializer(res, many=True, fields=('id', 'role', 'first_name', 'surname', 'last_name', 'username')).data)
+        return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
 
 class GetArchiveAccounts(GetAccounts):
     status = 'outdated'
@@ -178,7 +179,7 @@ class PostAccount(APIView):
         status.HTTP_400_BAD_REQUEST : None
     }, request=inline_serializer(
         name='post_account',
-           fields={key : ser.CharField() for key in ('role', 'first_name', 'surname', 'last_name', 'username', 'password')}))
+           fields={key : ser.CharField() for key in ACCOUNT_GET_REQUEST_FIELDS}))
     def post(self, request):
         serializer = serializers.AccountSerializer(data=request.data, request_type='post')
         if serializer.is_valid():
@@ -189,8 +190,7 @@ class PostAccount(APIView):
                 with transaction.atomic():
                     new_user = User.objects.create_user(username=data['username'], password=data['password'])
                     new_user.save()
-                    new_account = Account(status='active', user=new_user)
-                    new_account.save()
+                    new_account = Account.objects.create(status='active', user=new_user)
                     account_history_data = {key: data[key] for key in data if key != 'password'}
                     AccountHistory.objects.create(action='created', account=new_account, modified_by=get_user(request), **account_history_data)
                     return Response(status=status.HTTP_201_CREATED)
@@ -203,7 +203,7 @@ class GetPutDeleteAccount(APIView):
     @extend_schema(responses={
         status.HTTP_200_OK: inline_serializer(
         name='get_account',
-           fields={key : ser.CharField() for key in ('role', 'first_name', 'surname', 'last_name', 'username')}),
+           fields={key : ser.CharField() for key in GET_ACCOUNT_FIELDS}),
         status.HTTP_401_UNAUTHORIZED : None,
         status.HTTP_400_BAD_REQUEST : None})
     def get(self, _, AccountId):
