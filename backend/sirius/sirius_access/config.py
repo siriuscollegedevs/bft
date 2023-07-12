@@ -5,18 +5,7 @@ HISTORY_CHOICES = (('delited', 'Удален'), ('modified',
                    'Изменен'), ('created', 'Создан'))
 ACCOUNT_HISTORY_CHOICES = (('delited', 'Удален'), ('modified',
                    'Изменен'), ('created', 'Создан'), ('password_changed', 'Изменен пароль'))
-ACTION_CHOICES_RECORD = (
-    ('deleted', 'Удалена'),
-    ('canceled', 'Аннулирована'),
-    ('outdated', 'Истек срок действия'),
-    ('modified', 'Изменена'),
-    ('created', 'Создана'),
-    ('closed', 'Погашена')
-)
-TYPE_CHOICES_RECORD = (
-    ('for_once', 'разовый'),
-    ('for_long_time', 'временный')
-)
+
 TYPE_CHOICES_ACCOUNT = (
     ('administrator', 'Администратор'),
     ('manager', 'Руководитель СБ'),
@@ -27,12 +16,10 @@ TYPE_CHOICES_ACCOUNT = (
 # MODEL'S FIELDS LEN
 DEFAULT_LEN = 50
 NAMES_LEN = 20
-ACTION_RECORD_LEN = 10
 ACTION_ACCOUNT_LEN = 16
 DEFAULT_ACTION_LEN = 10
 ACCOUNT_TYPE_LEN = 16
 STATUS_LEN = 10
-RECORD_TYPE_LEN = 13
 
 #VALUE SETS FOR REQUESTS AND RESPONSES
 GET_ACCOUNTS_FIELDS = ('id', 'role', 'first_name', 'surname', 'last_name', 'username')
