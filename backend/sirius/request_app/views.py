@@ -15,10 +15,20 @@ class PostRequest(APIView):
             try:
                 with transaction.atomic():
                     request = Request.objects.create(status='active')
-                    code = code if code else request.id
+                    code = code if code else request.id #NOTE
                     request_info = RequestHistory.objects.create(request=request, code=code, action='created', modified_by=get_user(request))
                     return Response(serializers.RequestSerializer({'id': request.id, 'code' : code, 'timestamp' :request_info.timestamp}).data)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+     
+class RequestApiView(APIView):
+    def get(self, _, RequestId):
+        res = []
+        try:
+            req = Request.objects.get(id=RequestId)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        res= [record.get_info() for record in Record.objects.filter(request=req, status='active')]
+        return Response(serializers.RecordSerializer(res, many=True).data)
      
