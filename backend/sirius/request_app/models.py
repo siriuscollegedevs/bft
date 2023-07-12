@@ -57,6 +57,7 @@ class RequestHistory(models.Model):
     request = models.ForeignKey(Request, on_delete=models.PROTECT)
     code = models.CharField(max_length=DEFAULT_LEN)
     action = models.CharField(max_length=ACTION_RECORD_LEN, choices=STATUS_CHOICES_RECORD)
+    modified_by = models.ForeignKey(Account, on_delete=models.PROTECT)
 
     class Meta:
             db_table =  'request_history'
