@@ -5,7 +5,7 @@ from rest_framework import status
 from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
-from sirius_access.views import get_user
+from sirius.general_functions import get_user
 
 class PostRequest(APIView):
      def post(self, request):
