@@ -13,7 +13,7 @@ import { accountsContext, objectsContext, requestsContext } from './contexts/api
 import { useGetAllAccountsQuery } from './__data__/service/account.api'
 import { useGetAllObjectsQuery } from './__data__/service/object.api'
 import { useGetAllRequestsQuery } from './__data__/service/request.api'
-
+import { AdvancedSearch } from './components/advanced-search'
 export const App: React.FC = (): JSX.Element => {
   function Header() {
     const location = useLocation()
@@ -49,6 +49,7 @@ export const App: React.FC = (): JSX.Element => {
                   <Route path="/accounts/:id" element={<FormEditDirectories />} />
                   <Route path="/objects/:id" element={<FormEditDirectories />} />
                   <Route path="/employees/:id" element={<FormEditDirectories />} />
+                  <Route path="/admissions/search" element={<AdvancedSearch />} />
                 </Routes>
               </requestsContext.Provider>
             </objectsContext.Provider>
