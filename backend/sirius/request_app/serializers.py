@@ -16,9 +16,9 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
     modified_by = serializers.CharField(read_only=True)
     object_id = serializers.UUIDField(write_only=True)
     type = serializers.CharField()
-    first_name = serializers.CharField(max_length=NAMES_LEN)
+    first_name = serializers.CharField(max_length=NAMES_LEN, required=False)
     surname_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
-    last_name = serializers.CharField(max_length=NAMES_LEN)
+    last_name = serializers.CharField(max_length=NAMES_LEN, required=False)
     object = serializers.CharField(read_only=True)
     car_number = serializers.CharField(required=False)
     car_brand  = serializers.CharField(required=False)
@@ -27,14 +27,32 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
     to_date = serializers.DateTimeField(required=False)
     note = serializers.CharField(required=False, allow_blank=True)
 
+    def __init__(self, *args, **kwargs):
+        self.record_type = kwargs.pop('record_type', None)
+        super().__init__(*args, **kwargs)
+
     def validate_type(self, value):
         if value in RECORD_TYPES:
             return value
         raise serializers.ValidationError
     
+    def validate(self, data):
+        if not self.record_type:
+            return data
+        elif self.record_type == 'human':
+            if all(map(lambda x:data.get(x, ''), ['first_name', 'last_name'])):
+                return data
+            else:
+                raise serializers.ValidationError("first_name or last_name is empty value")
+        elif self.record_type == 'car':
+            if data.get('car_number', ''):
+                return data
+            else:
+                raise serializers.ValidationError("car_number is empty value")
+    
 class ChangeStatusSerializer(serializers.Serializer):
     status = serializers.CharField(max_length=STATUS_LEN)
-    reason = serializers.CharField(required=False, allow_black=True)
+    reason = serializers.CharField(required=False, allow_blank=True)
 
     def validate_status(self, value):
         if value in RECORD_API_STATUSES:
