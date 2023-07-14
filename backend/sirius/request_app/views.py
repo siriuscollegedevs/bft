@@ -54,10 +54,13 @@ class ChangeStatusRequest(APIView):
         req = get_request(RequestId)
         if not req:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        serializer = serializers.ChangeStatusRequest(data=request.data)
+        serializer = serializers.ChangeStatusSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
-            note = data['reason'] if data['status'] == 'canceled' else ''
-            req.make_outdated(user=get_user(request), action=data['status'], note=note)
-            return Response(status=status.HTTP_200_OK)
+            try:
+                with transaction.atomic():
+                    req.make_outdated(user=get_user(request), action=data['status'], note=data.get('reason', ''))
+                    return Response(status=status.HTTP_200_OK)
+            except Exception:
+                Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)

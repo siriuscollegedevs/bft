@@ -32,7 +32,7 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
             return value
         raise serializers.ValidationError
     
-class ChangeStatusRequest(serializers.Serializer):
+class ChangeStatusSerializer(serializers.Serializer):
     status = serializers.CharField(max_length=STATUS_LEN)
     reason = serializers.CharField(required=False, allow_black=True)
 
