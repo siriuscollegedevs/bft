@@ -64,3 +64,22 @@ class ChangeStatusRequest(APIView):
             except Exception:
                 Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+    
+class HumanRecord(APIView):
+    def post(self, request, RequestId):
+        serializer = serializers.RecordSerializer(data=request.data, record_type='human')
+        if serializer.is_valid():
+            data = serializer.validated_data
+            req = get_request(RequestId)
+            if not req:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            try:
+                with transaction.atomic():
+                    record = Record.objects.create(status='active', request=request)
+                    object = Object.objects.get(id=data['object_id'])
+                    info = {key : data[key] for key in data if key != 'object_id'}
+                    RecordHistory.objects.create(action='created', modified_by=get_user(request), record=record, object=object, **info)
+                    return Response(status=status.HTTP_200_OK)
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
