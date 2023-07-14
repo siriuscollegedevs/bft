@@ -23,12 +23,29 @@ class PostRequest(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST)
      
 class RequestApiView(APIView):
+
+    @staticmethod
+    def get_request(RequestId):
+        try:
+            return Request.objects.get(id=RequestId)
+        except Exception:
+            return None
+
     def get(self, _, RequestId):
         res = []
-        try:
-            req = Request.objects.get(id=RequestId)
-        except Exception:
+        req = self.get_request(RequestId)
+        if not req:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         res= [record.get_info() for record in Record.objects.filter(request=req, status='active')]
         return Response(serializers.RecordSerializer(res, many=True).data)
-     
+
+    def delete(self, request, RequestId):
+        req = self.get_request(RequestId)
+        if not req:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        try:
+            with transaction.atomic():
+                req.make_outdated(user=get_user(request), action='deleted')
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_200_OK)

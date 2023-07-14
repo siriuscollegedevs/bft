@@ -1,6 +1,6 @@
 from django.db import models
 from sirius.config import *
-from .config import STATUS_CHOICES_RECORD, TYPE_CHOICES_RECORD, RECORD_TYPE_LEN, ACTION_RECORD_LEN
+from .config import *
 from sirius_access.models import Account, Object, UUIDMixin
 
 
@@ -16,6 +16,13 @@ class Request(UUIDMixin, models.Model):
         info['timestamp'] = self.get_last_version().timestamp
         info['code'] = self.get_last_version().code
         return info
+    
+    def make_outdated(self, user, action, note=''):
+        self.status = 'outdated'
+        self.save()
+        RequestHistory.objects.create(action=action, modified_by=user, request=self, code=self.get_last_version().code)
+        for record in Record.objects.filter(request=self, status='active'):
+            record.make_outdated(user=user, action=action, note=note)
 
     class Meta:
         db_table = 'requests'
@@ -34,6 +41,13 @@ class Record(UUIDMixin, models.Model):
         info['object'] = data.object.get_info().name
         info['modified_by'] = data.modified_by.get_last_version().username
         return info
+
+    def make_outdated(self, user, action, note=''):
+        self.status = 'outdated'
+        self.save()
+        data = self.get_last_version().__dict__
+        info = {key : data[key] for key in data if key not in USELESS_FIELDS_FOR_NEW_RECORD_HISTORY}
+        RecordHistory.objects.create(action=action, modified_by=user, record=self, note=note, **info)
 
     class Meta:
         db_table =  'records'
