@@ -17,3 +17,5 @@ ACTION_RECORD_LEN = 10
 RECORD_TYPES = ('for_once', 'for_long_time')
 
 USELESS_FIELDS_FOR_NEW_RECORD_HISTORY = ['id', '_state', 'action', 'timestamp', 'modified_by', 'record', 'note']
+
+RECORD_API_STATUSES = ('canceled', 'closed')

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
-from sirius.config import NAMES_LEN
-from .config import RECORD_TYPES
+from sirius.config import NAMES_LEN, STATUS_LEN
+from .config import RECORD_TYPES, RECORD_API_STATUSES
 
 class UUIDMixin(serializers.Serializer):
     id = serializers.UUIDField(read_only=True)
@@ -31,3 +31,17 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
         if value in RECORD_TYPES:
             return value
         raise serializers.ValidationError
+    
+class ChangeStatusRequest(serializers.Serializer):
+    status = serializers.CharField(max_length=STATUS_LEN)
+    reason = serializers.CharField(required=False, allow_black=True)
+
+    def validate_status(self, value):
+        if value in RECORD_API_STATUSES:
+            return value
+        raise serializers.ValidationError
+    
+    def validate(self, data):
+        if (data['status'] == 'canceled' and data.get('reason', '')) or data['status'] == 'closed':
+            return data
+        raise serializers.ValidationError("Invalid status")

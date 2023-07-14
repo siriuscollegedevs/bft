@@ -7,6 +7,12 @@ from rest_framework.views import APIView
 from . import serializers
 from sirius.general_functions import get_user
 
+def get_request(RequestId):
+        try:
+            return Request.objects.get(id=RequestId)
+        except Exception:
+            return None
+
 class PostRequest(APIView):
      def post(self, request):
         serializer = serializers.RequestSerializer(data=request.data)
@@ -24,16 +30,9 @@ class PostRequest(APIView):
      
 class RequestApiView(APIView):
 
-    @staticmethod
-    def get_request(RequestId):
-        try:
-            return Request.objects.get(id=RequestId)
-        except Exception:
-            return None
-
     def get(self, _, RequestId):
         res = []
-        req = self.get_request(RequestId)
+        req = get_request(RequestId)
         if not req:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         res= [record.get_info() for record in Record.objects.filter(request=req, status='active')]
@@ -49,3 +48,16 @@ class RequestApiView(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_200_OK)
+    
+class ChangeStatusRequest(APIView):
+    def put(self, request, RequestId):
+        req = get_request(RequestId)
+        if not req:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        serializer = serializers.ChangeStatusRequest(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+            note = data['reason'] if data['status'] == 'canceled' else ''
+            req.make_outdated(user=get_user(request), action=data['status'], note=note)
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
