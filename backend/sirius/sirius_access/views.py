@@ -4,7 +4,7 @@ from rest_framework import status
 from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
-from django.db.models import F
+from django.db.models import F, Model, QuerySet
 from django.contrib.auth.models import User
 from rest_framework_simplejwt.tokens import AccessToken
 from drf_spectacular.utils import extend_schema, inline_serializer
@@ -24,7 +24,7 @@ def check_administrator(account):
 # WORK WITH OBJECTS
 
 class GetObjects(APIView):
-    status 
+    status
 
     @extend_schema(responses={
             status.HTTP_200_OK:serializers.ObjectSerializer(many=True), 
@@ -36,11 +36,14 @@ class GetObjects(APIView):
             res.append({'id': obj.id, 'name': obj.get_info().name})
         return Response(serializers.ObjectSerializer(res, many=True).data)
 
+
 class GetArchiveObjects(GetObjects):
     status = 'outdated'
 
+
 class GetActualObjects(GetObjects):
     status = 'active'
+
 
 class PostObject(APIView):
     @extend_schema(responses={
@@ -67,8 +70,9 @@ class PostObject(APIView):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
 class ObjectApiView(APIView):
-    
+
     @staticmethod
     def check_name(name):
         for obj in Object.objects.filter(status='active'):
@@ -153,7 +157,7 @@ class ObjectHistoryApiView(APIView):
 #WORK WITH ACCOUNTS
 
 class GetAccounts(APIView):
-    status 
+    status: str
 
     @extend_schema(responses={
             status.HTTP_200_OK:serializers.AccountSerializer(many=True, fields=GET_ACCOUNTS_FIELDS), 
@@ -165,11 +169,14 @@ class GetAccounts(APIView):
             res.append(account.get_last_version().to_dict())
         return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
 
+
 class GetArchiveAccounts(GetAccounts):
     status = 'outdated'
 
+
 class GetActualAccounts(GetAccounts):
     status = 'active'
+
 
 class PostAccount(APIView):
 
@@ -197,6 +204,7 @@ class PostAccount(APIView):
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class GetPutDeleteAccount(APIView):
 
@@ -261,7 +269,8 @@ class GetPutDeleteAccount(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
+
 class ChangePasswordApi(APIView):
 
     @extend_schema(responses={
@@ -286,7 +295,8 @@ class ChangePasswordApi(APIView):
                     return Response(status=status.HTTP_400_BAD_REQUEST)
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-    
+
+
 class AccountHistoryApiView(APIView):
 
     @extend_schema(responses={
@@ -313,3 +323,38 @@ class AccountHistoryApiView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         res = AccountHistory.objects.filter(account=account).values("role", "first_name", "last_name", "surname", "username", "timestamp", "action").annotate(modified_by=F('modified_by__user__username'))
         return Response(serializers.AccountSerializer(res, many=True).data)
+
+
+def list_to_queryset(model: Model, data: list) -> QuerySet:
+    pks = [obj.id for obj in data]
+    return model.objects.filter(id__in=pks)
+
+
+class AccountExpandSearch(APIView):
+
+    @extend_schema(responses={
+            status.HTTP_200_OK:serializers.AccountSerializer(many=True, fields=GET_ACCOUNTS_FIELDS), 
+            status.HTTP_401_UNAUTHORIZED : None,
+            status.HTTP_400_BAD_REQUEST : None
+        },
+        request=inline_serializer(
+        name='account_expand_search',
+           fields={key : ser.CharField() for key in GET_ACCOUNT_FIELDS}))
+    def post(self, request):
+        search_data = {key: value for key, value in request.data.items() if value}
+        if all([(not bool(value)) for value in list(request.data.values())]):
+            res = []
+            for account in Account.objects.filter(status='active'):
+                res.append(account.get_last_version().to_dict())
+            return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
+        active_accounts = Account.objects.filter(status='active')
+        res = []
+        for account in active_accounts:
+            res.append(account.get_last_version())
+        res = list_to_queryset(AccountHistory, res).filter(**search_data).values(
+            'role',
+            'first_name',
+            'last_name',
+            'surname'
+            ).annotate(username=F('account__user__username'), id=F('account__id'))
+        return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
