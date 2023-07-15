@@ -31,7 +31,7 @@ export const App: React.FC = (): JSX.Element => {
   }
 
   const { data: accountData, error: accountError, isLoading: accountLoading } = useGetAllAccountsQuery()
-  const { data: objectData, error: objectError, isLoading: objectLoading } = useGetAllObjectsQuery()
+  // const { data: objectData, error: objectError, isLoading: objectLoading } = useGetAllObjectsQuery()
   const { data: admissionsData, error: admissionsError, isLoading: admissionsLoading } = useGetAllAdmissionsQuery()
 
   return (
@@ -39,7 +39,7 @@ export const App: React.FC = (): JSX.Element => {
       <ThemeProvider theme={Classic}>
         <BrowserRouter>
           <accountsContext.Provider value={{ accountData, accountError, accountLoading }}>
-            <objectsContext.Provider value={{ objectData, objectError, objectLoading }}>
+            {/* <objectsContext.Provider value={{ objectData, objectError, objectLoading }}> */}
               <admissionssContext.Provider value={{ admissionsData, admissionsError, admissionsLoading }}>
                 <Header />
                 <Routes>
@@ -53,7 +53,7 @@ export const App: React.FC = (): JSX.Element => {
                   <Route path="/objects" element={<ObjectsPage />} />
                 </Routes>
               </admissionssContext.Provider>
-            </objectsContext.Provider>
+            {/* </objectsContext.Provider> */}
           </accountsContext.Provider>
         </BrowserRouter>
       </ThemeProvider>

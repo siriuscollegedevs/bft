@@ -9,17 +9,21 @@ import {
   SignInTextField,
   TitleTypography
 } from '../../../styles/login'
+import { setToken } from '../../../states/auth'
+import { useDispatch } from 'react-redux'
 
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const navigate = useNavigate()
   const [loginMutation, { isLoading, isError }] = useLoginMutation()
+  const dispatch = useDispatch()
 
   const handleLogin = async () => {
     try {
       const response = await loginMutation({ username: login, password: password }).unwrap()
-      return response ? navigate('/main-page') : null
+      dispatch(setToken(response.access))
+      return response ? navigate('/objects') : null
     } catch (error) {
       console.log(error)
     }

@@ -1,9 +1,12 @@
+import { useGetAllObjectsQuery } from '../../__data__/service/object.api'
 import { EntityTitle } from '../../components/entity-title'
 import { Sidebar } from '../../components/sidebar'
 import { SmartTable } from '../../components/smart-table'
 import { SideBarContainer } from '../../styles/sidebar'
 
 export const ObjectsPage = () => {
+  
+
   return (
     <>
       <EntityTitle isSwitch={true} />
