@@ -12,6 +12,12 @@ def get_request(RequestId):
             return Request.objects.get(id=RequestId)
         except Exception:
             return None
+        
+def get_record(RecordId):
+        try:
+            return Record.objects.get(id=RecordId)
+        except Exception:
+            return None
 
 class PostRequest(APIView):
      def post(self, request):
@@ -91,3 +97,16 @@ class HumanRecord(PostRecord):
 
 class CarRecord(PostRecord):
     record_type = 'car'
+
+class DeleteRecord(APIView):
+    def delete(self, request, RecordId):
+        record = get_record(RecordId)
+        if not record:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'error' : 'Invalid RecordId'})
+        try:
+            with transaction.atomic():
+                record.make_outdated(user=get_user(request), action='deleted')
+                return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
