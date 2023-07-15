@@ -11,6 +11,14 @@ class Request(UUIDMixin, models.Model):
        return RequestHistory.objects.filter(request=self).order_by('-timestamp').first()
     
     def get_info(self):
+        """
+        Returns:
+        {
+            'id' : request.id <uuid>
+            'timestamp' : time of creation <datetime>
+            'code': <str>
+        }
+        """
         info = {}
         info['id'] = self.id
         info['timestamp'] = self.get_last_version().timestamp
@@ -18,6 +26,17 @@ class Request(UUIDMixin, models.Model):
         return info
     
     def make_outdated(self, user, action, note=''):
+        """
+        Args:
+            user : Account -- who modified an object
+            action : str -- action type
+
+        Keyword arguments:
+            note : str -- reason of action
+
+        Returns:
+            None
+        """
         self.status = 'outdated'
         self.save()
         RequestHistory.objects.create(action=action, modified_by=user, request=self, code=self.get_last_version().code)
@@ -36,6 +55,26 @@ class Record(UUIDMixin, models.Model):
        return RecordHistory.objects.filter(record=self).order_by('-timestamp').first()
 
     def get_info(self):
+        """
+        Returns:
+        {
+            'id' : record.id <uuid>
+            'timestamp' : time of last modification <datetime>
+            'code' : <str>
+            'action' : action type <str>
+            'modified_by' : username of account that changed the data <str>
+            'type' : record's type <str>
+            'first_name' : <str>
+            'last_name' : <str>
+            'object' : object name <str>
+            'car_number' : <str>
+            'car_brand' : <str>
+            'car_model': <str>
+            'from_date': <datetime>
+            'to_date': <datetime>
+            'note': <str>
+        }
+        """
         data = self.get_last_version()
         info = {key : data.__dict__[key] for key in data.__dict__ if key not in ['_state', 'record', 'object_id', 'modified_by_id']}
         info['object'] = data.object.get_info().name
@@ -43,6 +82,17 @@ class Record(UUIDMixin, models.Model):
         return info
 
     def make_outdated(self, user, action, note=''):
+        """
+        Args:
+            user : Account -- who modified an object
+            action : str -- action type
+
+        Keyword arguments:
+            note : str -- reason of action
+
+        Returns:
+            None
+        """
         self.status = 'outdated'
         self.save()
         data = self.get_last_version().__dict__
