@@ -76,7 +76,8 @@ class Record(UUIDMixin, models.Model):
         }
         """
         data = self.get_last_version()
-        info = {key : data.__dict__[key] for key in data.__dict__ if key not in ['_state', 'record', 'object_id', 'modified_by_id']}
+        info = {key : data.__dict__[key] for key in data.__dict__ if key not in ['id', '_state', 'record', 'object_id', 'modified_by_id']}
+        info['id'] = self.id
         info['object'] = data.object.get_info().name
         info['modified_by'] = data.modified_by.get_last_version().username
         return info
