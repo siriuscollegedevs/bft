@@ -19,13 +19,82 @@ type URL = {
 export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { size: Size }) => {
   const objectsURL = currentURL === '/objects'
 
-  const rows = useContext(objectsContext)
+  const {
+    objectData = [
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      },
+      {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: 'ГМЦ'
+      }
+    ],
+    objectError,
+    objectLoading
+  } = useContext(objectsContext)
 
   return (
     <TableContainer sx={{ width: size.width, height: size.height }}>
       <Table aria-label="simple table">
         <TableBody>
-          {rows.map((row: Objects | Admissions) => (
+          {objectData.map((row: Objects | Admissions) => (
             <TableRow key={'name' in row ? row.name : row.code}>
               {objectsURL ? (
                 <>

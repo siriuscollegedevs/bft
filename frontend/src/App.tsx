@@ -13,6 +13,7 @@ import { accountsContext, objectsContext, admissionssContext } from './contexts/
 import { useGetAllAccountsQuery } from './__data__/service/account.api'
 import { useGetAllObjectsQuery } from './__data__/service/object.api'
 import { useGetAllAdmissionsQuery } from './__data__/service/admission.api'
+import { ObjectsPage } from './pages/objects'
 
 export const App: React.FC = (): JSX.Element => {
   function Header() {
@@ -49,6 +50,7 @@ export const App: React.FC = (): JSX.Element => {
                   <Route path="/accounts/:id" element={<FormEditDirectories />} />
                   <Route path="/objects/:id" element={<FormEditDirectories />} />
                   <Route path="/employees/:id" element={<FormEditDirectories />} />
+                  <Route path="/objects" element={<ObjectsPage />} />
                 </Routes>
               </admissionssContext.Provider>
             </objectsContext.Provider>
