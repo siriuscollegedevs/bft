@@ -8,7 +8,7 @@ import { Box } from '@mui/material'
 import { Size } from '..'
 import { useContext } from 'react'
 import { objectsContext } from '../../../contexts/api'
-import { Objects, Admissionss } from '../../../types/api'
+import { Objects, Admissions } from '../../../types/api'
 
 export type CurrentURL = '/objects' | '/admissions'
 
@@ -25,7 +25,7 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
     <TableContainer sx={{ width: size.width, height: size.height }}>
       <Table aria-label="simple table">
         <TableBody>
-          {rows.map((row: Objects | Admissionss) => (
+          {rows.map((row: Objects | Admissions) => (
             <TableRow key={'name' in row ? row.name : row.code}>
               {objectsURL ? (
                 <>

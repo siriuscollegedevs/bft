@@ -12,7 +12,7 @@ import { BackButton } from './components/button-back'
 import { accountsContext, objectsContext, admissionssContext } from './contexts/api'
 import { useGetAllAccountsQuery } from './__data__/service/account.api'
 import { useGetAllObjectsQuery } from './__data__/service/object.api'
-import { useGetAllAdmissionssQuery } from './__data__/service/admission.api'
+import { useGetAllAdmissionsQuery } from './__data__/service/admission.api'
 
 export const App: React.FC = (): JSX.Element => {
   function Header() {
@@ -31,7 +31,7 @@ export const App: React.FC = (): JSX.Element => {
 
   const { data: accountData, error: accountError, isLoading: accountLoading } = useGetAllAccountsQuery()
   const { data: objectData, error: objectError, isLoading: objectLoading } = useGetAllObjectsQuery()
-  const { data: admissionsData, error: admissionsError, isLoading: admissionsLoading } = useGetAllAdmissionssQuery()
+  const { data: admissionsData, error: admissionsError, isLoading: admissionsLoading } = useGetAllAdmissionsQuery()
 
   return (
     <>

@@ -92,7 +92,7 @@ export type Car = {
   note: string
 }
 
-export type Admissionss = {
+export type Admissions = {
   id: string
   timestemp: string
   code: string

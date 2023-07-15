@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Admissionss, AdmissionsHistory, SearchOfAdmissions, RootState } from '../../types/api'
+import { Admissions, AdmissionsHistory, SearchOfAdmissions, RootState } from '../../types/api'
 import { config } from '../config'
 
 const baseQuery = fetchBaseQuery({
@@ -17,13 +17,13 @@ export const apiAdmissions = createApi({
   reducerPath: 'apiAdmissions',
   baseQuery,
   endpoints: builder => ({
-    getAllAdmissionss: builder.query<Admissionss[], void>({
+    getAllAdmissions: builder.query<Admissions[], void>({
       query: () => '/admissionss'
     }),
-    getAllArchiveAdmissionss: builder.query<Admissionss[], void>({
+    getAllArchiveAdmissions: builder.query<Admissions[], void>({
       query: () => '/admissionss/archive'
     }),
-    createAdmissions: builder.mutation<Admissionss, void>({
+    createAdmissions: builder.mutation<Admissions, void>({
       query: () => ({
         url: '/admissions',
         method: 'POST'
@@ -41,7 +41,7 @@ export const apiAdmissions = createApi({
         method: 'DELETE'
       })
     }),
-    admissionsSearch: builder.mutation<Admissionss[], SearchOfAdmissions>({
+    admissionsSearch: builder.mutation<Admissions[], SearchOfAdmissions>({
       query: admissionsData => ({
         url: '/admissions/expand_search',
         method: 'POST',
@@ -64,8 +64,8 @@ export const apiAdmissions = createApi({
 })
 
 export const {
-  useGetAllAdmissionssQuery,
-  useGetAllArchiveAdmissionssQuery,
+  useGetAllAdmissionsQuery,
+  useGetAllArchiveAdmissionsQuery,
   useCreateAdmissionsMutation,
   useGetAdmissionsHistoryByIdQuery,
   useGetRecordOfAdmissionsQuery,
