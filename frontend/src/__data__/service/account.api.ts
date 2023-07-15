@@ -3,7 +3,7 @@ import {
   Accounts,
   Account,
   AccountHistory,
-  ExpandSearchRequestBody,
+  ExpandSearchAdmissionsBody,
   ChangePasswordData,
   RootState
 } from '../../types/api'
@@ -70,7 +70,7 @@ export const apiAccount = createApi({
     getAccountHistoryById: builder.query<AccountHistory[], string>({
       query: accountId => `/account/history/${accountId}`
     }),
-    accountSearch: builder.mutation<Accounts[], ExpandSearchRequestBody>({
+    accountSearch: builder.mutation<Accounts[], ExpandSearchAdmissionsBody>({
       query: accountData => ({
         url: '/account/expand_search',
         method: 'POST',
@@ -83,14 +83,14 @@ export const apiAccount = createApi({
         }
       })
     }),
-    changeAccountPassword: builder.mutation<void, { accountId: string; requestBody: ChangePasswordData }>({
-      query: ({ accountId, requestBody }) => ({
+    changeAccountPassword: builder.mutation<void, { accountId: string; admissionsBody: ChangePasswordData }>({
+      query: ({ accountId, admissionsBody }) => ({
         url: `/account/change_pswd/${accountId}`,
         method: 'POST',
         body: {
-          status: requestBody.status,
-          current_password: requestBody.current_password,
-          new_password: requestBody.new_password
+          status: admissionsBody.status,
+          current_password: admissionsBody.current_password,
+          new_password: admissionsBody.new_password
         }
       })
     })
