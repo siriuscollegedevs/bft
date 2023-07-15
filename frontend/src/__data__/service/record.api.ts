@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Status, Human, Car, RequestHistory, RootState } from '../../types/api'
+import { Status, Human, Car, AdmissionsHistory, RootState } from '../../types/api'
 import { config } from '../config'
 
 const baseQuery = fetchBaseQuery({
@@ -32,7 +32,7 @@ export const apiRecord = createApi({
         method: 'DELETE'
       })
     }),
-    getRecordHistoryById: builder.query<RequestHistory[], string>({
+    getRecordHistoryById: builder.query<AdmissionsHistory[], string>({
       query: (recordId: string) => `/record/history/${recordId}`
     }),
     updateHumanRecordById: builder.mutation<void, { recordId: string; recordData: Human }>({

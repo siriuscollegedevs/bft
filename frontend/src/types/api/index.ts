@@ -18,7 +18,7 @@ export type Account = {
   password: string
 }
 
-export type ExpandSearchRequestBody = {
+export type ExpandSearchAdmissionsBody = {
   role?: string
   first_name?: string
   surname?: string
@@ -92,13 +92,13 @@ export type Car = {
   note: string
 }
 
-export type Requests = {
+export type Admissionss = {
   id: string
   timestemp: string
   code: string
 }
 
-export type RequestHistory = {
+export type AdmissionsHistory = {
   id: string
   timestemp: string
   status: string
@@ -116,7 +116,7 @@ export type RequestHistory = {
   note: string
 }
 
-export type SearchOfRequest = {
+export type SearchOfAdmissions = {
   car_number: string
   car_brand: string
   car_model: string
