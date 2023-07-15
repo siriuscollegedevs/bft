@@ -6,4 +6,5 @@ urlpatterns = [
     path('/<uuid:RequestId>', views.RequestApiView.as_view()),
     path('/change_status/<uuid:RequestId>', views.ChangeStatusRequest.as_view()),
     path('/record/human/<uuid:RequestId>', views.HumanRecord.as_view()),
+    path('/record/car/<uuid:RequestId>', views.CarRecord.as_view()),
 ]

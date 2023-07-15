@@ -65,9 +65,11 @@ class ChangeStatusRequest(APIView):
                 Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
     
-class HumanRecord(APIView):
+class PostRecord(APIView):
+    record_type : str
+
     def post(self, request, RequestId):
-        serializer = serializers.RecordSerializer(data=request.data, record_type='human')
+        serializer = serializers.RecordSerializer(data=request.data, record_type=self.record_type)
         if serializer.is_valid():
             data = serializer.validated_data
             req = get_request(RequestId)
@@ -83,3 +85,9 @@ class HumanRecord(APIView):
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+    
+class HumanRecord(PostRecord):
+    record_type = 'human'
+
+class CarRecord(PostRecord):
+    record_type = 'car'
