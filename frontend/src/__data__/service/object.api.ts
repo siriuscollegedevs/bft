@@ -5,6 +5,7 @@ import { config } from '../config'
 const baseQuery = fetchBaseQuery({
   baseUrl: config.baseAPI,
   prepareHeaders: (headers, { getState }) => {
+    console.log((getState() as RootState).auth.token)
     const token = (getState() as RootState).auth.token
     if (token) {
       headers.set('Authorization', `Bearer ${token}`)

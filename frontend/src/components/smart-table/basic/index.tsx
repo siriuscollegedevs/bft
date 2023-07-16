@@ -6,12 +6,10 @@ import TableRow from '@mui/material/TableRow'
 import { ButtonNames, ShortcutButtons } from '../../shortcut-buttons'
 import { Box } from '@mui/material'
 import { Size } from '..'
-
-function createData(name: string, number: number) {
-  return { name, number }
-}
-
-const rows = [createData('abc', 152311313129), createData('abcd', 252311313129), createData('abcde', 452311313129)]
+import { useContext } from 'react'
+import { objectsContext } from '../../../contexts/api'
+import { Objects, Admissions } from '../../../types/api'
+import { useGetAllObjectsQuery } from '../../../__data__/service/object.api'
 
 export type CurrentURL = '/objects' | '/admissions'
 
@@ -22,16 +20,32 @@ type URL = {
 export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { size: Size }) => {
   const objectsURL = currentURL === '/objects'
 
+  // const {
+  //   objectData = [
+  //     {
+  //       id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  //       name: 'ГМЦ'
+  //     },
+  //     {
+  //       id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  //       name: 'ГМЦ'
+  //     },
+  //   ],
+  //   objectError,
+  //   objectLoading
+  // } = useContext(objectsContext)
+  const { data: objectData, error: objectError, isLoading: objectLoading } = useGetAllObjectsQuery()
+
   return (
     <TableContainer sx={{ width: size.width, height: size.height }}>
       <Table aria-label="simple table">
         <TableBody>
-          {rows.map(row => (
-            <TableRow key={row.name}>
+          {objectData?.map((row: Objects | Admissions) => (
+            <TableRow key={'name' in row ? row.name : row.code}>
               {objectsURL ? (
                 <>
                   <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
-                    {row.name}
+                    {'name' in row ? row.name : ''}
                   </TableCell>
                   <TableCell align="right">
                     <Box display="flex" alignItems="center" justifyContent="flex-end">
@@ -42,10 +56,10 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
               ) : (
                 <>
                   <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
-                    {row.name}
+                    {'timestemp' in row ? row.timestemp : ''}
                   </TableCell>
                   <TableCell align="left" padding={'checkbox'}>
-                    {'#' + row.number}
+                    {'code' in row ? `#${row.code}` : ''}
                   </TableCell>
                   <TableCell align="right">
                     <Box display="flex" alignItems="center" justifyContent="flex-end">
