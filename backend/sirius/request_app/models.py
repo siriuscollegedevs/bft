@@ -59,10 +59,6 @@ class Record(UUIDMixin, models.Model):
         Returns:
         {
             'id' : record.id <uuid>
-            'timestamp' : time of last modification <datetime>
-            'code' : <str>
-            'action' : action type <str>
-            'modified_by' : username of account that changed the data <str>
             'type' : record's type <str>
             'first_name' : <str>
             'last_name' : <str>
@@ -79,7 +75,6 @@ class Record(UUIDMixin, models.Model):
         info = {key : data.__dict__[key] for key in data.__dict__ if key not in ['id', '_state', 'record', 'object_id', 'modified_by_id']}
         info['id'] = self.id
         info['object'] = data.object.get_info().name
-        info['modified_by'] = data.modified_by.get_last_version().username
         return info
 
     def make_outdated(self, user, action, note=''):
@@ -120,6 +115,12 @@ class RecordHistory(UUIDMixin, models.Model):
     from_date = models.DateTimeField(null=True, blank=True)
     to_date  = models.DateTimeField()
     note = models.TextField()
+
+    def get_info(self):
+        info = self.__dict__
+        info['modified_by'] = self.modified_by.get_last_version().username
+        info['object'] = self.object.get_info().name
+        return info
 
     class Meta:
         db_table = 'records_history'

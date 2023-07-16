@@ -28,8 +28,15 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
     note = serializers.CharField(required=False, allow_blank=True)
 
     def __init__(self, *args, **kwargs):
+        fields = kwargs.pop('fields', None)
         self.record_type = kwargs.pop('record_type', None)
         super().__init__(*args, **kwargs)
+
+        if fields is not None:
+            allowed = set(fields)
+            existing = set(self.fields)
+            for field_name in existing - allowed:
+                self.fields.pop(field_name)
 
     def validate_type(self, value):
         if value in RECORD_TYPES:

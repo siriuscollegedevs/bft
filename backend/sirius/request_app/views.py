@@ -6,7 +6,7 @@ from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
 from sirius.general_functions import get_user
-from .config import REQUESTID_ERROR_MSG, RECORDID_ERROR_MSG, REQUEST_GET_FIELDS
+from .config import REQUESTID_ERROR_MSG, RECORDID_ERROR_MSG, REQUEST_GET_FIELDS, GET_RECORD_HISTORY_FIELDS
 
 
 def get_request(RequestId):
@@ -127,4 +127,12 @@ class ChangeStatusRecord(APIView):
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+    
+class RecordHistoryView(APIView):
+    def get(self, _, RecordId):
+        record = get_record(RecordId)
+        if not record:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+        res = [rh.get_info() for rh in RecordHistory.objects.filter(record=record)]
+        return Response(serializers.RecordSerializer(res, many=True, fields=GET_RECORD_HISTORY_FIELDS).data)
         
