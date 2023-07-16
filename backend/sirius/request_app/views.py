@@ -6,7 +6,7 @@ from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
 from sirius.general_functions import get_user
-from .config import REQUESTID_ERROR_MSG, RECORDID_ERROR_MSG
+from .config import REQUESTID_ERROR_MSG, RECORDID_ERROR_MSG, REQUEST_GET_FIELDS
 
 
 def get_request(RequestId):
@@ -44,7 +44,7 @@ class RequestApiView(APIView):
         if not req:
             return Response(status=status.HTTP_400_BAD_REQUEST,  data=REQUESTID_ERROR_MSG)
         res= [record.get_info() for record in Record.objects.filter(request=req, status='active')]
-        return Response(serializers.RecordSerializer(res, many=True).data)
+        return Response(serializers.RecordSerializer(res, many=True, fields=REQUEST_GET_FIELDS).data)
 
     def delete(self, request, RequestId):
         req = self.get_request(RequestId)

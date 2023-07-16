@@ -11,6 +11,7 @@ TYPE_CHOICES_RECORD = (
     ('for_long_time', 'временный')
 )
 
+# MODEL'S FIELDS LEN
 RECORD_TYPE_LEN = 13
 ACTION_RECORD_LEN = 10
 
@@ -20,5 +21,10 @@ USELESS_FIELDS_FOR_NEW_RECORD_HISTORY = ['id', '_state', 'action', 'timestamp', 
 
 RECORD_API_STATUSES = ('canceled', 'closed')
 
+# RESPONSE MESSAGES
 REQUESTID_ERROR_MSG =  {'error' : 'Invalid RequestId'}
 RECORDID_ERROR_MSG = {'error' : 'Invalid RequestdId'}
+
+# SERIALIZER FIELDS SETS
+REQUEST_GET_FIELDS = [ "id", "car_number", "car_brand", "car_model", "object",
+    "type", "first_name", "surname", "last_name", "from_date", "to_date", "note"]
