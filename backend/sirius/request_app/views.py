@@ -24,7 +24,12 @@ def get_record(RecordId):
             return None
 
 class PostRequest(APIView):
-     def post(self, request):
+    @extend_schema(responses={
+            status.HTTP_200_OK : inline_serializer(name='post_request_res', fields={'id' : ser.UUIDField()}),
+            status.HTTP_400_BAD_REQUEST: None,
+            status.HTTP_401_UNAUTHORIZED : None
+    }, request=inline_serializer(name='post_request_req', fields={'code' : ser.CharField()}))
+    def post(self, request):
         serializer = serializers.RequestSerializer(data=request.data)
         if serializer.is_valid():
             code = serializer.validated_data['code']
@@ -33,11 +38,12 @@ class PostRequest(APIView):
                     request = Request.objects.create(status='active')
                     code = code if code else request.id #NOTE
                     request_info = RequestHistory.objects.create(request=request, code=code, action='created', modified_by=get_user(request))
-                    return Response(serializers.RequestSerializer({'id': request.id, 'code' : code, 'timestamp' :request_info.timestamp}).data)
+                    return Response(serializers.RequestSerializer({'id': request.id}).data)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-     
+
+
 class RequestApiView(APIView):
 
     @extend_schema(responses={
@@ -53,6 +59,11 @@ class RequestApiView(APIView):
         res= [record.get_info() for record in Record.objects.filter(request=req, status='active')]
         return Response(serializers.RecordSerializer(res, many=True, fields=REQUEST_GET_FIELDS).data)
 
+    @extend_schema(responses={
+        status.HTTP_204_NO_CONTENT : None,
+        status.HTTP_400_BAD_REQUEST: None,
+        status.HTTP_401_UNAUTHORIZED : None
+    })
     def delete(self, request, RequestId):
         req = self.get_request(RequestId)
         if not req:
@@ -65,6 +76,13 @@ class RequestApiView(APIView):
         return Response(status=status.HTTP_200_OK)
     
 class ChangeStatusRequest(APIView):
+
+    @extend_schema(responses={
+            status.HTTP_200_OK : None,
+            status.HTTP_400_BAD_REQUEST: None,
+            status.HTTP_401_UNAUTHORIZED : None
+    }, request=serializers.ChangeStatusSerializer, 
+    description="status in ['closed', 'canceled']. Поле reason обязательно при status = canceled")
     def put(self, request, RequestId):
         req = get_request(RequestId)
         if not req:
@@ -108,6 +126,12 @@ class CarRecord(PostRecord):
     record_type = 'car'
 
 class DeleteRecord(APIView):
+
+    @extend_schema(responses={
+        status.HTTP_204_NO_CONTENT : None,
+        status.HTTP_400_BAD_REQUEST: None,
+        status.HTTP_401_UNAUTHORIZED : None
+    })
     def delete(self, request, RecordId):
         record = get_record(RecordId)
         if not record:
@@ -120,6 +144,13 @@ class DeleteRecord(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
 class ChangeStatusRecord(APIView):
+
+    @extend_schema(responses={
+            status.HTTP_200_OK : None,
+            status.HTTP_400_BAD_REQUEST: None,
+            status.HTTP_401_UNAUTHORIZED : None
+    }, request=serializers.ChangeStatusSerializer, 
+    description="status in ['closed', 'canceled']. Поле reason обязательно при status = canceled")
     def put(self, request, RecordId):
         record = get_record(RecordId)
         if not record:
@@ -136,6 +167,26 @@ class ChangeStatusRecord(APIView):
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
     
 class RecordHistoryView(APIView):
+    @extend_schema(responses={
+            status.HTTP_200_OK : inline_serializer(name='record_history', 
+            fields={
+            'type' : ser.CharField(),
+            'first_name' : ser.CharField(),
+            'last_name' : ser.CharField(),
+            'object' : ser.CharField(),
+            'car_number' : ser.CharField(),
+            'car_brand' : ser.CharField(),
+            'car_model': ser.CharField(),
+            'from_date': ser.DateTimeField(),
+            'to_date': ser.DateTimeField(),
+            'note': ser.CharField(),
+            'action' : ser.CharField(),
+            'timestamp' : ser.DateTimeField(),
+            "modified_by" : ser.CharField()
+            }),
+            status.HTTP_400_BAD_REQUEST: None,
+            status.HTTP_401_UNAUTHORIZED : None
+    })
     def get(self, _, RecordId):
         record = get_record(RecordId)
         if not record:
@@ -144,6 +195,11 @@ class RecordHistoryView(APIView):
         return Response(serializers.RecordSerializer(res, many=True, fields=GET_RECORD_HISTORY_FIELDS).data)
     
 class RecordArchive(APIView):
+    @extend_schema(responses={
+            status.HTTP_200_OK : serializers.RecordSerializer(many=True, fields=REQUEST_GET_FIELDS),
+            status.HTTP_400_BAD_REQUEST: None,
+            status.HTTP_401_UNAUTHORIZED : None
+    })
     def get(self, _, RequestId):
         req = get_request(RequestId)
         if not req:
