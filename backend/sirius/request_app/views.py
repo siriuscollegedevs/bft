@@ -1,12 +1,14 @@
 from rest_framework.response import Response
 from .models import Request, RequestHistory, Record, RecordHistory
-from sirius_access.models import Account, Object
+from sirius_access.models import Object
 from rest_framework import status
 from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
 from sirius.general_functions import get_user
 from .config import REQUESTID_ERROR_MSG, RECORDID_ERROR_MSG, REQUEST_GET_FIELDS, GET_RECORD_HISTORY_FIELDS
+from drf_spectacular.utils import extend_schema, inline_serializer
+from rest_framework import serializers as ser
 
 
 def get_request(RequestId):
@@ -38,6 +40,11 @@ class PostRequest(APIView):
      
 class RequestApiView(APIView):
 
+    @extend_schema(responses={
+            status.HTTP_200_OK : serializers.RecordSerializer(many=True, fields=REQUEST_GET_FIELDS),
+            status.HTTP_400_BAD_REQUEST: None,
+            status.HTTP_401_UNAUTHORIZED : None
+    })
     def get(self, _, RequestId):
         res = []
         req = get_request(RequestId)
