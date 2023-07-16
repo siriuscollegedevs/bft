@@ -16,16 +16,16 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
     modified_by = serializers.CharField(read_only=True)
     object_id = serializers.UUIDField(write_only=True)
     type = serializers.CharField()
-    first_name = serializers.CharField(max_length=NAMES_LEN, required=False)
-    surname_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
-    last_name = serializers.CharField(max_length=NAMES_LEN, required=False)
+    first_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_null=True)
+    surname_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True, allow_null=True)
+    last_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_null=True)
     object = serializers.CharField(read_only=True)
-    car_number = serializers.CharField(required=False)
-    car_brand  = serializers.CharField(required=False)
-    car_model = serializers.CharField(required=False)
+    car_number = serializers.CharField(required=False, allow_null=True)
+    car_brand  = serializers.CharField(required=False, allow_null=True)
+    car_model = serializers.CharField(required=False, allow_null=True)
     from_date = serializers.DateTimeField()
-    to_date = serializers.DateTimeField(required=False)
-    note = serializers.CharField(required=False, allow_blank=True)
+    to_date = serializers.DateTimeField(required=False, allow_null=True)
+    note = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
     def __init__(self, *args, **kwargs):
         fields = kwargs.pop('fields', None)
@@ -59,7 +59,7 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
     
 class ChangeStatusSerializer(serializers.Serializer):
     status = serializers.CharField(max_length=STATUS_LEN)
-    reason = serializers.CharField(required=False, allow_blank=True)
+    reason = serializers.CharField(required=False, allow_blank=True, allow_null=True)
 
     def validate_status(self, value):
         if value in RECORD_API_STATUSES:
