@@ -114,7 +114,7 @@ class RecordHistory(UUIDMixin, models.Model):
     surname = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     from_date = models.DateTimeField(null=True, blank=True)
     to_date  = models.DateTimeField()
-    note = models.TextField()
+    note = models.TextField(null=True, blank=True)
 
     def get_info(self):
         info = self.__dict__

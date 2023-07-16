@@ -8,7 +8,7 @@ class UUIDMixin(serializers.Serializer):
 
 class RequestSerializer(UUIDMixin, serializers.Serializer):
     timestamp = serializers.DateTimeField(required=False)
-    code = serializers.CharField(max_length=50, allow_blank=True)
+    code = serializers.CharField(max_length=50, allow_blank=True, allow_null=True)
 
 class RecordSerializer(UUIDMixin, serializers.Serializer):
     timestamp = serializers.DateTimeField(required=False)

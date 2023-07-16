@@ -67,7 +67,7 @@ class ChangeStatusRequest(APIView):
             data = serializer.validated_data
             try:
                 with transaction.atomic():
-                    req.make_outdated(user=get_user(request), action=data['status'], note=data.get('reason', ''))
+                    req.make_outdated(user=get_user(request), action=data['status'], note=data.get('reason', None))
                     return Response(status=status.HTTP_200_OK)
             except Exception:
                 Response(status=status.HTTP_400_BAD_REQUEST)
@@ -135,4 +135,13 @@ class RecordHistoryView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
         res = [rh.get_info() for rh in RecordHistory.objects.filter(record=record)]
         return Response(serializers.RecordSerializer(res, many=True, fields=GET_RECORD_HISTORY_FIELDS).data)
+    
+class RecordArchive(APIView):
+    def get(self, _, RequestId):
+        req = get_request(RequestId)
+        if not req:
+            return Response(status=status.HTTP_400_BAD_REQUEST,  data=REQUESTID_ERROR_MSG)
+        res = [record.get_info() for record in Record.objects.filter(request=req, status='outdated')]
+        return Response(serializers.RecordSerializer(res, many=True, fields=REQUEST_GET_FIELDS).data)
+ 
         
