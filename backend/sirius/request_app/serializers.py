@@ -60,6 +60,9 @@ class ChangeStatusSerializer(serializers.Serializer):
         raise serializers.ValidationError
     
     def validate(self, data):
-        if (data['status'] == 'canceled' and data.get('reason', '')) or data['status'] == 'closed':
-            return data
-        raise serializers.ValidationError("Invalid status")
+        if data['status'] == 'canceled':
+            if data.get('reason', ''):
+                return data
+            else:
+                raise serializers.ValidationError("status 'cancelad' with no reason")
+        return data
