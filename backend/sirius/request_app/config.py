@@ -19,3 +19,6 @@ RECORD_TYPES = ('for_once', 'for_long_time')
 USELESS_FIELDS_FOR_NEW_RECORD_HISTORY = ['id', '_state', 'action', 'timestamp', 'modified_by', 'record', 'note']
 
 RECORD_API_STATUSES = ('canceled', 'closed')
+
+REQUESTID_ERROR_MSG =  {'error' : 'Invalid RequestId'}
+RECORDID_ERROR_MSG = {'error' : 'Invalid RequestdId'}

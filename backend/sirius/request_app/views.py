@@ -6,6 +6,8 @@ from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
 from sirius.general_functions import get_user
+from .config import REQUESTID_ERROR_MSG, RECORDID_ERROR_MSG
+
 
 def get_request(RequestId):
         try:
@@ -40,14 +42,14 @@ class RequestApiView(APIView):
         res = []
         req = get_request(RequestId)
         if not req:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST,  data=REQUESTID_ERROR_MSG)
         res= [record.get_info() for record in Record.objects.filter(request=req, status='active')]
         return Response(serializers.RecordSerializer(res, many=True).data)
 
     def delete(self, request, RequestId):
         req = self.get_request(RequestId)
         if not req:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST,  data=REQUESTID_ERROR_MSG)
         try:
             with transaction.atomic():
                 req.make_outdated(user=get_user(request), action='deleted')
@@ -59,7 +61,7 @@ class ChangeStatusRequest(APIView):
     def put(self, request, RequestId):
         req = get_request(RequestId)
         if not req:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
         serializer = serializers.ChangeStatusSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
@@ -80,14 +82,14 @@ class PostRecord(APIView):
             data = serializer.validated_data
             req = get_request(RequestId)
             if not req:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
             try:
                 with transaction.atomic():
                     record = Record.objects.create(status='active', request=request)
                     object = Object.objects.get(id=data['object_id'])
                     info = {key : data[key] for key in data if key != 'object_id'}
                     RecordHistory.objects.create(action='created', modified_by=get_user(request), record=record, object=object, **info)
-                    return Response(status=status.HTTP_200_OK)
+                    return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
@@ -102,11 +104,27 @@ class DeleteRecord(APIView):
     def delete(self, request, RecordId):
         record = get_record(RecordId)
         if not record:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data={'error' : 'Invalid RecordId'})
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
         try:
             with transaction.atomic():
                 record.make_outdated(user=get_user(request), action='deleted')
                 return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+class ChangeStatusRecord(APIView):
+    def put(self, request, RecordId):
+        record = get_record(RecordId)
+        if not record:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+        serializer = serializers.ChangeStatusRequest(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+            try:
+                with transaction.atomic():
+                    record.make_outdated(user=get_user(request), action=data['status'], note=data.get('reason', ''))
+                    return Response(status=status.HTTP_200_OK)
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
         
