@@ -10,5 +10,6 @@ urlpatterns = [
     path('/record/<uuid:RecordId>', views.DeleteRecord.as_view()),
     path('/record/change_status/<uuid:RecordId>', views.ChangeStatusRecord.as_view()),
     path('/record/history/<uuid:RecordId>', views.RecordHistoryView.as_view()),
-    path('/records/archive/<uuid:RequestId>', views.RecordArchive.as_view())
+    path('/records/archive/<uuid:RequestId>', views.RecordArchive.as_view()),
+    path('/record/carr/<uuid:RecordId>', views.PutRecord.as_view()),
 ]

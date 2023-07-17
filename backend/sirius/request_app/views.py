@@ -6,7 +6,7 @@ from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
 from sirius.general_functions import get_user
-from .config import REQUESTID_ERROR_MSG, RECORDID_ERROR_MSG, REQUEST_GET_FIELDS, GET_RECORD_HISTORY_FIELDS
+from .config import *
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
 
@@ -35,9 +35,9 @@ class PostRequest(APIView):
             code = serializer.validated_data['code']
             try:
                 with transaction.atomic():
-                    request = Request.objects.create(status='active')
-                    code = code if code else request.id #NOTE
-                    request_info = RequestHistory.objects.create(request=request, code=code, action='created', modified_by=get_user(request))
+                    req = Request.objects.create(status='active')
+                    code = code if code else req.id #NOTE
+                    RequestHistory.objects.create(request=req, code=code, action='created', modified_by=get_user(request))
                     return Response(serializers.RequestSerializer({'id': request.id}).data)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -206,5 +206,20 @@ class RecordArchive(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST,  data=REQUESTID_ERROR_MSG)
         res = [record.get_info() for record in Record.objects.filter(request=req, status='outdated')]
         return Response(serializers.RecordSerializer(res, many=True, fields=REQUEST_GET_FIELDS).data)
+    
+class PutRecord(APIView):
+    def put(self, request, RecordId):
+        record = get_record(RecordId)
+        if not record:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+        serializer = serializers.RecordSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer_data = serializer.validated_data
+            new_data = {key : serializer_data[key] for key in serializer_data if serializer_data[key]}
+            info = record.get_last_version().__dict__
+            old_data = {key : info[key] for key in info if key not in new_data.keys() and key not in USELESS_FIELDS + FIELDS_TO_ADD}
+            RecordHistory.objects.create(modified_by=get_user(request), action='modified', **old_data, **new_data)
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
  
         

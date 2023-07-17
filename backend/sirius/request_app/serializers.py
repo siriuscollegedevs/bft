@@ -39,24 +39,25 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
                 self.fields.pop(field_name)
 
     def validate_type(self, value):
-        if value in RECORD_TYPES:
+        if value in RECORD_TYPES or (value is None):
             return value
         raise serializers.ValidationError
     
     def validate(self, data):
+        required_fields = ['type', 'object_id', 'from_date']
         if not self.record_type:
             return data
         elif self.record_type == 'human':
-            if all(map(lambda x:data.get(x, ''), ['first_name', 'last_name'])):
+            if all(map(lambda x:data.get(x, ''), ['first_name', 'last_name'] + required_fields)):
                 return data
             else:
-                raise serializers.ValidationError("first_name or last_name is empty value")
+                raise serializers.ValidationError("first_name or last_name is empty value or no required fields")
         elif self.record_type == 'car':
-            if data.get('car_number', ''):
+            if all(map(lambda x:data.get(x, ''), ['car_number'] + required_fields)):
                 return data
             else:
-                raise serializers.ValidationError("car_number is empty value")
-    
+                raise serializers.ValidationError("car_number is empty value or no required fields")
+
 class ChangeStatusSerializer(serializers.Serializer):
     status = serializers.CharField(max_length=STATUS_LEN)
     reason = serializers.CharField(required=False, allow_blank=True, allow_null=True)
