@@ -9,10 +9,6 @@ import { FormEditDirectories } from './components/form-edit-directories'
 import { DynamicHeader } from './components/header/dynamic'
 import { StaticHeader } from './components/header/static'
 import { BackButton } from './components/button-back'
-import { accountsContext, objectsContext, admissionssContext } from './contexts/api'
-import { useGetAllAccountsQuery } from './__data__/service/account.api'
-import { useGetAllObjectsQuery } from './__data__/service/object.api'
-import { useGetAllAdmissionsQuery } from './__data__/service/admission.api'
 import { ObjectsPage } from './pages/objects'
 
 export const App: React.FC = (): JSX.Element => {
@@ -30,31 +26,21 @@ export const App: React.FC = (): JSX.Element => {
     )
   }
 
-  const { data: accountData, error: accountError, isLoading: accountLoading } = useGetAllAccountsQuery()
-  // const { data: objectData, error: objectError, isLoading: objectLoading } = useGetAllObjectsQuery()
-  const { data: admissionsData, error: admissionsError, isLoading: admissionsLoading } = useGetAllAdmissionsQuery()
-
   return (
     <>
       <ThemeProvider theme={Classic}>
         <BrowserRouter>
-          <accountsContext.Provider value={{ accountData, accountError, accountLoading }}>
-            {/* <objectsContext.Provider value={{ objectData, objectError, objectLoading }}> */}
-              <admissionssContext.Provider value={{ admissionsData, admissionsError, admissionsLoading }}>
-                <Header />
-                <Routes>
-                  <Route path="/" element={<Login />} />
-                  <Route path="/navigation" element={<Main />} />
-                  <Route path="/settings" element={<Settings />} />
-                  <Route path="/directories" element={<MainDirectories />} />
-                  <Route path="/accounts/:id" element={<FormEditDirectories />} />
-                  <Route path="/objects/:id" element={<FormEditDirectories />} />
-                  <Route path="/employees/:id" element={<FormEditDirectories />} />
-                  <Route path="/objects" element={<ObjectsPage />} />
-                </Routes>
-              </admissionssContext.Provider>
-            {/* </objectsContext.Provider> */}
-          </accountsContext.Provider>
+          <Header />
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/navigation" element={<Main />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/directories" element={<MainDirectories />} />
+            <Route path="/accounts/:id" element={<FormEditDirectories />} />
+            <Route path="/objects/:id" element={<FormEditDirectories />} />
+            <Route path="/employees/:id" element={<FormEditDirectories />} />
+            <Route path="/objects" element={<ObjectsPage />} />
+          </Routes>
         </BrowserRouter>
       </ThemeProvider>
     </>
