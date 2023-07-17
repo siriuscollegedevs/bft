@@ -1,7 +1,7 @@
 from django.db import migrations
 from django.db import transaction
 from django.contrib.auth.models import User
-from . .models import Account, AccountHistory, Object, ObjectHistory
+from ..models import Account, AccountHistory, Object, ObjectHistory
 
 
 class Migration(migrations.Migration):
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
 
         with transaction.atomic():
             for user_data, account_data in zip(Migration.USER_DATA, Migration.ACCOUNT_DATA):
-                user = User.objects.create(**user_data)
+                user = User.objects.create_user(**user_data)
                 account = Account.objects.create(status='active', user=user)
                 AccountHistory.objects.create(account=account, modified_by=account, username=user.username, **account_data)
             for object_data in Migration.OBJECT_DATA:
