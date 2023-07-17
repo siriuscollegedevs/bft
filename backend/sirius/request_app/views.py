@@ -22,6 +22,33 @@ def get_record(RecordId):
             return Record.objects.get(id=RecordId)
         except Exception:
             return None
+        
+class GetRequests(APIView):
+    status : str
+
+    @extend_schema(responses={
+            status.HTTP_200_OK : serializers.RequestSerializer(many=True),
+            status.HTTP_400_BAD_REQUEST: None,
+            status.HTTP_401_UNAUTHORIZED : None
+    }, description='request body is {"ids" : [ list of ids ]})')
+    def post(self, request):
+        objects_ids = request.data.get('ids', None)
+        if objects_ids is None:
+            res = [req.get_info() for req in Request.objects.filter(status=self.status)]
+            return Response(serializers.RequestSerializer(res, many=True).data)
+        res_requests = set()
+        for record in Record.objects.filter(status=self.status):
+            if record.request.status == self.status:
+                if str(record.get_last_version().object.id) in objects_ids:
+                    res_requests.add(record.request)
+        res = [req.get_info() for req in res_requests]
+        return Response(serializers.RequestSerializer(res, many=True).data)
+    
+class GetActiveRequests(GetRequests):
+    status = 'active'
+
+class GetArchiveRequests(GetRequests):
+    status = 'outdated'
 
 class PostRequest(APIView):
     @extend_schema(responses={
@@ -125,7 +152,7 @@ class HumanRecord(PostRecord):
 class CarRecord(PostRecord):
     record_type = 'car'
 
-class DeleteRecord(APIView):
+class DeletePutRecord(APIView):
 
     @extend_schema(responses={
         status.HTTP_204_NO_CONTENT : None,
@@ -143,6 +170,39 @@ class DeleteRecord(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
+    @extend_schema(responses={
+            status.HTTP_200_OK : None,
+            status.HTTP_400_BAD_REQUEST: None,
+            status.HTTP_401_UNAUTHORIZED : None
+    }, request=inline_serializer(name='record_put', 
+            fields={
+            'type' : ser.CharField(),
+            'first_name' : ser.CharField(),
+            'surname' : ser.CharField(),
+            'last_name' : ser.CharField(),
+            'object_id' : ser.UUIDField(),
+            'car_number' : ser.CharField(),
+            'car_brand' : ser.CharField(),
+            'car_model': ser.CharField(),
+            'from_date': ser.DateTimeField(),
+            'to_date': ser.DateTimeField(),
+            'note': ser.CharField()
+            }), description="Any of the fields can be null")
+    def put(self, request, RecordId):
+        record = get_record(RecordId)
+        if not record:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+        serializer = serializers.RecordSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer_data = serializer.validated_data
+            new_data = {key : serializer_data[key] for key in serializer_data if serializer_data[key]}
+            info = record.get_last_version().__dict__
+            old_data = {key : info[key] for key in info if key not in new_data.keys() and key not in USELESS_FIELDS + FIELDS_TO_ADD}
+            RecordHistory.objects.create(modified_by=get_user(request), action='modified', **old_data, **new_data)
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
+
+
 class ChangeStatusRecord(APIView):
 
     @extend_schema(responses={
@@ -172,6 +232,7 @@ class RecordHistoryView(APIView):
             fields={
             'type' : ser.CharField(),
             'first_name' : ser.CharField(),
+            'surname' : ser.CharField(),
             'last_name' : ser.CharField(),
             'object' : ser.CharField(),
             'car_number' : ser.CharField(),
@@ -206,20 +267,5 @@ class RecordArchive(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST,  data=REQUESTID_ERROR_MSG)
         res = [record.get_info() for record in Record.objects.filter(request=req, status='outdated')]
         return Response(serializers.RecordSerializer(res, many=True, fields=REQUEST_GET_FIELDS).data)
-    
-class PutRecord(APIView):
-    def put(self, request, RecordId):
-        record = get_record(RecordId)
-        if not record:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
-        serializer = serializers.RecordSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer_data = serializer.validated_data
-            new_data = {key : serializer_data[key] for key in serializer_data if serializer_data[key]}
-            info = record.get_last_version().__dict__
-            old_data = {key : info[key] for key in info if key not in new_data.keys() and key not in USELESS_FIELDS + FIELDS_TO_ADD}
-            RecordHistory.objects.create(modified_by=get_user(request), action='modified', **old_data, **new_data)
-            return Response(status=status.HTTP_200_OK)
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
- 
+
         
