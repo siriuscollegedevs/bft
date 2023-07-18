@@ -5,21 +5,12 @@ from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
 from django.db.models import F, Model, QuerySet
+from sirius.general_functions import get_user, check_administrator
 from django.contrib.auth.models import User
-from rest_framework_simplejwt.tokens import AccessToken
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
 from .config import *
 
-
-def get_user(request):
-        access_token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
-        token = AccessToken(access_token)
-        user = User.objects.get(id=token.payload['user_id'])
-        return Account.objects.get(user=user)
-
-def check_administrator(account):
-    return account.get_last_version().role == 'Administrator'
 
 # WORK WITH OBJECTS
 
