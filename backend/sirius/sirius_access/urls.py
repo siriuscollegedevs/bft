@@ -17,6 +17,7 @@ urlpatterns = [
     path('account/history/<uuid:AccountId>', views.AccountHistoryApiView.as_view()),
     path('account/expand_search', views.AccountExpandSearch.as_view()),
     # ACCOUNT TO OBJECTS
-    path('object/accounts', views.GetPostAccountsObjectsView.as_view()),
-    path('account_to_objects', views.GetAccountByObjectView.as_view()),
+    path('account_to_objects', views.GetPostAccountsObjectsView.as_view()),
+    path('object/accounts', views.GetAccountByObjectView.as_view()),
+    path('account_to_objects/<uuid:AccountId>', views.GetPutAccountToObjectView.as_view()),
 ]
