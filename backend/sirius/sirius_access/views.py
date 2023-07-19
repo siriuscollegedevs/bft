@@ -1,25 +1,16 @@
 from rest_framework.response import Response
-from .models import Object, ObjectHistory, Account, AccountHistory
+from .models import Object, ObjectHistory, Account, AccountHistory, AccountToObject
 from rest_framework import status
 from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
-from django.db.models import F, Model, QuerySet
+from django.db.models import F
 from django.contrib.auth.models import User
-from rest_framework_simplejwt.tokens import AccessToken
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
 from .config import *
+from sirius import general_functions as gf
 
-
-def get_user(request):
-        access_token = request.META.get('HTTP_AUTHORIZATION', " ").split(' ')[1]
-        token = AccessToken(access_token)
-        user = User.objects.get(id=token.payload['user_id'])
-        return Account.objects.get(user=user)
-
-def check_administrator(account):
-    return account.get_last_version().role == 'Administrator'
 
 # WORK WITH OBJECTS
 
@@ -33,7 +24,7 @@ class GetObjects(APIView):
     def get(self, _):
         res = []
         for obj in Object.objects.filter(status=self.status):
-            res.append({'id': obj.id, 'name': obj.get_info().name})
+            res.append({'id': obj.id, 'name': obj.get_last_version().name})
         return Response(serializers.ObjectSerializer(res, many=True).data)
 
 
@@ -64,7 +55,7 @@ class PostObject(APIView):
                 with transaction.atomic():
                     obj = Object.objects.create(status='active')
                     ObjectHistory.objects.create(
-                        object=obj, name=name, modified_by=get_user(request), action='created')
+                        object=obj, name=name, modified_by=gf.get_account(request), action='created')
                 return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -76,7 +67,7 @@ class ObjectApiView(APIView):
     @staticmethod
     def check_name(name):
         for obj in Object.objects.filter(status='active'):
-            if obj.get_info().name == name:
+            if obj.get_last_version().name == name:
                 return False
         return True
 
@@ -93,7 +84,7 @@ class ObjectApiView(APIView):
             obj = Object.objects.get(id=ObjectId)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        name = obj.get_info().name
+        name = obj.get_last_version().name
         return Response(serializers.ObjectSerializer({'name': name}).data)
 
     @extend_schema(responses={
@@ -107,9 +98,9 @@ class ObjectApiView(APIView):
                 obj = Object.objects.get(id=ObjectId)
                 obj.status = 'outdated'
                 obj.save()
-                name = obj.get_info().name
+                name = obj.get_last_version().name
                 ObjectHistory.objects.create(
-                    object=obj, name=name, modified_by=get_user(request), action='deleted')
+                    object=obj, name=name, modified_by=gf.get_account(request), action='deleted')
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -131,9 +122,9 @@ class ObjectApiView(APIView):
             try:
                 with transaction.atomic():
                     obj = Object.objects.get(id=ObjectId)
-                    version = obj.get_info().version + 1
+                    version = obj.get_last_version().version + 1
                     ObjectHistory.objects.create(
-                        object=obj, name=name, modified_by=get_user(request), action='modified', version=version)
+                        object=obj, name=name, modified_by=gf.get_account(request), action='modified', version=version)
                     return Response(status=status.HTTP_200_OK)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -192,16 +183,17 @@ class PostAccount(APIView):
         if serializer.is_valid():
             data = serializer.validated_data
             try:
-                if not check_administrator(get_user(request)):
+                if not gf.check_administrator(gf.get_account(request)):
                         return Response(status=status.HTTP_400_BAD_REQUEST)
                 with transaction.atomic():
                     new_user = User.objects.create_user(username=data['username'], password=data['password'])
                     new_user.save()
                     new_account = Account.objects.create(status='active', user=new_user)
                     account_history_data = {key: data[key] for key in data if key != 'password'}
-                    AccountHistory.objects.create(action='created', account=new_account, modified_by=get_user(request), **account_history_data)
+                    AccountHistory.objects.create(action='created', account=new_account, modified_by=gf.get_account(request), **account_history_data)
                     return Response(status=status.HTTP_201_CREATED)
-            except Exception:
+            except Exception as ex:
+                print(ex)
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -233,7 +225,7 @@ class GetPutDeleteAccount(APIView):
             try:
                 with transaction.atomic():
                     account = Account.objects.get(id=AccountId)
-                    if not check_administrator(get_user(request)):
+                    if not gf.check_administrator(gf.get_account(request)):
                         return Response(status=status.HTTP_400_BAD_REQUEST)
                     user = User.objects.get(account=account)
                     if data['username'] != user.username:
@@ -245,7 +237,7 @@ class GetPutDeleteAccount(APIView):
                         action = 'modified'
                     user.save()
                     account_history_data = {key: data[key] for key in data if key != 'password'}
-                    AccountHistory.objects.create(action=action, account=account, modified_by=get_user(request), **account_history_data) 
+                    AccountHistory.objects.create(action=action, account=account, modified_by=gf.get_account(request), **account_history_data) 
                     return Response(status=status.HTTP_200_OK)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -258,14 +250,14 @@ class GetPutDeleteAccount(APIView):
     })
     def delete(self, request, AccountId):
         try:
-            if not check_administrator(get_user(request)):
+            if not gf.check_administrator(gf.get_account(request)):
                         return Response(status=status.HTTP_400_BAD_REQUEST)
             with transaction.atomic():
                 account = Account.objects.get(id=AccountId)
                 account.status = 'outdated'
                 account.save()
                 AccountHistory.objects.create(
-                    account=account, modified_by=get_user(request), action='deleted', **account.get_info())
+                    account=account, modified_by=gf.get_account(request), action='deleted', **account.get_info())
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -284,12 +276,12 @@ class ChangePasswordApi(APIView):
             data = serializer.validated_data
             account = Account.objects.get(id=AccountId)
             user = User.objects.get(account=account)
-            if data['status'] == 'Administrator' or (user.check_password(data['current_password']) and account == get_user(request)):
+            if data['status'] == 'Administrator' or (user.check_password(data['current_password']) and account == gf.get_account(request)):
                 try:
                     with transaction.atomic():
                         user.set_password(data['new_password'])
                         user.save()
-                        AccountHistory.objects.create(account=account, modified_by=get_user(request), action='password_changed', **account.get_info())
+                        AccountHistory.objects.create(account=account, modified_by=gf.get_account(request), action='password_changed', **account.get_info())
                         return Response(status=status.HTTP_200_OK)
                 except Exception:
                     return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -325,11 +317,6 @@ class AccountHistoryApiView(APIView):
         return Response(serializers.AccountSerializer(res, many=True).data)
 
 
-def list_to_queryset(model: Model, data: list) -> QuerySet:
-    pks = [obj.id for obj in data]
-    return model.objects.filter(id__in=pks)
-
-
 class AccountExpandSearch(APIView):
 
     @extend_schema(responses={
@@ -342,19 +329,129 @@ class AccountExpandSearch(APIView):
            fields={key : ser.CharField() for key in GET_ACCOUNT_FIELDS}))
     def post(self, request):
         search_data = {key: value for key, value in request.data.items() if value}
-        if all([(not bool(value)) for value in list(request.data.values())]):
-            res = []
-            for account in Account.objects.filter(status='active'):
-                res.append(account.get_last_version().to_dict())
-            return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
-        active_accounts = Account.objects.filter(status='active')
+        try:
+            with transaction.atomic():
+                if all([(not bool(value)) for value in list(request.data.values())]):
+                    res = []
+                    for account in Account.objects.filter(status='active'):
+                        res.append(account.get_last_version().to_dict())
+                    return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
+                active_accounts = Account.objects.filter(status='active')
+                res = []
+                for account in active_accounts:
+                    res.append(account.get_last_version())
+                res = gf.list_to_queryset(AccountHistory, res).filter(**search_data).values(
+                    'role',
+                    'first_name',
+                    'last_name',
+                    'surname'
+                    ).annotate(username=F('account__user__username'), id=F('account__id'))
+                return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+# ACCOUNT TO OBJECT VIEWS
+
+class GetAccountByObjectView(APIView):
+
+    @extend_schema(responses={
+            status.HTTP_200_OK:serializers.AccountSerializer(many=True, fields=GET_ACCOUNTS_FIELDS), 
+            status.HTTP_401_UNAUTHORIZED : None,
+            status.HTTP_400_BAD_REQUEST : None
+        },
+        request=inline_serializer(
+        name='account_to_object_search',
+           fields={'ids': ser.ListField()}))
+    def post(self, request):
+        object_ids = request.data.get('ids', None)
+        try:
+            with transaction.atomic():
+                if object_ids is None:
+                    res = []
+                    for account in Account.objects.filter(status='active'):
+                        res.append(account.get_last_version().to_dict())
+                    return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
+                res = set()
+                for iter, id in object_ids.enumerate():
+                    for record in AccountToObject.objects.filter(object__id=id):
+                        if iter == 0:
+                            res.add(record.account.get_last_version())
+                        else:
+                            accounts = set()
+                            accounts.add(record.account.get_last_version())
+                    res.intersection_update(accounts)
+                if res:
+                    res_accounts = [record.to_dict() for record in res]
+                    return Response(serializers.AccountSerializer(res_accounts, many=True, fileds=GET_ACCOUNTS_FIELDS).data)
+                return Response(data={[]})
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetPostAccountsObjectsView(APIView):
+
+    @extend_schema(responses={
+            status.HTTP_200_OK : inline_serializer(
+                many=True, 
+                name='account_and_objects', 
+                fields={
+                    "id" : ser.UUIDField(),
+                    "role" : ser.CharField(),
+                    "first_name" : ser.CharField(),
+                    "surname" : ser.CharField(),
+                    "last_name" : ser.CharField(),
+                    "username" : ser.CharField(),
+                    "objects": ser.ListField()}),
+            status.HTTP_401_UNAUTHORIZED : None,
+            status.HTTP_400_BAD_REQUEST : None
+        })
+    def get(self, _):
         res = []
-        for account in active_accounts:
-            res.append(account.get_last_version())
-        res = list_to_queryset(AccountHistory, res).filter(**search_data).values(
-            'role',
-            'first_name',
-            'last_name',
-            'surname'
-            ).annotate(username=F('account__user__username'), id=F('account__id'))
-        return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
+        try:
+            with transaction.atomic():
+                for account in Account.objects.filter(status='active'):
+                    account_dict = account.get_last_version().to_dict()
+                    account_dict['objects'] = []
+                    all_matches = AccountToObject.objects.filter(account=account)
+                    if all_matches:
+                        for record in all_matches:
+                            account_dict['objects'].append(record.object.get_last_version().name)
+                    res.append(account_dict)
+                return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNT_OBJECTS_FIELDS).data)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка в транзакции
+
+    @extend_schema(responses={
+            status.HTTP_200_OK: None, 
+            status.HTTP_401_UNAUTHORIZED : None,
+            status.HTTP_400_BAD_REQUEST : None
+        },
+        request=inline_serializer(
+        name='account_to_object_create',
+           fields={
+               'first_name': ser.CharField(),
+               'last_name': ser.CharField(),
+               'surname': ser.CharField(),
+               'ids': ser.ListField()
+            }))
+    def post(self, request):
+        serializer = serializers.AccountObjectSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+            object_ids = data.pop('object_ids')
+            try:
+                with transaction.atomic():
+                    try:
+                        account = Account.objects.get(**data)
+                    except Exception:
+                        return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE нельзя точно определить аккаунт по фио
+                    for object_id in object_ids:
+                        try:
+                            object_ins = Object.objects.get(id=object_id)
+                        except Exception:
+                            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE нет объекта соответствующего данному id
+                        AccountToObject.objects.create(object=object_ins, account=account)
+                    return Response(status=status.HTTP_200_OK)
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
+        return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка при сериализации
