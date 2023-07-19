@@ -7,10 +7,10 @@ export const apiAdmissions = createApi({
   baseQuery,
   endpoints: builder => ({
     getAllAdmissions: builder.query<Admissions[], void>({
-      query: () => '/admissionss'
+      query: () => '/request/all'
     }),
     getAllArchiveAdmissions: builder.query<Admissions[], void>({
-      query: () => '/admissionss/archive'
+      query: () => '/admissions/archive'
     }),
     createAdmissions: builder.mutation<Admissions, void>({
       query: () => ({

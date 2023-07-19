@@ -23,7 +23,7 @@ export const LoginForm = () => {
     try {
       const response = await loginMutation({ username: login, password: password }).unwrap()
       dispatch(setToken(response.access))
-      return response ? navigate('/objects') : null
+      return response ? navigate('/admissions') : null
     } catch (error) {
       console.log(error)
     }
