@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
-from .config import ACCOUNT_TYPES, DEFAULT_LEN, NAMES_LEN, ACTION_ACCOUNT_LEN, ACCOUNT_TYPE_LEN, DEFAULT_ACTION_LEN
+from .config import ACCOUNT_TYPES, ACTION_ACCOUNT_LEN, ACCOUNT_TYPE_LEN
+from sirius.config import DEFAULT_ACTION_LEN, DEFAULT_LEN, NAMES_LEN
 
 class UUIDMixin(serializers.Serializer):
     id = serializers.UUIDField(required=False)
