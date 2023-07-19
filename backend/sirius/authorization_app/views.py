@@ -8,6 +8,7 @@ from django.conf import settings
 from django.middleware import csrf
 from os import getenv
 from dotenv import load_dotenv
+from sirius_access.models import Account
 
 
 load_dotenv()
@@ -49,12 +50,11 @@ class LoginView(APIView):
                     httponly = settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                     samesite = settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
                 )
-                # account_history = AccountHistory.objects.get(user=user)
                 res.data = {
                     "access": tokens['access_token'],
                     "refresh_exp": float(getenv('ACCESS_TOKEN_LIFETIME')),
                     "access_exp": float(getenv('REFRESH_TOKEN_LIFETIME')),
-                    # "account_id": str(account_history.account.id)
+                    "account_id": str(Account.objects.get(user=user).id)
                 }
                 res['X-CSRFToken'] = csrf.get_token(request)
                 return res
