@@ -446,6 +446,8 @@ class GetPostAccountsObjectsView(APIView):
                         account = Account.objects.get(**data)
                     except Exception:
                         return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE нельзя точно определить аккаунт по фио
+                    if account.get_last_version().role == 'security_officer' and len(object_ids) > 1:
+                        return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE сотрудник охраны не может быть закреплен более чем за 1 объектом
                     for object_id in object_ids:
                         try:
                             object_ins = Object.objects.get(id=object_id)
@@ -456,3 +458,56 @@ class GetPostAccountsObjectsView(APIView):
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
         return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка при сериализации
+
+
+class GetPutAccountToObjectView(APIView):
+
+    @extend_schema(responses={
+            status.HTTP_200_OK : serializers.ObjectSerializer(many=True),
+            status.HTTP_401_UNAUTHORIZED : None,
+            status.HTTP_400_BAD_REQUEST : None
+        })
+    def get(self, _, AccountId):
+        try:
+            account = Account.objects.get(id=AccountId)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE аккаунта с таким id не существует или id не верен
+        try:
+            with transaction.atomic():
+                res = []
+                for record in AccountToObject.objects.filter(account=account):
+                    res.append({'id': record.object.id, 'name': record.object.get_last_version().name})
+                return Response(serializers.ObjectSerializer(data=res, many=True).data)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
+
+    @extend_schema(responses={
+            status.HTTP_200_OK: None, 
+            status.HTTP_401_UNAUTHORIZED : None,
+            status.HTTP_400_BAD_REQUEST : None
+        },
+        request=inline_serializer(
+        name='account_to_object_put',
+           fields={
+               'object_ids': ser.ListField()
+            }))
+    def put(self, request, AccountId):
+        object_ids = request.data.pop('object_ids', None)
+        if not object_ids:
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE список с id пустой
+        try:
+            account = Account.objects.get(id=AccountId)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE аккаунта с таким id не существует или id не верен
+        try:
+            with transaction.atomic():
+                AccountToObject.objects.filter(account=account).delete()
+                for object_id in object_ids:
+                    try:
+                        object_ins = Object.objects.get(id=object_id)
+                    except Exception:
+                        return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE объекта с таким id не существует
+                    AccountToObject.objects.create(object=object_ins, account=account)
+                return Response(status=status.HTTP_200_OK)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
