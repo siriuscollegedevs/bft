@@ -11,7 +11,3 @@ def check_administrator(account) -> bool:
 def list_to_queryset(model: Model, data: list) -> QuerySet:
     pks = [obj.id for obj in data]
     return model.objects.filter(id__in=pks)
-
-# def get_last_version(instance: Model, history_model: Model) -> Model:
-#     model_name = instance._meta.model_name.lower()
-#     return history_model.objects.filter(**{model_name: instance}).order_by('-timestamp').first()

@@ -4,7 +4,7 @@ from .config import ACCOUNT_TYPES, ACTION_ACCOUNT_LEN, ACCOUNT_TYPE_LEN
 from sirius.config import DEFAULT_ACTION_LEN, DEFAULT_LEN, NAMES_LEN
 
 class UUIDMixin(serializers.Serializer):
-    id = serializers.UUIDField(required=False)
+    id = serializers.UUIDField(read_only=True)
 
 class ObjectSerializer(UUIDMixin, serializers.Serializer):
     name = serializers.CharField(max_length=DEFAULT_LEN)
@@ -33,10 +33,10 @@ class AccountSerializer(UUIDMixin, serializers.Serializer):
     surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
     last_name = serializers.CharField(max_length=NAMES_LEN)
     username = serializers.CharField(max_length=NAMES_LEN)
-    modified_by = serializers.CharField(max_length=DEFAULT_LEN, required=False)
-    action = serializers.CharField(max_length=ACTION_ACCOUNT_LEN, required=False)
+    modified_by = serializers.CharField(max_length=DEFAULT_LEN, read_only=True)
+    action = serializers.CharField(max_length=ACTION_ACCOUNT_LEN, read_only=True)
     password = serializers.CharField(trim_whitespace=False, max_length=128, required=False)
-    timestamp = serializers.DateTimeField(required=False)
+    timestamp = serializers.DateTimeField(read_only=True)
 
     def __init__(self, *args, **kwargs):
         fields = kwargs.pop('fields', None)
@@ -55,13 +55,6 @@ class AccountSerializer(UUIDMixin, serializers.Serializer):
             if value:
                 return value 
             raise serializers.ValidationError
-        return value
-
-    def validate_id(self, value):
-        if self.request_type == 'post':
-            if value:
-                raise serializers.ValidationError
-            return value
         return value
     
     def validate_role(self, value):

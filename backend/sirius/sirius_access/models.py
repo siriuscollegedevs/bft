@@ -1,7 +1,7 @@
 from django.db import models
 from uuid import uuid4
 from django.core.exceptions import ValidationError
-from .config import *
+from .config import ACCOUNT_TYPE_LEN, TYPE_CHOICES_ACCOUNT, ACTION_ACCOUNT_LEN, ACCOUNT_HISTORY_CHOICES
 from sirius.config import *
 from django.conf.global_settings import AUTH_USER_MODEL
 

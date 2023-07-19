@@ -1,17 +1,6 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Status, Human, Car, RequestHistory, RootState } from '../../types/api'
-import { config } from '../config'
-
-const baseQuery = fetchBaseQuery({
-  baseUrl: config.baseAPI,
-  prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.token
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`)
-    }
-    return headers
-  }
-})
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Status, Human, Car, AdmissionsHistory } from '../../types/api'
+import { baseQuery } from '../utils'
 
 export const apiRecord = createApi({
   reducerPath: 'apiRecord',
@@ -32,7 +21,7 @@ export const apiRecord = createApi({
         method: 'DELETE'
       })
     }),
-    getRecordHistoryById: builder.query<RequestHistory[], string>({
+    getRecordHistoryById: builder.query<AdmissionsHistory[], string>({
       query: (recordId: string) => `/record/history/${recordId}`
     }),
     updateHumanRecordById: builder.mutation<void, { recordId: string; recordData: Human }>({

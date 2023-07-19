@@ -1,24 +1,6 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import {
-  Accounts,
-  Account,
-  AccountHistory,
-  ExpandSearchRequestBody,
-  ChangePasswordData,
-  RootState
-} from '../../types/api'
-import { config } from '../config'
-
-const baseQuery = fetchBaseQuery({
-  baseUrl: config.baseAPI,
-  prepareHeaders: (headers, { getState }) => {
-    const token = (getState() as RootState).auth.token
-    if (token) {
-      headers.set('Authorization', `Bearer ${token}`)
-    }
-    return headers
-  }
-})
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { Accounts, Account, AccountHistory, ExpandSearchAdmissionsBody, ChangePasswordData } from '../../types/api'
+import { baseQuery } from '../utils'
 
 export const apiAccount = createApi({
   reducerPath: 'apiAccount',
@@ -70,7 +52,7 @@ export const apiAccount = createApi({
     getAccountHistoryById: builder.query<AccountHistory[], string>({
       query: accountId => `/account/history/${accountId}`
     }),
-    accountSearch: builder.mutation<Accounts[], ExpandSearchRequestBody>({
+    accountSearch: builder.mutation<Accounts[], ExpandSearchAdmissionsBody>({
       query: accountData => ({
         url: '/account/expand_search',
         method: 'POST',
@@ -83,14 +65,14 @@ export const apiAccount = createApi({
         }
       })
     }),
-    changeAccountPassword: builder.mutation<void, { accountId: string; requestBody: ChangePasswordData }>({
-      query: ({ accountId, requestBody }) => ({
+    changeAccountPassword: builder.mutation<void, { accountId: string; admissionsBody: ChangePasswordData }>({
+      query: ({ accountId, admissionsBody }) => ({
         url: `/account/change_pswd/${accountId}`,
         method: 'POST',
         body: {
-          status: requestBody.status,
-          current_password: requestBody.current_password,
-          new_password: requestBody.new_password
+          status: admissionsBody.status,
+          current_password: admissionsBody.current_password,
+          new_password: admissionsBody.new_password
         }
       })
     })

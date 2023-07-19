@@ -4,7 +4,8 @@ from rest_framework import status
 from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
-from django.db.models import F
+from django.db.models import F, Model, QuerySet
+from sirius.general_functions import get_user, check_administrator
 from django.contrib.auth.models import User
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
