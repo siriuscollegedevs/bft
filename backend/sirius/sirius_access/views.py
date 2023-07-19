@@ -10,6 +10,7 @@ from django.contrib.auth.models import User
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
 from .config import *
+from sirius.config import USELESS_FIELDS, FIELDS_TO_ADD
 
 
 # WORK WITH OBJECTS
@@ -59,7 +60,7 @@ class PostObject(APIView):
                 return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
 
 class ObjectApiView(APIView):
@@ -83,7 +84,7 @@ class ObjectApiView(APIView):
         try:
             obj = Object.objects.get(id=ObjectId)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=OBJECTID_ERROR_MSG)
         name = obj.get_info().name
         return Response(serializers.ObjectSerializer({'name': name}).data)
 
@@ -128,7 +129,7 @@ class ObjectApiView(APIView):
                     return Response(status=status.HTTP_200_OK)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
 
 class ObjectHistoryApiView(APIView):
@@ -141,7 +142,7 @@ class ObjectHistoryApiView(APIView):
         try:
             obj = Object.objects.get(id=ObjectId)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=OBJECTID_ERROR_MSG)
         res = ObjectHistory.objects.filter(object=obj).values("name", "version", "timestamp", "action").annotate(modified_by=F('modified_by__user__username'))
         return Response(serializers.ObjectHistorySerializer(res, many=True).data)
 
@@ -188,13 +189,13 @@ class PostAccount(APIView):
                 with transaction.atomic():
                     new_user = User.objects.create_user(username=data['username'], password=data['password'])
                     new_user.save()
-                    new_account = Account.objects.create(status='active', user=new_user)
-                    account_history_data = {key: data[key] for key in data if key != 'password'}
+                    new_account = Account.objects.create(status='active', user=new_user, role=data['role'])
+                    account_history_data = {key: data[key] for key in data if key not in ['password', 'role', 'username']}
                     AccountHistory.objects.create(action='created', account=new_account, modified_by=get_user(request), **account_history_data)
                     return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
 
 class GetPutDeleteAccount(APIView):
@@ -209,14 +210,15 @@ class GetPutDeleteAccount(APIView):
         try:
             account = Account.objects.get(id=AccountId)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=ACCOUNTID_ERROR_MSG)
         return Response(serializers.AccountSerializer(account.get_info()).data)
 
     @extend_schema(responses={
         status.HTTP_200_OK: None,
         status.HTTP_401_UNAUTHORIZED : None,
         status.HTTP_400_BAD_REQUEST : None
-    }, request=inline_serializer(name='post_account', fields={}))
+    }, request=inline_serializer(name='put_account', 
+    fields={key : ser.CharField() for key in ['first_name', 'surname', 'last_name', 'password']}))
     def put(self, request, AccountId):
         serializer = serializers.AccountSerializer(data=request.data)
         if serializer.is_valid():
@@ -227,20 +229,20 @@ class GetPutDeleteAccount(APIView):
                     if not check_administrator(get_user(request)):
                         return Response(status=status.HTTP_400_BAD_REQUEST)
                     user = User.objects.get(account=account)
-                    if data['username'] != user.username:
-                        user.username = data['username']
                     if data.get('password', ''):
                         user.set_password(data['password'])
+                        user.save()
                         action = 'password_changed'
                     else:
                         action = 'modified'
-                    user.save()
-                    account_history_data = {key: data[key] for key in data if key != 'password'}
-                    AccountHistory.objects.create(action=action, account=account, modified_by=get_user(request), **account_history_data) 
+                    new_data = {key : data[key] for key in data if data[key] and key != 'password'}
+                    info = account.get_last_version().__dict__
+                    old_data = {key : info[key] for key in info if key not in new_data.keys() and key not in USELESS_FIELDS + FIELDS_TO_ADD}
+                    AccountHistory.objects.create(action=action, account=account, modified_by=get_user(request), **old_data, **new_data) 
                     return Response(status=status.HTTP_200_OK)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
     @extend_schema(responses={
         status.HTTP_204_NO_CONTENT : None,
@@ -256,7 +258,7 @@ class GetPutDeleteAccount(APIView):
                 account.status = 'outdated'
                 account.save()
                 AccountHistory.objects.create(
-                    account=account, modified_by=get_user(request), action='deleted', **account.get_info())
+                    account=account, modified_by=get_user(request), action='deleted', **account.get_data_from_history())
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -280,12 +282,12 @@ class ChangePasswordApi(APIView):
                     with transaction.atomic():
                         user.set_password(data['new_password'])
                         user.save()
-                        AccountHistory.objects.create(account=account, modified_by=get_user(request), action='password_changed', **account.get_info())
+                        AccountHistory.objects.create(account=account, modified_by=get_user(request), action='password_changed', **account.get_data_from_history())
                         return Response(status=status.HTTP_200_OK)
                 except Exception:
                     return Response(status=status.HTTP_400_BAD_REQUEST)
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
 
 class AccountHistoryApiView(APIView):
@@ -311,8 +313,9 @@ class AccountHistoryApiView(APIView):
         try:
             account = Account.objects.get(id=AccountId)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        res = AccountHistory.objects.filter(account=account).values("role", "first_name", "last_name", "surname", "username", "timestamp", "action").annotate(modified_by=F('modified_by__user__username'))
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=ACCOUNTID_ERROR_MSG)
+        res = AccountHistory.objects.filter(account=account).values("first_name", "last_name", "surname", "timestamp", "action")\
+                .annotate(modified_by=F('modified_by__user__username'), username=F('account__user__username'), role=F('account__role'))
         return Response(serializers.AccountSerializer(res, many=True).data)
 
 

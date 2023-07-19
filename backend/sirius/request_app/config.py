@@ -32,5 +32,3 @@ REQUEST_GET_FIELDS = RECORD_GENERAL_FIELDS + ["id"]
 GET_RECORD_HISTORY_FIELDS = RECORD_GENERAL_FIELDS + ["action", "timestamp", "modified_by"]
 
 REQUIRED_FIELDS_FOR_RECORD  = ['type', 'object_id', 'from_date']
-USELESS_FIELDS = ['_state', 'id']
-FIELDS_TO_ADD =  ['timestamp', 'action', 'modified_by_id']
