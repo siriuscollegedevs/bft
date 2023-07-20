@@ -30,4 +30,3 @@ RECORD_GENERAL_FIELDS = ["car_number", "car_brand", "car_model",
                          "type", "first_name", "surname", "last_name", "from_date", "to_date", "note"]
 REQUEST_GET_FIELDS = RECORD_GENERAL_FIELDS + ["id"]
 GET_RECORD_HISTORY_FIELDS = RECORD_GENERAL_FIELDS + ["action", "timestamp", "modified_by"]
-

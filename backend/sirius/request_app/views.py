@@ -1,5 +1,5 @@
 from rest_framework.response import Response
-from .models import Request, RequestHistory, Record, RecordHistory
+from .models import Request, RequestHistory, Record, RecordHistory, RequestToObject
 from sirius_access.models import Object
 from rest_framework import status
 from django.db import transaction
@@ -33,18 +33,16 @@ class GetRequests(APIView):
         status.HTTP_200_OK: serializers.RequestSerializer(many=True),
         status.HTTP_400_BAD_REQUEST: None,
         status.HTTP_401_UNAUTHORIZED: None
-    }, description='request body is {"ids" : [ list of ids ]})')
+    }, request=inline_serializer(name='get_requests', fields={'ids': ser.ListField(child=ser.UUIDField())}))
     def post(self, request):
         objects_ids = request.data.get('ids', None)
         if objects_ids is None:
             res = [req.get_info() for req in Request.objects.filter(status=self.status)]
             return Response(serializers.RequestSerializer(res, many=True).data)
-        res_requests = set()
-        for record in Record.objects.filter(status=self.status):
-            if record.request.status == self.status:
-                if str(record.get_last_version().object.id) in objects_ids:
-                    res_requests.add(record.request)
-        res = [req.get_info() for req in res_requests]
+        res = []
+        for object_id in objects_ids:
+            res.extend([line.request.get_info()
+                       for line in RequestToObject.objects.filter(object=Object.objects.get(id=object_id))])
         return Response(serializers.RequestSerializer(res, many=True).data)
 
 
@@ -61,7 +59,7 @@ class PostRequest(APIView):
         status.HTTP_200_OK: inline_serializer(name='post_request_res', fields={'id': ser.UUIDField()}),
         status.HTTP_400_BAD_REQUEST: None,
         status.HTTP_401_UNAUTHORIZED: None
-    }, request=inline_serializer(name='post_request_req', fields={'code': ser.CharField()}))
+    }, request=inline_serializer(name='post_request_req', fields={'code': ser.CharField(), 'object_ids': ser.ListField(child=ser.UUIDField())}))
     def post(self, request):
         serializer = serializers.RequestSerializer(data=request.data)
         if serializer.is_valid():
@@ -70,10 +68,11 @@ class PostRequest(APIView):
                 with transaction.atomic():
                     req = Request.objects.create(status='active')
                     code = code if code else req.id  # NOTE
-                    object = Object.objects.get(id=serializer.validated_data['object_id'])
-                    RequestHistory.objects.create(request=req, code=code, object=object,
+                    for obj_id in serializer.validated_data['object_ids']:
+                        RequestToObject.objects.create(object=Object.objects.get(id=obj_id), request=req)
+                    RequestHistory.objects.create(request=req, code=code,
                                                   action='created', modified_by=get_user(request))
-                    return Response(serializers.RequestSerializer({'id': request.id}).data)
+                    return Response(serializers.RequestSerializer({'id': req.id}).data)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)

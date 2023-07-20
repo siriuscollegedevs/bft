@@ -24,8 +24,11 @@ class Request(UUIDMixin, models.Model):
         info['id'] = self.id
         info['timestamp'] = self.get_last_version().timestamp
         info['code'] = self.get_last_version().code
-        info['object'] = self.get_last_version().object.get_info().name
+        info['objects'] = self.get_objects()
         return info
+
+    def get_objects(self):
+        return [line.object.get_info().name for line in RequestToObject.objects.filter(request=self)]
 
     def make_outdated(self, user, action, note=''):
         """
@@ -41,7 +44,7 @@ class Request(UUIDMixin, models.Model):
         """
         self.status = 'outdated'
         self.save()
-        RequestHistory.objects.create(action=action, modified_by=user, request=self, code=self.get_last_version().code, object=self.get_last_version().object)
+        RequestHistory.objects.create(action=action, modified_by=user, request=self, code=self.get_last_version().code)
         for record in Record.objects.filter(request=self, status='active'):
             record.make_outdated(user=user, action=action, note=note)
 
@@ -136,3 +139,11 @@ class RequestHistory(models.Model):
 
     class Meta:
         db_table = 'request_history'
+
+
+class RequestToObject(UUIDMixin, models.Model):
+    object = models.ForeignKey(Object, models.CASCADE)
+    request = models.ForeignKey(Request, models.CASCADE)
+
+    class Meta:
+        db_table = 'request_to_object'

@@ -11,8 +11,8 @@ class UUIDMixin(serializers.Serializer):
 class RequestSerializer(UUIDMixin, serializers.Serializer):
     timestamp = serializers.DateTimeField(required=False)
     code = serializers.CharField(max_length=50, allow_blank=True, allow_null=True, required=False)
-    object_id = serializers.UUIDField(write_only=True, allow_null=True)
-    object = serializers.CharField(read_only=True)
+    object_ids = serializers.ListField(write_only=True, child=serializers.UUIDField(), allow_empty=False)
+    objects = serializers.ListField(read_only=True, child=serializers.CharField())
 
 
 class RecordSerializer(UUIDMixin, serializers.Serializer):
