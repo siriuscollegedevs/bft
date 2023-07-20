@@ -22,13 +22,12 @@ USELESS_FIELDS_FOR_NEW_RECORD_HISTORY = ['id', '_state', 'action', 'timestamp', 
 RECORD_API_STATUSES = ('canceled', 'closed')
 
 # RESPONSE MESSAGES
-REQUESTID_ERROR_MSG =  {'error' : 'Invalid RequestId'}
-RECORDID_ERROR_MSG = {'error' : 'Invalid RequestdId'}
+REQUESTID_ERROR_MSG = {'error': 'Invalid RequestId'}
+RECORDID_ERROR_MSG = {'error': 'Invalid RequestdId'}
 
 # SERIALIZER FIELDS SETS
-RECORD_GENERAL_FIELDS = ["car_number", "car_brand", "car_model", "object",
-    "type", "first_name", "surname", "last_name", "from_date", "to_date", "note"]
+RECORD_GENERAL_FIELDS = ["car_number", "car_brand", "car_model",
+                         "type", "first_name", "surname", "last_name", "from_date", "to_date", "note"]
 REQUEST_GET_FIELDS = RECORD_GENERAL_FIELDS + ["id"]
 GET_RECORD_HISTORY_FIELDS = RECORD_GENERAL_FIELDS + ["action", "timestamp", "modified_by"]
 
-REQUIRED_FIELDS_FOR_RECORD  = ['type', 'object_id', 'from_date']
