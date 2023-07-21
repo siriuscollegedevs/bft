@@ -115,3 +115,5 @@ export const DynamicHeader = () => {
     </>
   )
 }
+
+//TODO сделать адекватный выход(когда будет api)
