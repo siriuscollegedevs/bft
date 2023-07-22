@@ -2,7 +2,7 @@ from sirius_access.models import Account
 from django.db.models import Model, QuerySet
 
 
-def get_account(request) -> Account:
+def get_user(request) -> Account:
     return Account.objects.get(user=request.user)
 
 def check_administrator(account) -> bool:
