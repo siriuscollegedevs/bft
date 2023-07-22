@@ -71,3 +71,10 @@ class ChangePasswordSerializer(serializers.Serializer):
         if value in ACCOUNT_TYPES:
             return value
         return serializers.ValidationError
+
+
+class AccountObjectSerializer(serializers.Serializer):
+    first_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
+    surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
+    last_name = serializers.CharField(max_length=NAMES_LEN)
+    object_ids = serializers.ListField(child=serializers.UUIDField(), allow_empty=False)

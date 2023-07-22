@@ -15,7 +15,7 @@ class UUIDMixin(models.Model):
 class Object(UUIDMixin, models.Model):
     status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
 
-    def get_info(self):
+    def get_last_version(self):
             return ObjectHistory.objects.filter(object=self).order_by('-timestamp').first()
 
     class Meta:
@@ -28,7 +28,7 @@ class Account(UUIDMixin, models.Model):
 
     def get_last_version(self):
         return AccountHistory.objects.filter(account=self).order_by('-timestamp').first()
-    
+
     def get_info(self):
         fields = ['role', 'first_name', 'last_name', 'surname', 'username']
         return {key : self.get_last_version().__dict__[key] for key in self.get_last_version().__dict__ if key in fields}
