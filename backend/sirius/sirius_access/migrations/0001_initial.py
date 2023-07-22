@@ -74,6 +74,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('account', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sirius_access.account')),
                 ('object', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sirius_access.object')),
+                ('status', models.CharField(choices=[('active', 'Активен'), ('outdated', 'Неактивен')], max_length=10)),
             ],
             options={
                 'db_table': 'account_to_object',
