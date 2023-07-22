@@ -12,14 +12,15 @@ class UUIDMixin(models.Model):
     class Meta:
         abstract = True
 
+
 class Object(UUIDMixin, models.Model):
     status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
 
     def get_info(self):
-            return ObjectHistory.objects.filter(object=self).order_by('-timestamp').first()
+        return ObjectHistory.objects.filter(object=self).order_by('-timestamp').first()
 
     class Meta:
-        db_table =  'objects'
+        db_table = 'objects'
 
 
 class Account(UUIDMixin, models.Model):
@@ -31,10 +32,11 @@ class Account(UUIDMixin, models.Model):
 
     def get_info(self):
         fields = ['role', 'first_name', 'last_name', 'surname', 'username']
-        return {key : self.get_last_version().__dict__[key] for key in self.get_last_version().__dict__ if key in fields}
+        return {key: self.get_last_version().__dict__[key] for key in self.get_last_version().__dict__ if key in fields}
 
     class Meta:
-        db_table =  'accounts'
+        db_table = 'accounts'
+
 
 class AccountToObject(UUIDMixin, models.Model):
     account = models.ForeignKey(Account, on_delete=models.PROTECT)
@@ -61,6 +63,7 @@ class ObjectHistory(UUIDMixin, models.Model):
     class Meta:
         db_table = 'objects_history'
 
+
 class AccountHistory(UUIDMixin, models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     role = models.CharField(max_length=ACCOUNT_TYPE_LEN, choices=TYPE_CHOICES_ACCOUNT)
@@ -73,7 +76,7 @@ class AccountHistory(UUIDMixin, models.Model):
     username = models.CharField(max_length=DEFAULT_LEN)
 
     def to_dict(self):
-        info = {key : self.__dict__[key] for key in self.__dict__ if key not in ['_state', 'account', 'id']}
+        info = {key: self.__dict__[key] for key in self.__dict__ if key not in ['_state', 'account', 'id']}
         info['id'] = self.account.id
         info['modified_by'] = self.modified_by.user.username
         info['username'] = self.account.user.username
