@@ -12,15 +12,22 @@ from rest_framework import serializers as ser
 from .config import *
 
 
+def check_name(name):
+    for obj in Object.objects.filter(status='active'):
+        if obj.get_info().name == name:
+            return False
+    return True
+
 # WORK WITH OBJECTS
+
 
 class GetObjects(APIView):
     status
 
     @extend_schema(responses={
-            status.HTTP_200_OK:serializers.ObjectSerializer(many=True), 
-            status.HTTP_401_UNAUTHORIZED : None
-        })
+        status.HTTP_200_OK: serializers.ObjectSerializer(many=True),
+        status.HTTP_401_UNAUTHORIZED: None
+    })
     def get(self, _):
         res = []
         for obj in Object.objects.filter(status=self.status):
@@ -39,17 +46,17 @@ class GetActualObjects(GetObjects):
 class PostObject(APIView):
     @extend_schema(responses={
         status.HTTP_201_CREATED: None,
-        status.HTTP_401_UNAUTHORIZED : None,
-        status.HTTP_400_BAD_REQUEST : None
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
     }, request=inline_serializer(
         name='object_name',
-           fields={'name': ser.CharField(),}
-       ))
+        fields={'name': ser.CharField(), }
+    ))
     def post(self, request):
-        serializer = serializers.ObjectSerializer(data=request.data, request_type='post')
+        serializer = serializers.ObjectSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             name = serializer.validated_data['name']
-            if not self.check_name(name):
+            if not check_name(name):
                 return Response(status=status.HTTP_409_CONFLICT)
             try:
                 with transaction.atomic():
@@ -64,20 +71,13 @@ class PostObject(APIView):
 
 class ObjectApiView(APIView):
 
-    @staticmethod
-    def check_name(name):
-        for obj in Object.objects.filter(status='active'):
-            if obj.get_info().name == name:
-                return False
-        return True
-
     @extend_schema(responses={
         status.HTTP_201_CREATED: inline_serializer(
-        name='object_name',
-           fields={'name': ser.CharField(),}
-       ),
-        status.HTTP_401_UNAUTHORIZED : None,
-        status.HTTP_400_BAD_REQUEST : None
+            name='object_name',
+            fields={'name': ser.CharField(), }
+        ),
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
     })
     def get(self, _, ObjectId):
         try:
@@ -88,9 +88,9 @@ class ObjectApiView(APIView):
         return Response(serializers.ObjectSerializer({'name': name}).data)
 
     @extend_schema(responses={
-        status.HTTP_204_NO_CONTENT : None,
-        status.HTTP_401_UNAUTHORIZED : None,
-        status.HTTP_400_BAD_REQUEST : None
+        status.HTTP_204_NO_CONTENT: None,
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
     })
     def delete(self, request, ObjectId):
         try:
@@ -106,18 +106,18 @@ class ObjectApiView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(responses={
-        status.HTTP_200_OK : None,
-        status.HTTP_401_UNAUTHORIZED : None,
-        status.HTTP_400_BAD_REQUEST : None
+        status.HTTP_200_OK: None,
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
     }, request=inline_serializer(
         name='object_name',
-           fields={'name': ser.CharField(),}
-       ))
+        fields={'name': ser.CharField(), }
+    ))
     def put(self, request, ObjectId):
         serializer = serializers.ObjectSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             name = serializer.validated_data['name']
-            if not self.check_name(name):
+            if not check_name(name):
                 return Response(status=status.HTTP_409_CONFLICT)
             try:
                 with transaction.atomic():
@@ -133,27 +133,29 @@ class ObjectApiView(APIView):
 
 class ObjectHistoryApiView(APIView):
     @extend_schema(responses={
-        status.HTTP_200_OK : serializers.ObjectHistorySerializer,
-        status.HTTP_401_UNAUTHORIZED : None,
-        status.HTTP_400_BAD_REQUEST : None
+        status.HTTP_200_OK: serializers.ObjectHistorySerializer,
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
     })
     def get(self, _, ObjectId):
         try:
             obj = Object.objects.get(id=ObjectId)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        res = ObjectHistory.objects.filter(object=obj).values("name", "version", "timestamp", "action").annotate(modified_by=F('modified_by__user__username'))
+        res = ObjectHistory.objects.filter(object=obj).values(
+            "name", "version", "timestamp", "action").annotate(modified_by=F('modified_by__user__username'))
         return Response(serializers.ObjectHistorySerializer(res, many=True).data)
 
-#WORK WITH ACCOUNTS
+# WORK WITH ACCOUNTS
+
 
 class GetAccounts(APIView):
     status: str
 
     @extend_schema(responses={
-            status.HTTP_200_OK:serializers.AccountSerializer(many=True, fields=GET_ACCOUNTS_FIELDS), 
-            status.HTTP_401_UNAUTHORIZED : None
-        })
+        status.HTTP_200_OK: serializers.AccountSerializer(many=True, fields=GET_ACCOUNTS_FIELDS),
+        status.HTTP_401_UNAUTHORIZED: None
+    })
     def get(self, _):
         res = []
         for account in Account.objects.filter(status=self.status):
@@ -173,24 +175,25 @@ class PostAccount(APIView):
 
     @extend_schema(responses={
         status.HTTP_201_CREATED: None,
-        status.HTTP_401_UNAUTHORIZED : None,
-        status.HTTP_400_BAD_REQUEST : None
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
     }, request=inline_serializer(
         name='post_account',
-           fields={key : ser.CharField() for key in ACCOUNT_GET_REQUEST_FIELDS}))
+        fields={key: ser.CharField() for key in ACCOUNT_GET_REQUEST_FIELDS}))
     def post(self, request):
         serializer = serializers.AccountSerializer(data=request.data, request_type='post')
         if serializer.is_valid():
             data = serializer.validated_data
             try:
                 if not check_administrator(get_user(request)):
-                        return Response(status=status.HTTP_400_BAD_REQUEST)
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
                 with transaction.atomic():
                     new_user = User.objects.create_user(username=data['username'], password=data['password'])
                     new_user.save()
                     new_account = Account.objects.create(status='active', user=new_user)
                     account_history_data = {key: data[key] for key in data if key != 'password'}
-                    AccountHistory.objects.create(action='created', account=new_account, modified_by=get_user(request), **account_history_data)
+                    AccountHistory.objects.create(action='created', account=new_account,
+                                                  modified_by=get_user(request), **account_history_data)
                     return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -201,10 +204,10 @@ class GetPutDeleteAccount(APIView):
 
     @extend_schema(responses={
         status.HTTP_200_OK: inline_serializer(
-        name='get_account',
-           fields={key : ser.CharField() for key in GET_ACCOUNT_FIELDS}),
-        status.HTTP_401_UNAUTHORIZED : None,
-        status.HTTP_400_BAD_REQUEST : None})
+            name='get_account',
+            fields={key: ser.CharField() for key in GET_ACCOUNT_FIELDS}),
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None})
     def get(self, _, AccountId):
         try:
             account = Account.objects.get(id=AccountId)
@@ -214,8 +217,8 @@ class GetPutDeleteAccount(APIView):
 
     @extend_schema(responses={
         status.HTTP_200_OK: None,
-        status.HTTP_401_UNAUTHORIZED : None,
-        status.HTTP_400_BAD_REQUEST : None
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
     }, request=inline_serializer(name='post_account', fields={}))
     def put(self, request, AccountId):
         serializer = serializers.AccountSerializer(data=request.data)
@@ -236,21 +239,22 @@ class GetPutDeleteAccount(APIView):
                         action = 'modified'
                     user.save()
                     account_history_data = {key: data[key] for key in data if key != 'password'}
-                    AccountHistory.objects.create(action=action, account=account, modified_by=get_user(request), **account_history_data) 
+                    AccountHistory.objects.create(action=action, account=account,
+                                                  modified_by=get_user(request), **account_history_data)
                     return Response(status=status.HTTP_200_OK)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     @extend_schema(responses={
-        status.HTTP_204_NO_CONTENT : None,
-        status.HTTP_401_UNAUTHORIZED : None,
-        status.HTTP_400_BAD_REQUEST : None
+        status.HTTP_204_NO_CONTENT: None,
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
     })
     def delete(self, request, AccountId):
         try:
             if not check_administrator(get_user(request)):
-                        return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
             with transaction.atomic():
                 account = Account.objects.get(id=AccountId)
                 account.status = 'outdated'
@@ -266,8 +270,8 @@ class ChangePasswordApi(APIView):
 
     @extend_schema(responses={
         status.HTTP_200_OK: None,
-        status.HTTP_401_UNAUTHORIZED : None,
-        status.HTTP_400_BAD_REQUEST : None
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
     }, request=serializers.ChangePasswordSerializer)
     def post(self, request, AccountId):
         serializer = serializers.ChangePasswordSerializer(data=request.data)
@@ -280,7 +284,8 @@ class ChangePasswordApi(APIView):
                     with transaction.atomic():
                         user.set_password(data['new_password'])
                         user.save()
-                        AccountHistory.objects.create(account=account, modified_by=get_user(request), action='password_changed', **account.get_info())
+                        AccountHistory.objects.create(account=account, modified_by=get_user(
+                            request), action='password_changed', **account.get_info())
                         return Response(status=status.HTTP_200_OK)
                 except Exception:
                     return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -291,28 +296,29 @@ class ChangePasswordApi(APIView):
 class AccountHistoryApiView(APIView):
 
     @extend_schema(responses={
-            status.HTTP_200_OK : inline_serializer(
-                many=True, 
-                name='account_history', 
-                fields={
-                    "role" : ser.CharField(),
-                    "first_name" : ser.CharField(),
-                    "surname" : ser.CharField(),
-                    "last_name" : ser.CharField(),
-                    "username" : ser.CharField(),
-                    "modified_by" : ser.CharField(),
-                    "action" : ser.CharField(),
-                    "password" : ser.CharField(),
-                    "timestamp" : ser.DateTimeField()}),
-            status.HTTP_401_UNAUTHORIZED : None,
-            status.HTTP_400_BAD_REQUEST : None
-        })
+        status.HTTP_200_OK: inline_serializer(
+            many=True,
+            name='account_history',
+            fields={
+                "role": ser.CharField(),
+                "first_name": ser.CharField(),
+                "surname": ser.CharField(),
+                "last_name": ser.CharField(),
+                "username": ser.CharField(),
+                "modified_by": ser.CharField(),
+                "action": ser.CharField(),
+                "password": ser.CharField(),
+                "timestamp": ser.DateTimeField()}),
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
+    })
     def get(self, _, AccountId):
         try:
             account = Account.objects.get(id=AccountId)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        res = AccountHistory.objects.filter(account=account).values("role", "first_name", "last_name", "surname", "username", "timestamp", "action").annotate(modified_by=F('modified_by__user__username'))
+        res = AccountHistory.objects.filter(account=account).values(
+            "role", "first_name", "last_name", "surname", "username", "timestamp", "action").annotate(modified_by=F('modified_by__user__username'))
         return Response(serializers.AccountSerializer(res, many=True).data)
 
 
@@ -324,13 +330,13 @@ def list_to_queryset(model: Model, data: list) -> QuerySet:
 class AccountExpandSearch(APIView):
 
     @extend_schema(responses={
-            status.HTTP_200_OK:serializers.AccountSerializer(many=True, fields=GET_ACCOUNTS_FIELDS), 
-            status.HTTP_401_UNAUTHORIZED : None,
-            status.HTTP_400_BAD_REQUEST : None
-        },
+        status.HTTP_200_OK: serializers.AccountSerializer(many=True, fields=GET_ACCOUNTS_FIELDS),
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
+    },
         request=inline_serializer(
         name='account_expand_search',
-           fields={key : ser.CharField() for key in GET_ACCOUNT_FIELDS}))
+        fields={key: ser.CharField() for key in GET_ACCOUNT_FIELDS}))
     def post(self, request):
         search_data = {key: value for key, value in request.data.items() if value}
         if all([(not bool(value)) for value in list(request.data.values())]):
@@ -347,5 +353,5 @@ class AccountExpandSearch(APIView):
             'first_name',
             'last_name',
             'surname'
-            ).annotate(username=F('account__user__username'), id=F('account__id'))
+        ).annotate(username=F('account__user__username'), id=F('account__id'))
         return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
