@@ -41,6 +41,7 @@ class Account(UUIDMixin, models.Model):
 class AccountToObject(UUIDMixin, models.Model):
     account = models.ForeignKey(Account, on_delete=models.PROTECT)
     object = models.ForeignKey(Object, on_delete=models.PROTECT)
+    status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
 
     class Meta:
         db_table = 'account_to_object'
