@@ -25,7 +25,7 @@ class GetObjects(APIView):
     def get(self, _):
         res = []
         for obj in Object.objects.filter(status=self.status):
-            res.append({'id': obj.id, 'name': obj.get_last_version().name})
+            res.append({'id': obj.id, 'name': obj.get_info().name})
         return Response(serializers.ObjectSerializer(res, many=True).data)
 
 
@@ -68,7 +68,7 @@ class ObjectApiView(APIView):
     @staticmethod
     def check_name(name):
         for obj in Object.objects.filter(status='active'):
-            if obj.get_last_version().name == name:
+            if obj.get_info().name == name:
                 return False
         return True
 
@@ -85,7 +85,7 @@ class ObjectApiView(APIView):
             obj = Object.objects.get(id=ObjectId)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        name = obj.get_last_version().name
+        name = obj.get_info().name
         return Response(serializers.ObjectSerializer({'name': name}).data)
 
     @extend_schema(responses={
@@ -99,7 +99,7 @@ class ObjectApiView(APIView):
                 obj = Object.objects.get(id=ObjectId)
                 obj.status = 'outdated'
                 obj.save()
-                name = obj.get_last_version().name
+                name = obj.get_info().name
                 ObjectHistory.objects.create(
                     object=obj, name=name, modified_by=gf.get_account(request), action='deleted')
         except Exception:
@@ -123,7 +123,7 @@ class ObjectApiView(APIView):
             try:
                 with transaction.atomic():
                     obj = Object.objects.get(id=ObjectId)
-                    version = obj.get_last_version().version + 1
+                    version = obj.get_info().version + 1
                     ObjectHistory.objects.create(
                         object=obj, name=name, modified_by=gf.get_account(request), action='modified', version=version)
                     return Response(status=status.HTTP_200_OK)
@@ -416,7 +416,7 @@ class GetPostAccountsObjectsView(APIView):
                     all_matches = AccountToObject.objects.filter(account=account)
                     if all_matches:
                         for record in all_matches:
-                            account_dict['objects'].append(record.object.get_last_version().name)
+                            account_dict['objects'].append(record.object.get_info().name)
                     res.append(account_dict)
                 return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNT_OBJECTS_FIELDS).data)
         except Exception:
@@ -476,7 +476,7 @@ class GetPutAccountToObjectView(APIView):
             with transaction.atomic():
                 res = []
                 for record in AccountToObject.objects.filter(account=account):
-                    res.append({'id': record.object.id, 'name': record.object.get_last_version().name})
+                    res.append({'id': record.object.id, 'name': record.object.get_info().name})
                 return Response(serializers.ObjectSerializer(data=res, many=True).data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции

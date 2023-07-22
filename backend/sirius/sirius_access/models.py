@@ -15,7 +15,7 @@ class UUIDMixin(models.Model):
 class Object(UUIDMixin, models.Model):
     status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
 
-    def get_last_version(self):
+    def get_info(self):
             return ObjectHistory.objects.filter(object=self).order_by('-timestamp').first()
 
     class Meta:
