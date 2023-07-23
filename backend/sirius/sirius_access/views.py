@@ -308,7 +308,6 @@ class AccountHistoryApiView(APIView):
                 "username": ser.CharField(),
                 "modified_by": ser.CharField(),
                 "action": ser.CharField(),
-                "password": ser.CharField(),
                 "timestamp": ser.DateTimeField()}),
         status.HTTP_401_UNAUTHORIZED: None,
         status.HTTP_400_BAD_REQUEST: None
@@ -324,6 +323,7 @@ class AccountHistoryApiView(APIView):
 
 
 class AccountExpandSearch(APIView):
+    status: str
 
     @extend_schema(responses={
         status.HTTP_200_OK: serializers.AccountSerializer(many=True, fields=GET_ACCOUNTS_FIELDS),
@@ -339,10 +339,10 @@ class AccountExpandSearch(APIView):
             with transaction.atomic():
                 if all([(not bool(value)) for value in list(request.data.values())]):
                     res = []
-                    for account in Account.objects.filter(status='active'):
+                    for account in Account.objects.filter(status=self.status):
                         res.append(account.get_last_version().to_dict())
                     return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
-                active_accounts = Account.objects.filter(status='active')
+                active_accounts = Account.objects.filter(status=self.status)
                 res = []
                 for account in active_accounts:
                     res.append(account.get_last_version())
@@ -355,6 +355,15 @@ class AccountExpandSearch(APIView):
                 return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class ActualAccountExpandSearch(AccountExpandSearch):
+    status = 'active'
+
+
+class ArchiveAccountExpandSearch(AccountExpandSearch):
+    status = 'outdated'
+
 
 # ACCOUNT TO OBJECT VIEWS
 

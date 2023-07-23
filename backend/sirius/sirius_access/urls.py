@@ -15,7 +15,8 @@ urlpatterns = [
     path('account/<uuid:AccountId>', views.GetPutDeleteAccount.as_view()),
     path('account/change_pswd/<uuid:AccountId>', views.ChangePasswordApi.as_view()),
     path('account/history/<uuid:AccountId>', views.AccountHistoryApiView.as_view()),
-    path('account/expand_search', views.AccountExpandSearch.as_view()),
+    path('account/expand_search', views.ActualAccountExpandSearch.as_view()),
+    path('account/expand_search/archive', views.ArchiveAccountExpandSearch.as_view()),
     # ACCOUNT TO OBJECTS
     path('account_to_objects', views.GetPostActualAccountsObjectsView.as_view()),
     path('account_to_objects/archive', views.GetArchiveAccountsObjectsView.as_view()),
