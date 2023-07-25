@@ -32,7 +32,11 @@ export const DynamicHeader = () => {
     isError: currentAccountError
   } = useGetAccountByIdQuery(mycurrentAccountId)
 
-  const roles = {
+  type Roles = {
+    [key: string]: string
+  }
+
+  const roles: Roles = {
     administrator: 'Администратор',
     manager: 'Руководитель',
     specialist: 'Сотрудник СБ',
@@ -71,7 +75,7 @@ export const DynamicHeader = () => {
                   <LogoIcon />
                 </HeaderLogo>
                 <CustomTypography>{`Доступ.${
-                  currentAccountData?.role !== null ? roles[currentAccountData?.role as keyof typeof roles] : 'Error'
+                  currentAccountData?.role !== null ? roles[currentAccountData?.role] : 'Error'
                 }`}</CustomTypography>
                 <Box sx={{ flexGrow: 1 }} />
                 {currentAccountData?.role === roles.manager && (
