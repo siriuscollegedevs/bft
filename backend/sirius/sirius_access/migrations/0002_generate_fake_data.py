@@ -24,23 +24,30 @@ USER_DATA = [
 ]
 
 ACCOUNT_DATA = [
-    {'role': 'manager', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'specialist', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'security_officer', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'administrator', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'manager', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'specialist', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'security_officer', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'administrator', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'manager', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'specialist', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'security_officer', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'administrator', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'manager', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'specialist', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'security_officer', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'role': 'administrator', 'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
 ]
+
+ACCOUNT_ROLES = [
+    {'role': 'manager'},
+    {'role': 'specialist'},
+    {'role': 'security_officer'},
+    {'role': 'administartor'},
+] * 4
 
 OBJECT_DATA = [
     {'version': 0, 'name': 'Фишт'},
@@ -55,10 +62,19 @@ ACCOUNT_HISTORY = [
     {'first_name': 'Андрей', 'last_name': 'Иванов', 'surname': 'Иванович'},
     {'first_name': 'Андрей', 'last_name': 'Андреев', 'surname': 'Иванович'},
     {'first_name': 'Андрей', 'last_name': 'Андреев', 'surname': 'Андреевич'},
-    {'first_name': 'Илья', 'last_name': 'Андреев', 'surname': 'Ильин'},
+    {'first_name': 'Илья', 'last_name': 'Андреев', 'surname': 'Константинович'},
     {'first_name': 'Илья', 'last_name': 'Илюшев', 'surname': 'Ильин'},
     {'first_name': 'Игорь', 'last_name': 'Карпов', 'surname': 'Ильин'},
     {'first_name': 'Игорь', 'last_name': 'Карпов', 'surname': 'Игоревич'},
+    {'first_name': 'Артём', 'last_name': 'Иванов', 'surname': 'Иванович'},
+    {'first_name': 'Артём', 'last_name': 'Андреев', 'surname': 'Романович'},
+    {'first_name': 'Артём', 'last_name': 'Мишин', 'surname': 'Андреевич'},
+    {'first_name': 'Константин', 'last_name': 'Мишин', 'surname': 'Романович'},
+    {'first_name': 'Константин', 'last_name': 'Илюшев', 'surname': 'Ильин'},
+    {'first_name': 'Константин', 'last_name': 'Карпов', 'surname': 'Романович'},
+    {'first_name': 'Артур', 'last_name': 'Мишин', 'surname': 'Игоревич'},
+    {'first_name': 'Артур', 'last_name': 'Карпов', 'surname': 'Романович'},
+    {'first_name': 'Артур', 'last_name': 'Карпов', 'surname': 'Константинович'},
 ]
 
 OBJECT_HISTORY = [
@@ -76,16 +92,14 @@ class Migration(migrations.Migration):
     def generate_random_data(self, schema_editor):
 
         with transaction.atomic():
-            for user_data, account_data in zip(USER_DATA, ACCOUNT_DATA):
+            for user_data, account_data, account_role in zip(USER_DATA, ACCOUNT_DATA, ACCOUNT_ROLES):
                 user = User.objects.create_user(**user_data)
-                account = Account.objects.create(status='active', user=user)
-                AccountHistory.objects.create(account=account, modified_by=account, username=user.username, **account_data)
+                account = Account.objects.create(status='active', user=user, **account_role)
+                AccountHistory.objects.create(account=account, modified_by=account, **account_data)
                 for record in ACCOUNT_HISTORY:
                     AccountHistory.objects.create(
                         account=account,
                         modified_by=account,
-                        username=user.username,
-                        role=account_data['role'],
                         action='modified',
                         **record
                     )
