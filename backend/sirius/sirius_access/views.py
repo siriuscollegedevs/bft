@@ -369,8 +369,8 @@ class AccountExpandSearch(APIView):
                 for account in active_accounts:
                     res.append(account.get_last_version())
                 res = list_to_queryset(AccountHistory, res).filter(**search_data).values(
-                    'role', 'first_name', 'last_name', 'surname'
-                    ).annotate(username=F('account__user__username'), id=F('account__id'))
+                    'first_name', 'last_name', 'surname'
+                ).annotate(username=F('account__user__username'), id=F('account__id'), role=F('account__role'))
                 return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
