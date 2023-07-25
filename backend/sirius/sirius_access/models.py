@@ -12,14 +12,15 @@ class UUIDMixin(models.Model):
     class Meta:
         abstract = True
 
+
 class Object(UUIDMixin, models.Model):
     status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
 
     def get_info(self):
-            return ObjectHistory.objects.filter(object=self).order_by('-timestamp').first()
+        return ObjectHistory.objects.filter(object=self).order_by('-timestamp').first()
 
     class Meta:
-        db_table =  'objects'
+        db_table = 'objects'
 
 
 class Account(UUIDMixin, models.Model):
@@ -29,7 +30,7 @@ class Account(UUIDMixin, models.Model):
 
     def get_last_version(self):
         return AccountHistory.objects.filter(account=self).order_by('-timestamp').first()
-    
+
     def get_info(self):
         fields = ['first_name', 'last_name', 'surname']
         res = {key : self.get_last_version().__dict__[key] for key in self.get_last_version().__dict__ if key in fields}
@@ -42,7 +43,8 @@ class Account(UUIDMixin, models.Model):
         return {key : data[key] for key in data if key in ['first_name', 'last_name', 'surname']}
 
     class Meta:
-        db_table =  'accounts'
+        db_table = 'accounts'
+
 
 class AccountToObject(UUIDMixin, models.Model):
     account = models.ForeignKey(Account, on_delete=models.PROTECT)
@@ -69,6 +71,7 @@ class ObjectHistory(UUIDMixin, models.Model):
     class Meta:
         db_table = 'objects_history'
 
+
 class AccountHistory(UUIDMixin, models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='modified')
@@ -79,7 +82,7 @@ class AccountHistory(UUIDMixin, models.Model):
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT, related_name='modifier')
 
     def to_dict(self):
-        info = {key : self.__dict__[key] for key in self.__dict__ if key not in ['_state', 'account', 'id']}
+        info = {key: self.__dict__[key] for key in self.__dict__ if key not in ['_state', 'account', 'id']}
         info['id'] = self.account.id
         info['modified_by'] = self.modified_by.user.username
         info['username'] = self.account.user.username
