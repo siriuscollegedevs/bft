@@ -19,3 +19,7 @@ ACCOUNT_GET_REQUEST_FIELDS = ('role', 'first_name', 'surname', 'last_name', 'use
 GET_ACCOUNT_FIELDS = ('role', 'first_name', 'surname', 'last_name', 'username')
 
 ACCOUNT_TYPES = ('administrator', 'manager', 'specialist', 'security_officer')
+
+# RESPONSE MESSAGES
+OBJECTID_ERROR_MSG =  {'error' : 'Invalid ObjectId'}
+ACCOUNTID_ERROR_MSG =  {'error' : 'Invalid AccountId'}

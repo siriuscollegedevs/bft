@@ -32,14 +32,14 @@ class ObjectHistorySerializer(serializers.Serializer):
 
 
 class AccountSerializer(UUIDMixin, serializers.Serializer):
-    role = serializers.CharField(max_length=ACCOUNT_TYPE_LEN)
-    first_name = serializers.CharField(max_length=NAMES_LEN, required=False)
-    surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
-    last_name = serializers.CharField(max_length=NAMES_LEN)
-    username = serializers.CharField(max_length=NAMES_LEN)
+    role = serializers.CharField(required=False)
+    first_name = serializers.CharField(max_length=NAMES_LEN, allow_null=True)
+    surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True, allow_null=True)
+    last_name = serializers.CharField(max_length=NAMES_LEN, allow_null=True)
+    username = serializers.CharField(required=False)
     modified_by = serializers.CharField(max_length=DEFAULT_LEN, read_only=True)
     action = serializers.CharField(max_length=ACTION_ACCOUNT_LEN, read_only=True)
-    password = serializers.CharField(trim_whitespace=False, max_length=128, required=False)
+    password = serializers.CharField(trim_whitespace=False, max_length=128, write_only=True, allow_null=True)
     timestamp = serializers.DateTimeField(read_only=True)
 
     def __init__(self, *args, **kwargs):
@@ -62,10 +62,21 @@ class AccountSerializer(UUIDMixin, serializers.Serializer):
         return value
 
     def validate_role(self, value):
-        if value in ACCOUNT_TYPES:
-            return value
-        return serializers.ValidationError
-
+        if value not in ACCOUNT_TYPES:
+            return serializers.ValidationError
+        elif self.request_type == 'post':
+            if value:
+                return value
+            else:
+                return serializers.ValidationError
+        return value
+    
+    def validate_username(self, value):
+        if self.request_type == 'post':
+            if value:
+                return value 
+            raise serializers.ValidationError
+        return value
 
 class ChangePasswordSerializer(serializers.Serializer):
     status = serializers.CharField(max_length=ACCOUNT_TYPE_LEN)
