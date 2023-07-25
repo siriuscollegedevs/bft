@@ -4,7 +4,7 @@ from rest_framework import status
 from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
-from django.db.models import F, Model, QuerySet
+from django.db.models import F
 from sirius.general_functions import get_user, check_administrator, list_to_queryset
 from django.contrib.auth.models import User
 from drf_spectacular.utils import extend_schema, inline_serializer
@@ -100,7 +100,11 @@ class ObjectApiView(APIView):
                 obj.save()
                 name = obj.get_info().name
                 ObjectHistory.objects.create(
-                    object=obj, name=name, modified_by=get_user(request), action='deleted')
+                    object=obj,
+                    name=name,
+                    modified_by=get_user(request),
+                    action='deleted'
+                )
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -143,7 +147,8 @@ class ObjectHistoryApiView(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         res = ObjectHistory.objects.filter(object=obj).values(
-            "name", "version", "timestamp", "action").annotate(modified_by=F('modified_by__user__username'))
+            "name", "version", "timestamp", "action"
+        ).annotate(modified_by=F('modified_by__user__username'))
         return Response(serializers.ObjectHistorySerializer(res, many=True).data)
 
 # WORK WITH ACCOUNTS
@@ -185,15 +190,19 @@ class PostAccount(APIView):
         if serializer.is_valid():
             data = serializer.validated_data
             try:
-                if not check_administrator(get_user(request)):
+                if not check_administrator(request):
                     return Response(status=status.HTTP_400_BAD_REQUEST)
                 with transaction.atomic():
                     new_user = User.objects.create_user(username=data['username'], password=data['password'])
                     new_user.save()
                     new_account = Account.objects.create(status='active', user=new_user)
                     account_history_data = {key: data[key] for key in data if key != 'password'}
-                    AccountHistory.objects.create(action='created', account=new_account,
-                                                  modified_by=get_user(request), **account_history_data)
+                    AccountHistory.objects.create(
+                        action='created',
+                        account=new_account,
+                        modified_by=get_user(request),
+                        **account_history_data
+                    )
                     return Response(status=status.HTTP_201_CREATED)
             except Exception as ex:
                 print(ex)
@@ -228,7 +237,7 @@ class GetPutDeleteAccount(APIView):
             try:
                 with transaction.atomic():
                     account = Account.objects.get(id=AccountId)
-                    if not check_administrator(get_user(request)):
+                    if not check_administrator(request):
                         return Response(status=status.HTTP_400_BAD_REQUEST)
                     user = User.objects.get(account=account)
                     if data['username'] != user.username:
@@ -240,8 +249,12 @@ class GetPutDeleteAccount(APIView):
                         action = 'modified'
                     user.save()
                     account_history_data = {key: data[key] for key in data if key != 'password'}
-                    AccountHistory.objects.create(action=action, account=account,
-                                                  modified_by=get_user(request), **account_history_data)
+                    AccountHistory.objects.create(
+                        action=action,
+                        account=account,
+                        modified_by=get_user(request),
+                        **account_history_data
+                    )
                     return Response(status=status.HTTP_200_OK)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -254,14 +267,18 @@ class GetPutDeleteAccount(APIView):
     })
     def delete(self, request, AccountId):
         try:
-            if not check_administrator(get_user(request)):
+            if not check_administrator(request):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             with transaction.atomic():
                 account = Account.objects.get(id=AccountId)
                 account.status = 'outdated'
                 account.save()
                 AccountHistory.objects.create(
-                    account=account, modified_by=get_user(request), action='deleted', **account.get_info())
+                    account=account,
+                    modified_by=get_user(request),
+                    action='deleted',
+                    **account.get_info()
+                )
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -285,8 +302,12 @@ class ChangePasswordApi(APIView):
                     with transaction.atomic():
                         user.set_password(data['new_password'])
                         user.save()
-                        AccountHistory.objects.create(account=account, modified_by=get_user(
-                            request), action='password_changed', **account.get_info())
+                        AccountHistory.objects.create(
+                            account=account,
+                            modified_by=get_user(request),
+                            action='password_changed',
+                            **account.get_info()
+                        )
                         return Response(status=status.HTTP_200_OK)
                 except Exception:
                     return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -318,7 +339,8 @@ class AccountHistoryApiView(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         res = AccountHistory.objects.filter(account=account).values(
-            "role", "first_name", "last_name", "surname", "username", "timestamp", "action").annotate(modified_by=F('modified_by__user__username'))
+            "role", "first_name", "last_name", "surname", "username", "timestamp", "action"
+        ).annotate(modified_by=F('modified_by__user__username'))
         return Response(serializers.AccountSerializer(res, many=True).data)
 
 
@@ -347,10 +369,7 @@ class AccountExpandSearch(APIView):
                 for account in active_accounts:
                     res.append(account.get_last_version())
                 res = list_to_queryset(AccountHistory, res).filter(**search_data).values(
-                    'role',
-                    'first_name',
-                    'last_name',
-                    'surname'
+                    'role', 'first_name', 'last_name', 'surname'
                     ).annotate(username=F('account__user__username'), id=F('account__id'))
                 return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
         except Exception:
@@ -382,10 +401,15 @@ class GetAccountByObjectView(APIView):
         object_ids = request.data.get('ids', None)
         try:
             with transaction.atomic():
-                if object_ids is None:
+                if not object_ids:
                     res = []
                     for account in Account.objects.filter(status='active'):
+                        if account is None:
+                            break
                         res.append(account.get_last_version().to_dict())
+                    if self.status == 'outdated':
+                        for account in Account.objects.filter(status='outdated'):
+                            res.append(account.get_last_version().to_dict())
                     return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
                 res = set()
                 for iter, id in object_ids.enumerate():
@@ -439,7 +463,10 @@ class GetPostActualAccountsObjectsView(APIView):
                     all_matches = AccountToObject.objects.filter(account=account, status='active')
                     if all_matches:
                         for record in all_matches:
-                            account_dict['objects'].append(record.object.get_info().name)
+                            account_dict['objects'].append({
+                                'match_id': str(record.id),
+                                'name': record.object.get_info().name
+                            })
                     res.append(account_dict)
                 return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNT_OBJECTS_FIELDS).data)
         except Exception:
@@ -469,7 +496,7 @@ class GetPostActualAccountsObjectsView(APIView):
                         account = Account.objects.get(**data)
                     except Exception:
                         return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE нельзя точно определить аккаунт по фио
-                    if account.get_last_version().role == 'security_officer' and len(object_ids) > 1:
+                    if account.role == 'security_officer' and len(object_ids) > 1:
                         return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE сотрудник охраны не может быть закреплен более чем за 1 объектом
                     for object_id in object_ids:
                         try:
@@ -477,7 +504,7 @@ class GetPostActualAccountsObjectsView(APIView):
                         except Exception:
                             return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE нет объекта соответствующего данному id
                         AccountToObject.objects.create(object=object_ins, account=account, status='active')
-                    return Response(status=status.HTTP_200_OK)
+                    return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
         return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка при сериализации
@@ -496,7 +523,7 @@ class GetArchiveAccountsObjectsView(APIView):
                     "surname" : ser.CharField(),
                     "last_name" : ser.CharField(),
                     "username" : ser.CharField(),
-                    "objects": ser.ListField()}),
+                    "objects": ser.ListField(child=ser.DictField())}),
             status.HTTP_401_UNAUTHORIZED : None,
             status.HTTP_400_BAD_REQUEST : None
         })
@@ -510,7 +537,10 @@ class GetArchiveAccountsObjectsView(APIView):
                     all_matches = AccountToObject.objects.filter(account=account, status='outdated')
                     if all_matches:
                         for record in all_matches:
-                            account_dict['objects'].append(record.object.get_info().name)
+                            account_dict['objects'].append({
+                                'match_id': str(record.id),
+                                'name': record.object.get_info().name
+                            })
                     res.append(account_dict)
                 return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNT_OBJECTS_FIELDS).data)
         except Exception:
@@ -546,7 +576,7 @@ class GetPutAccountToObjectView(APIView):
         request=inline_serializer(
         name='account_to_object_put',
            fields={
-               'object_ids': ser.ListField()
+               'object_ids': ser.ListField(child=ser.UUIDField())
             }))
     def put(self, request, AccountId):
         object_ids = request.data.pop('object_ids', None)
@@ -566,5 +596,30 @@ class GetPutAccountToObjectView(APIView):
                         return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE объекта с таким id не существует
                     AccountToObject.objects.create(object=object_ins, account=account, status='active')
                 return Response(status=status.HTTP_200_OK)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
+
+
+class DeleteAccountToObjbectView(APIView):
+
+    @extend_schema(responses={
+        status.HTTP_204_NO_CONTENT: None,
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
+    })
+    def delete(self, request, MatchId):
+        if not check_administrator(request):
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE роль аккаунта НЕ администратор
+        try:
+            match = AccountToObject.objects.get(id=MatchId)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE закрепления с таким id нет
+        if match.status == 'outdated':
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE закрепление уже находится в архиве
+        try:
+            with transaction.atomic():
+                match.status = 'outdated'
+                match.save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
