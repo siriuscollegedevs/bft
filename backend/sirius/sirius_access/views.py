@@ -473,7 +473,7 @@ class GetPostActualAccountsObjectsView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка в транзакции
 
     @extend_schema(responses={
-            status.HTTP_200_OK: None, 
+            status.HTTP_201_CREATED: None, 
             status.HTTP_401_UNAUTHORIZED : None,
             status.HTTP_400_BAD_REQUEST : None
         },
