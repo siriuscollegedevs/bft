@@ -1,6 +1,9 @@
 STATUS_CHOICES = (('active', 'Активен'), ('outdated', 'Неактивен'))
-HISTORY_CHOICES = (('delited', 'Удален'), ('modified',
-                   'Изменен'), ('created', 'Создан'))
+HISTORY_CHOICES = (
+    ('deleted', 'Удален'),
+    ('modified', 'Изменен'),
+    ('created', 'Создан')
+)
 
 # MODEL'S FIELDS LEN
 DEFAULT_LEN = 50

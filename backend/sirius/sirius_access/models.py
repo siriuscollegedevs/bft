@@ -37,7 +37,7 @@ class Account(UUIDMixin, models.Model):
         res['role'] = self.role
         res['username'] = self.user.username
         return res
-    
+
     def get_data_from_history(self):
         data = self.get_last_version().__dict__
         return {key : data[key] for key in data if key in ['first_name', 'last_name', 'surname']}
@@ -49,6 +49,7 @@ class Account(UUIDMixin, models.Model):
 class AccountToObject(UUIDMixin, models.Model):
     account = models.ForeignKey(Account, on_delete=models.PROTECT)
     object = models.ForeignKey(Object, on_delete=models.PROTECT)
+    status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
 
     class Meta:
         db_table = 'account_to_object'

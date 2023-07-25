@@ -3,7 +3,7 @@ from .views import LoginView, LogoutView, CookieTokenRefreshView
 
 
 urlpatterns = [
-    path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('refresh/', CookieTokenRefreshView.as_view(), name='token_refresh'),
+    path('login', LoginView.as_view(), name='login'),
+    path('logout', LogoutView.as_view(), name='logout'),
+    path('refresh', CookieTokenRefreshView.as_view(), name='token_refresh'),
 ]

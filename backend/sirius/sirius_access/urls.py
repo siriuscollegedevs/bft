@@ -15,8 +15,13 @@ urlpatterns = [
     path('account/<uuid:AccountId>', views.GetPutDeleteAccount.as_view()),
     path('account/change_pswd/<uuid:AccountId>', views.ChangePasswordApi.as_view()),
     path('account/history/<uuid:AccountId>', views.AccountHistoryApiView.as_view()),
-    # path('account/expand_search/', views.AccountExpandSearch.as_view()),
-    # # ACCOUNT TO OBJECTS
-    # path('object/accounts/', views.GetAccountsObjectsView.as_view()),
-    # path('account_to_objects/', views.GetAccountByObjectView.as_view()),
+    path('account/expand_search', views.ActualAccountExpandSearch.as_view()),
+    path('account/expand_search/archive', views.ArchiveAccountExpandSearch.as_view()),
+    # ACCOUNT TO OBJECTS
+    path('account_to_objects', views.GetPostActualAccountsObjectsView.as_view()),
+    path('account_to_objects/archive', views.GetArchiveAccountsObjectsView.as_view()),
+    path('object/accounts', views.GetActualAccountByObjectView.as_view()),
+    path('object/accounts/archive', views.GetArchiveAccountByObjectView.as_view()),
+    path('account_to_objects/<uuid:AccountId>', views.GetPutAccountToObjectView.as_view()),
+    path('account_to_objects/<uuid:MatchId>', views.DeleteAccountToObjbectView.as_view()),
 ]
