@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux'
 import { CurrentAccountId } from '../../../states/account'
 import React, { useEffect } from 'react'
 import { Typography } from '@mui/material'
+import { ACCOUNT_ROLES } from '../../../consts/account-roles'
 
 export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')
@@ -31,17 +32,6 @@ export const DynamicHeader = () => {
     isLoading: currentAccountLoading,
     isError: currentAccountError
   } = useGetAccountByIdQuery(mycurrentAccountId)
-
-  type Roles = {
-    [key: string]: string
-  }
-
-  const roles: Roles = {
-    administrator: 'Администратор',
-    manager: 'Руководитель',
-    specialist: 'Сотрудник СБ',
-    security_officer: 'Сотрудник охраны'
-  }
 
   useEffect(() => {
     const currentPath = location.pathname
@@ -75,10 +65,10 @@ export const DynamicHeader = () => {
                   <LogoIcon />
                 </HeaderLogo>
                 <CustomTypography>{`Доступ.${
-                  currentAccountData?.role !== null ? roles[currentAccountData?.role] : 'Error'
+                  currentAccountData?.role !== null ? ACCOUNT_ROLES[currentAccountData?.role] : 'Error'
                 }`}</CustomTypography>
                 <Box sx={{ flexGrow: 1 }} />
-                {currentAccountData?.role === roles.manager && (
+                {currentAccountData?.role === ACCOUNT_ROLES.manager && (
                   <>
                     <CustomButton
                       isActive={activeButton === 'directories'}
