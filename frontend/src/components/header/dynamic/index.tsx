@@ -1,4 +1,3 @@
-import * as React from 'react'
 import Box from '@mui/material/Box'
 import { ReactComponent as LogoIcon } from '../../../assets/sirius-logo.svg'
 import { ReactComponent as SettingsIcon } from '../../../assets/settings.svg'
@@ -12,31 +11,40 @@ import {
   CustomExitButton
 } from '../../../styles/header'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { useGetAccountByIdQuery } from '../../../__data__/service/account.api'
+import { useSelector } from 'react-redux'
+import { CurrentAccountId } from '../../../states/account'
+import React, { useEffect } from 'react'
+import { Typography } from '@mui/material'
 
 export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')
-  const [role, setRole] = React.useState('')
   const navigate = useNavigate()
   const location = useLocation()
 
-  const name = 'Иванов'
+  const mycurrentAccountId = useSelector(
+    (state: { currentAccount: CurrentAccountId }) => state.currentAccount.currentAccountId
+  )
 
-  //TODO
-  const roles = {
-    admin: 'Администратор',
+  const {
+    data: currentAccountData,
+    isLoading: currentAccountLoading,
+    isError: currentAccountError
+  } = useGetAccountByIdQuery(mycurrentAccountId)
+
+  type Roles = {
+    [key: string]: string
+  }
+
+  const roles: Roles = {
+    administrator: 'Администратор',
     manager: 'Руководитель',
-    sb: 'Сотрудник СБ',
-    security: 'Сотрудник охраны'
+    specialist: 'Сотрудник СБ',
+    security_officer: 'Сотрудник охраны'
   }
 
   useEffect(() => {
-    setRole(roles.manager)
-  }, [])
-
-  useEffect(() => {
     const currentPath = location.pathname
-
     const directoriesPaths = ['directories', 'accounts', 'objects', 'employees']
     const admissionsPath = 'admissions'
 
@@ -55,40 +63,60 @@ export const DynamicHeader = () => {
   }
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
-      <CustomAppBar position="static">
-        <CustomToolbar>
-          <HeaderLogo color="inherit" disableRipple onClick={() => navigate('/navigation')}>
-            <LogoIcon />
-          </HeaderLogo>
-          <CustomTypography>{`Доступ.${role}`}</CustomTypography>
-          <Box sx={{ flexGrow: 1 }} />
-          {role === roles.manager && (
-            <>
-              <CustomButton isActive={activeButton === 'directories'} onClick={() => handleButtonClick('directories')}>
-                Справочники
-              </CustomButton>
-              <CustomButton isActive={activeButton === 'admissions'} onClick={() => handleButtonClick('admissions')}>
-                Заявки
-              </CustomButton>
-            </>
-          )}
-          <Box sx={{ flexGrow: 1 }} />
-          <CustomSettingsButton
-            aria-label="setting"
-            color="inherit"
-            disableRipple
-            onClick={() => navigate('/settings')}
-          >
-            <SettingsIcon />
-          </CustomSettingsButton>
-          <CustomTypography>{`${name} ${name[0]}.${name[0]}.`}</CustomTypography>
-          <CustomExitButton color="inherit" variant="contained" onClick={() => navigate('/')}>
-            Выход
-          </CustomExitButton>
-        </CustomToolbar>
-      </CustomAppBar>
-    </Box>
+    <>
+      <Box sx={{ flexGrow: 1 }}>
+        <CustomAppBar position="static">
+          <CustomToolbar>
+            {currentAccountLoading && <Typography>Loading</Typography>}
+            {currentAccountError && <Typography>Error</Typography>}
+            {currentAccountData && (
+              <>
+                <HeaderLogo color="inherit" disableRipple onClick={() => navigate('/navigation')}>
+                  <LogoIcon />
+                </HeaderLogo>
+                <CustomTypography>{`Доступ.${
+                  currentAccountData?.role !== null ? roles[currentAccountData?.role] : 'Error'
+                }`}</CustomTypography>
+                <Box sx={{ flexGrow: 1 }} />
+                {currentAccountData?.role === roles.manager && (
+                  <>
+                    <CustomButton
+                      isActive={activeButton === 'directories'}
+                      onClick={() => handleButtonClick('directories')}
+                    >
+                      Справочники
+                    </CustomButton>
+                    <CustomButton
+                      isActive={activeButton === 'admissions'}
+                      onClick={() => handleButtonClick('admissions')}
+                    >
+                      Заявки
+                    </CustomButton>
+                  </>
+                )}
+                <Box sx={{ flexGrow: 1 }} />
+                <CustomSettingsButton
+                  aria-label="setting"
+                  color="inherit"
+                  disableRipple
+                  onClick={() => navigate('/settings')}
+                >
+                  <SettingsIcon />
+                </CustomSettingsButton>
+                {currentAccountData?.last_name !== null && currentAccountData?.surname !== null ? (
+                  <CustomTypography>{`${currentAccountData?.first_name} ${currentAccountData?.last_name[0]}.${currentAccountData?.surname[0]}.`}</CustomTypography>
+                ) : (
+                  <CustomTypography>{`${currentAccountData?.first_name}`}</CustomTypography>
+                )}
+                <CustomExitButton color="inherit" variant="contained" onClick={() => navigate('/')}>
+                  Выход
+                </CustomExitButton>
+              </>
+            )}
+          </CustomToolbar>
+        </CustomAppBar>
+      </Box>
+    </>
   )
 }
 

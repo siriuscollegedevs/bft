@@ -11,6 +11,7 @@ import {
 } from '../../../styles/login'
 import { setToken } from '../../../states/auth'
 import { useDispatch } from 'react-redux'
+import { setAccount } from '../../../states/account'
 
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
@@ -23,6 +24,7 @@ export const LoginForm = () => {
     try {
       const response = await loginMutation({ username: login, password: password }).unwrap()
       dispatch(setToken(response.access))
+      dispatch(setAccount({ currentAccountId: response.account_id }))
       return response ? navigate('/objects') : null
     } catch (error) {
       console.log(error)

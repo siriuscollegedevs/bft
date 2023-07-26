@@ -16,10 +16,9 @@ export const apiAuth = createApi({
       })
     }),
     logout: builder.mutation<void, { refreshToken: string }>({
-      query: refreshToken => ({
-        url: '/logout/blacklist',
-        method: 'POST',
-        body: { refresh_token: refreshToken }
+      query: () => ({
+        url: '/auth/logout',
+        method: 'POST'
       })
     }),
     refresh: builder.mutation<{ access: string }, { refreshToken: string }>({

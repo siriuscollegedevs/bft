@@ -46,7 +46,7 @@ ACCOUNT_ROLES = [
     {'role': 'manager'},
     {'role': 'specialist'},
     {'role': 'security_officer'},
-    {'role': 'administartor'},
+    {'role': 'administrator'},
 ] * 4
 
 OBJECT_DATA = [
