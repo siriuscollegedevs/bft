@@ -10,11 +10,11 @@ export type Accounts = {
 }
 
 export type Account = {
-  role: string | null
+  role: string
   first_name: string | null
   surname: string | null
-  last_name: string | null
-  username: string | null
+  last_name: string
+  username: string
 }
 
 export type ExpandSearchAdmissionsBody = {
