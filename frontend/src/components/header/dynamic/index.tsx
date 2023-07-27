@@ -23,7 +23,7 @@ export const DynamicHeader = () => {
   const navigate = useNavigate()
   const location = useLocation()
 
-  const mycurrentAccountId = useSelector(
+  const currentAccountId = useSelector(
     (state: { currentAccount: CurrentAccountId }) => state.currentAccount.currentAccountId
   )
 
@@ -31,7 +31,7 @@ export const DynamicHeader = () => {
     data: currentAccountData,
     isLoading: currentAccountLoading,
     isError: currentAccountError
-  } = useGetAccountByIdQuery(mycurrentAccountId)
+  } = useGetAccountByIdQuery(currentAccountId)
 
   useEffect(() => {
     const currentPath = location.pathname
