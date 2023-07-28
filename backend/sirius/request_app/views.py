@@ -204,12 +204,7 @@ class DeletePutRecord(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
         serializer = serializers.RecordSerializer(data=request.data)
         if serializer.is_valid():
-            serializer_data = serializer.validated_data
-            new_data = {key: serializer_data[key] for key in serializer_data if serializer_data[key]}
-            info = record.get_last_version().__dict__
-            old_data = {key: info[key] for key in info if key not in new_data.keys(
-            ) and key not in USELESS_FIELDS + FIELDS_TO_ADD}
-            RecordHistory.objects.create(modified_by=get_user(request), action='modified', **old_data, **new_data)
+            RecordHistory.objects.create(modified_by=get_user(request), action='modified', record=record, **serializer.validated_data)
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
