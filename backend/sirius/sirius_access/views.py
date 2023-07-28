@@ -394,7 +394,7 @@ class GetAccountByObjectView(APIView):
     },
         request=inline_serializer(
         name='account_to_object_search',
-        fields={'ids': ser.ListField()}))
+           fields={'ids': ser.ListField(child=ser.UUIDField())}))
     def post(self, request):
         object_ids = request.data.get('ids', None)
         try:
@@ -410,20 +410,21 @@ class GetAccountByObjectView(APIView):
                             res.append(account.get_last_version().to_dict())
                     return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
                 res = set()
-                for iter, id in object_ids.enumerate():
+                for iter, id in enumerate(object_ids):
+                    accounts = set()
                     for record in AccountToObject.objects.filter(object__id=id, status=self.status):
                         if iter == 0:
-                            res.add(record.account.get_last_version())
+                            res.add(record.account.id)
                         else:
-                            accounts = set()
-                            accounts.add(record.account.get_last_version())
-                    res.intersection_update(accounts)
+                            accounts.add(record.account.id)
+                    if iter != 0:
+                        res.intersection_update(accounts) 
                 if res:
-                    res_accounts = [record.to_dict() for record in res]
-                    return Response(serializers.AccountSerializer(res_accounts, many=True, fileds=GET_ACCOUNTS_FIELDS).data)
-                return Response(data={[]})
+                    res_accounts = [Account.objects.get(id=acc_id).get_last_version().to_dict() for acc_id in res]
+                    return Response(serializers.AccountSerializer(res_accounts, many=True, fields=GET_ACCOUNTS_FIELDS).data)
+                return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE Аккаунты, закрепленные за данными объектами, не найдены.
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
 
 
 class GetActualAccountByObjectView(GetAccountByObjectView):
@@ -437,20 +438,10 @@ class GetArchiveAccountByObjectView(GetAccountByObjectView):
 class GetPostActualAccountsObjectsView(APIView):
 
     @extend_schema(responses={
-        status.HTTP_200_OK: inline_serializer(
-            many=True,
-            name='account_and_objects',
-            fields={
-                "id": ser.UUIDField(),
-                "role": ser.CharField(),
-                "first_name": ser.CharField(),
-                "surname": ser.CharField(),
-                "last_name": ser.CharField(),
-                "username": ser.CharField(),
-                "objects": ser.ListField()}),
-        status.HTTP_401_UNAUTHORIZED: None,
-        status.HTTP_400_BAD_REQUEST: None
-    })
+            status.HTTP_200_OK: serializers.AccountToObjectSerializer(many=True),
+            status.HTTP_401_UNAUTHORIZED: None,
+            status.HTTP_400_BAD_REQUEST: None
+        })
     def get(self, _):
         res = []
         try:
@@ -466,7 +457,7 @@ class GetPostActualAccountsObjectsView(APIView):
                                 'name': record.object.get_info().name
                             })
                     res.append(account_dict)
-                return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNT_OBJECTS_FIELDS).data)
+                return Response(serializers.AccountToObjectSerializer(res, many=True).data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE ошибка в транзакции
 
@@ -491,43 +482,44 @@ class GetPostActualAccountsObjectsView(APIView):
             try:
                 with transaction.atomic():
                     try:
-                        account = Account.objects.get(**data)
+                        account = AccountHistory.objects.filter(
+                            account__status='active',
+                            **data
+                        ).order_by('-timestamp').first().account
                     except Exception:
-                        # NOTE нельзя точно определить аккаунт по фио
-                        return Response(status=status.HTTP_400_BAD_REQUEST)
-                    if account.role == 'security_officer' and len(object_ids) > 1:
-                        # NOTE сотрудник охраны не может быть закреплен более чем за 1 объектом
-                        return Response(status=status.HTTP_400_BAD_REQUEST)
+                        return Response(status=status.HTTP_400_BAD_REQUEST, data={'1'}) ## NOTE нельзя точно определить аккаунт по фио
+                    if not account:
+                        return Response(status=status.HTTP_400_BAD_REQUEST, data={'2'}) ## NOTE не удалось найти данный аккаунт среди активных
+                    if account.role == 'security_officer':
+                        if AccountToObject.objects.filter(account=account, status='active').exists():
+                            return Response(status=status.HTTP_400_BAD_REQUEST, data={'3'}) ## NOTE аккаунт типа Сотрудник охраны уже закреплен за 1 объектом
+                        if len(object_ids) > 1:
+                            return Response(status=status.HTTP_400_BAD_REQUEST, data={'4'}) ## NOTE сотрудник охраны не может быть закреплен более чем за 1 объектом
                     for object_id in object_ids:
                         try:
                             object_ins = Object.objects.get(id=object_id)
                         except Exception:
-                            # NOTE нет объекта соответствующего данному id
-                            return Response(status=status.HTTP_400_BAD_REQUEST)
-                        AccountToObject.objects.create(object=object_ins, account=account, status='active')
+                           return Response(status=status.HTTP_400_BAD_REQUEST, data={'1'}) ## NOTE нельзя точно определить аккаунт по фио
+                    if not account:
+                        return Response(status=status.HTTP_400_BAD_REQUEST, data={'2'}) ## NOTE не удалось найти данный аккаунт среди активных
+                    if account.role == 'security_officer':
+                        if AccountToObject.objects.filter(account=account, status='active').exists():
+                            return Response(status=status.HTTP_400_BAD_REQUEST, data={'3'}) ## NOTE аккаунт типа Сотрудник охраны уже закреплен за 1 объектом
+                        if len(object_ids) > 1:
+                            return Response(status=status.HTTP_400_BAD_REQUEST, data={'4'}) ## NOTE сотрудник охраны не может быть закреплен более чем за 1 объектом
                     return Response(status=status.HTTP_201_CREATED)
             except Exception:
-                return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE ошибка транзакции
-        return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE ошибка при сериализации
+               return Response(status=status.HTTP_400_BAD_REQUEST, data={'6'}) ## NOTE ошибка транзакции
+        return Response(status=status.HTTP_400_BAD_REQUEST, data={'7'}) ## NOTE ошибка при сериализации
 
 
 class GetArchiveAccountsObjectsView(APIView):
 
     @extend_schema(responses={
-        status.HTTP_200_OK: inline_serializer(
-            many=True,
-            name='account_and_objects_archive',
-            fields={
-                "id": ser.UUIDField(),
-                "role": ser.CharField(),
-                "first_name": ser.CharField(),
-                "surname": ser.CharField(),
-                "last_name": ser.CharField(),
-                "username": ser.CharField(),
-                "objects": ser.ListField(child=ser.DictField())}),
-        status.HTTP_401_UNAUTHORIZED: None,
-        status.HTTP_400_BAD_REQUEST: None
-    })
+            status.HTTP_200_OK: serializers.AccountToObjectSerializer(many=True),
+            status.HTTP_401_UNAUTHORIZED : None,
+            status.HTTP_400_BAD_REQUEST : None
+        })
     def get(self, _):
         res = []
         try:
@@ -543,7 +535,7 @@ class GetArchiveAccountsObjectsView(APIView):
                                 'name': record.object.get_info().name
                             })
                     res.append(account_dict)
-                return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNT_OBJECTS_FIELDS).data)
+                return Response(serializers.AccountToObjectSerializer(res, many=True).data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE ошибка в транзакции
 
@@ -566,7 +558,7 @@ class GetPutAccountToObjectView(APIView):
                 res = []
                 for record in AccountToObject.objects.filter(account=account, status='active'):
                     res.append({'id': record.object.id, 'name': record.object.get_info().name})
-                return Response(serializers.ObjectSerializer(data=res, many=True).data)
+                return Response(serializers.ObjectSerializer(res, many=True).data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE ошибка транзакции
 
@@ -587,8 +579,9 @@ class GetPutAccountToObjectView(APIView):
         try:
             account = Account.objects.get(id=AccountId)
         except Exception:
-            # NOTE аккаунта с таким id не существует или id не верен
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE аккаунта с таким id не существует или id не верен
+            if account.status == 'outdated':
+                return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE аккаунт находится в архиве
         try:
             with transaction.atomic():
                 AccountToObject.objects.filter(account=account, status='active').delete()
