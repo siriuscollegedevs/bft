@@ -499,17 +499,16 @@ class GetPostActualAccountsObjectsView(APIView):
                         try:
                             object_ins = Object.objects.get(id=object_id)
                         except Exception:
-                           return Response(status=status.HTTP_400_BAD_REQUEST, data={'1'}) ## NOTE нельзя точно определить аккаунт по фио
-                    if not account:
-                        return Response(status=status.HTTP_400_BAD_REQUEST, data={'2'}) ## NOTE не удалось найти данный аккаунт среди активных
-                    if account.role == 'security_officer':
-                        if AccountToObject.objects.filter(account=account, status='active').exists():
-                            return Response(status=status.HTTP_400_BAD_REQUEST, data={'3'}) ## NOTE аккаунт типа Сотрудник охраны уже закреплен за 1 объектом
-                        if len(object_ids) > 1:
-                            return Response(status=status.HTTP_400_BAD_REQUEST, data={'4'}) ## NOTE сотрудник охраны не может быть закреплен более чем за 1 объектом
+                            return Response(status=status.HTTP_400_BAD_REQUEST, data={'5'}) ## NOTE нет объекта соответствующего данному id
+                        if AccountToObject.objects.filter(account=account, object=object_ins, status='active').exists():
+                            return Response(status=status.HTTP_400_BAD_REQUEST, data={'9'}) ## NOTE аккаунт уже закреплен за данным объектом
+                        try:
+                            AccountToObject.objects.create(object=object_ins, account=account, status='active')
+                        except Exception:
+                            return Response(status=status.HTTP_400_BAD_REQUEST, data={'10'}) ## NOTE аккаунт уже закреплен за этим объектом
                     return Response(status=status.HTTP_201_CREATED)
             except Exception:
-               return Response(status=status.HTTP_400_BAD_REQUEST, data={'6'}) ## NOTE ошибка транзакции
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={'6'}) ## NOTE ошибка транзакции
         return Response(status=status.HTTP_400_BAD_REQUEST, data={'7'}) ## NOTE ошибка при сериализации
 
 
