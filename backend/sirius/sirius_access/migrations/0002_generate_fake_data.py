@@ -92,17 +92,21 @@ class Migration(migrations.Migration):
     def generate_random_data(self, schema_editor):
 
         with transaction.atomic():
+            existing_accounts = []
             for user_data, account_data, account_role in zip(USER_DATA, ACCOUNT_DATA, ACCOUNT_ROLES):
                 user = User.objects.create_user(**user_data)
                 account = Account.objects.create(status='active', user=user, **account_role)
                 AccountHistory.objects.create(account=account, modified_by=account, **account_data)
                 for record in ACCOUNT_HISTORY:
-                    AccountHistory.objects.create(
-                        account=account,
-                        modified_by=account,
-                        action='modified',
-                        **record
-                    )
+                    if (record['first_name'], record['last_name'], record['surname']) not in existing_accounts:
+                        AccountHistory.objects.create(
+                            account=account,
+                            modified_by=account,
+                            action='modified',
+                            **record
+                        )
+                created_account = account.get_data_from_history()
+                existing_accounts.append((created_account['first_name'], created_account['last_name'], created_account['surname']))
                 ACCOUNT_HISTORY.append(ACCOUNT_HISTORY.pop(0))
             for object_data in OBJECT_DATA:
                 object_inst = Object.objects.create(status='active')
