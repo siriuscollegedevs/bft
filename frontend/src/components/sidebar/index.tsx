@@ -9,8 +9,11 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import MenuItem from '@mui/material/MenuItem'
 import Checkbox from '@mui/material/Checkbox'
 import { useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
 import { ACCOUNT_ROLES } from '../../consts/account-roles'
+import { useSelector } from 'react-redux'
+import { Account } from '../../types/api'
+import { CurrentAccountId } from '../../states/account'
+import { useGetAccountToObjectsQuery } from '../../__data__/service/object-account'
 
 type SidebarProps = {
   isSearch: boolean
@@ -19,12 +22,20 @@ type SidebarProps = {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton }) => {
+  const [objectName, setObjectName] = React.useState<string[]>([])
   const location = useLocation()
-  const [role, setRole] = React.useState('')
+  const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
+  const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
-  useEffect(() => {
-    setRole(ACCOUNT_ROLES.administrator)
-  }, [])
+  const {
+    data: currentAccountObjectsData,
+    isLoading: currentAccountObjectsLoading,
+    isError: currentAccountObjectsError
+  } = useGetAccountToObjectsQuery(currentAccountId)
+
+  if (currentAccountObjectsData) {
+    console.log(currentAccountObjectsData)
+  }
 
   const fundObjectsName = [
     { id: 1, name: 'Наименование 1' },
@@ -35,8 +46,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
     { id: 6, name: 'Наименование 6' },
     { id: 7, name: 'Наименование 7' }
   ]
-
-  const [objectName, setObjectName] = React.useState<string[]>([])
 
   const handleChange = ({ target: { value } }: SelectChangeEvent<typeof objectName>) => {
     setObjectName(typeof value === 'string' ? value.split(',') : value)
@@ -75,7 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
         )}
         {isObjects && (
           <>
-            {role === ACCOUNT_ROLES.security ? (
+            {currentAccountRole === ACCOUNT_ROLES.security ? (
               <SidebarButton
                 variant="outlined"
                 color="primary"
@@ -130,7 +139,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
           </>
         )}
       </Box>
-      {isButton && role !== ACCOUNT_ROLES.security ? (
+      {isButton && currentAccountRole !== ACCOUNT_ROLES.security ? (
         <SidebarButton variant="contained" color="primary">
           {location.pathname.startsWith('/admissions') ? 'Создать заявку' : 'Создать запись'}
         </SidebarButton>

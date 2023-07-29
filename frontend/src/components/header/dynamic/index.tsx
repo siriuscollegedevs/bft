@@ -12,8 +12,8 @@ import {
 } from '../../../styles/header'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useGetAccountByIdQuery } from '../../../__data__/service/account.api'
-import { useSelector } from 'react-redux'
-import { CurrentAccountId } from '../../../states/account'
+import { useDispatch, useSelector } from 'react-redux'
+import { CurrentAccountId, setAccountData } from '../../../states/account'
 import React, { useEffect } from 'react'
 import { Typography } from '@mui/material'
 import { ACCOUNT_ROLES } from '../../../consts/account-roles'
@@ -22,16 +22,19 @@ export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')
   const navigate = useNavigate()
   const location = useLocation()
+  const dispatch = useDispatch()
 
-  const currentAccountId = useSelector(
-    (state: { currentAccount: CurrentAccountId }) => state.currentAccount.currentAccountId
-  )
+  const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
 
   const {
     data: currentAccountData,
     isLoading: currentAccountLoading,
     isError: currentAccountError
   } = useGetAccountByIdQuery(currentAccountId)
+
+  if (currentAccountData) {
+    dispatch(setAccountData(currentAccountData))
+  }
 
   useEffect(() => {
     const currentPath = location.pathname

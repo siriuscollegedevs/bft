@@ -1,25 +1,38 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { Account } from '../../types/api'
 
 export type CurrentAccountId = {
-  currentAccountId: string
+  id: string
 }
 
-const initialState: CurrentAccountId = {
-  currentAccountId: ''
+const initialAccountState: Account = {
+  role: null,
+  first_name: null,
+  surname: null,
+  last_name: null,
+  username: null
+}
+
+const initialState: CurrentAccountId & Account = {
+  id: '',
+  ...initialAccountState
 }
 
 const accountSlice = createSlice({
   name: 'currentAccount',
   initialState,
   reducers: {
-    setAccount: (state, action: PayloadAction<CurrentAccountId>) => {
-      return action.payload
+    setAccountId: (state, action: PayloadAction<CurrentAccountId>) => {
+      return { ...state, id: action.payload.id }
+    },
+    setAccountData: (state, action: PayloadAction<Account>) => {
+      return { ...state, ...action.payload }
     },
     clearAccount: () => {
-      return initialState
+      return { id: '', ...initialAccountState }
     }
   }
 })
 
-export const { setAccount, clearAccount } = accountSlice.actions
+export const { setAccountId, setAccountData, clearAccount } = accountSlice.actions
 export const accountReducer = accountSlice.reducer
