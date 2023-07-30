@@ -6,11 +6,11 @@ export type CurrentAccountId = {
 }
 
 const initialAccountState: Account = {
-  role: null,
-  first_name: null,
-  surname: null,
-  last_name: null,
-  username: null
+  role: '',
+  first_name: '',
+  surname: '',
+  last_name: '',
+  username: ''
 }
 
 const initialState: CurrentAccountId & Account = {
