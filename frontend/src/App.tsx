@@ -1,15 +1,15 @@
 import { Route, Routes, BrowserRouter, useLocation } from 'react-router-dom'
 import { ThemeProvider } from '@mui/material'
 import { Classic } from './styles/theme'
-import { Login } from './components/login'
-import { Main } from './components/main'
+import { Login } from './pages/login'
+import { Main } from './pages/main'
+import { ObjectsPage } from './pages/objects'
 import { Settings } from './components/user-settings'
 import { MainDirectories } from './components/main-directories'
 import { FormEditDirectories } from './components/form-edit-directories'
 import { DynamicHeader } from './components/header/dynamic'
 import { StaticHeader } from './components/header/static'
 import { BackButton } from './components/button-back'
-import { ObjectsPage } from './pages/objects'
 
 export const App: React.FC = (): JSX.Element => {
   function Header() {
