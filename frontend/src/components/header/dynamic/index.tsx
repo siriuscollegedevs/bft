@@ -16,7 +16,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { CurrentAccountId, setAccountData } from '../../../states/account'
 import React, { useEffect } from 'react'
 import { Typography } from '@mui/material'
-import { ACCOUNT_ROLES } from '../../../__data__/account-roles'
+import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
 
 export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')

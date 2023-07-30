@@ -1,4 +1,4 @@
-import { Roles } from '../../types/account'
+import { Roles } from '../../../types/account'
 
 export const ACCOUNT_ROLES: Roles = {
   administrator: 'Администратор',
