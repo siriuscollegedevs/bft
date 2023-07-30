@@ -11,8 +11,8 @@ export type Accounts = {
 
 export type Account = {
   role: string
-  first_name: string | null
-  surname: string | null
+  first_name: string
+  surname: string
   last_name: string
   username: string
 }
