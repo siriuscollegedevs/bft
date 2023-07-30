@@ -1,7 +1,7 @@
 import { Container, FormControl, FormHelperText } from '@mui/material'
 import Box from '@mui/material/Box'
-import { CustomDefaultButton, CustomFormControl } from '../../../styles/settings'
-import { CustomTypography } from '../../../styles/header'
+import { CustomDefaultButton, CustomFormControl } from '../../styles/settings'
+import { CustomTypography } from '../../styles/header'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
 import InputLabel from '@mui/material/InputLabel'
@@ -10,20 +10,14 @@ import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import IconButton from '@mui/material/IconButton'
 import OutlinedInput from '@mui/material/OutlinedInput'
+import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 
 export const UserSettings = () => {
-  const roles = {
-    manager: 'manager',
-    sb: 'sb',
-    administrator: 'admin',
-    security: 'security'
-  }
-
   const [role, setRole] = React.useState('')
 
   useEffect(() => {
     // Fetch
-    setRole(roles.manager)
+    setRole(ACCOUNT_ROLES.manager)
   }, [])
 
   const [showOldPassword, setShowOldPassword] = useState(false)
@@ -103,7 +97,7 @@ export const UserSettings = () => {
               width: '100%'
             }}
           >
-            {role !== roles.administrator && (
+            {role !== ACCOUNT_ROLES.administrator && (
               <FormControl
                 sx={{ m: 1, width: '85%' }}
                 variant="outlined"
