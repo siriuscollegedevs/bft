@@ -5,15 +5,26 @@ import { config } from '../config'
 export const apiAuth = createApi({
   reducerPath: 'apiAuth',
   baseQuery: fetchBaseQuery({
-    baseUrl: config.baseAPI
+    baseUrl: config.baseAPI,
+    credentials: 'include'
   }),
+  tagTypes: ['Login'],
   endpoints: builder => ({
-    login: builder.mutation<Login, { username: string; password: string }>({
+    login: builder.mutation<any, { username: string; password: string }>({
       query: ({ username, password }) => ({
         url: '/auth/login',
         method: 'POST',
-        body: { username: username, password: password }
-      })
+        body: { username: username, password: password },
+        credentials: 'include'
+      }),
+      invalidatesTags: [{ type: 'Login' }],
+      transformResponse: async (response, meta: any) => {
+        const setCookieHeaders = meta.response.headers.get('Set-Cookie')
+        console.log(setCookieHeaders)
+        
+
+        return response
+      }
     }),
     logout: builder.mutation<void, { refreshToken: string }>({
       query: () => ({
