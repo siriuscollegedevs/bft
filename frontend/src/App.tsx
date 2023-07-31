@@ -26,13 +26,11 @@ export const App: React.FC = (): JSX.Element => {
           return value
         }
       }
-      return null // Если HTTP-кука csrftoken не найдена
+      return null
     }
 
-    // Получение CSRF-токена
     const csrfToken = getCSRFToken()
 
-    // Вывод CSRF-токена в консоль
     console.log('CSRF Token:', csrfToken)
 
     return (
@@ -42,7 +40,6 @@ export const App: React.FC = (): JSX.Element => {
       </>
     )
   }
-  
 
   return (
     <>
