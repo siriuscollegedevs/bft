@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('status', models.CharField(choices=[('active', 'Активен'), ('outdated', 'Неактивен')], max_length=10)),
+                ('role', models.CharField(choices=[('administrator', 'Администратор'), ('manager', 'Руководитель СБ'), ('specialist', 'Специалист СБ'), ('security_officer', 'Сотрудник охраны')], max_length=16)),
                 ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
@@ -55,12 +56,10 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('timestamp', models.DateTimeField(auto_now_add=True)),
-                ('role', models.CharField(choices=[('administrator', 'Администратор'), ('manager', 'Руководитель СБ'), ('specialist', 'Специалист СБ'), ('security_officer', 'Сотрудник охраны')], max_length=16)),
                 ('first_name', models.CharField(blank=True, max_length=20, null=True)),
                 ('last_name', models.CharField(max_length=20)),
                 ('surname', models.CharField(blank=True, max_length=20, null=True)),
                 ('action', models.CharField(choices=[('deleted', 'Удален'), ('modified', 'Изменен'), ('created', 'Создан'), ('password_changed', 'Изменен пароль')], max_length=16)),
-                ('username', models.CharField(max_length=50)),
                 ('account', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='modified', to='sirius_access.account')),
                 ('modified_by', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='modifier', to='sirius_access.account')),
             ],
@@ -72,12 +71,13 @@ class Migration(migrations.Migration):
             name='AccountToObject',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
+                ('status', models.CharField(choices=[('active', 'Активен'), ('outdated', 'Неактивен')], max_length=10)),
                 ('account', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sirius_access.account')),
                 ('object', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sirius_access.object')),
             ],
             options={
                 'db_table': 'account_to_object',
-                'unique_together': {('object', 'account')},
+                'unique_together': {('object', 'account', 'status')},
             },
         ),
     ]

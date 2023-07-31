@@ -6,12 +6,16 @@ import { apiObject } from './service/object.api'
 import { apiAdmissions } from './service/admission.api'
 import { apiRecord } from './service/record.api'
 import { authReducer } from '../states/auth'
+import { accountReducer } from '../states/account'
+import { apiObjectsAccounts } from './service/object-account'
 
 const rootReducer = combineReducers({
   auth: authReducer,
+  currentAccount: accountReducer,
   [apiAuth.reducerPath]: apiAuth.reducer,
   [apiAccount.reducerPath]: apiAccount.reducer,
   [apiObject.reducerPath]: apiObject.reducer,
+  [apiObjectsAccounts.reducerPath]: apiObjectsAccounts.reducer,
   [apiAdmissions.reducerPath]: apiAdmissions.reducer,
   [apiRecord.reducerPath]: apiRecord.reducer
 })
@@ -20,6 +24,7 @@ const apiMiddleware = [
   apiAuth.middleware,
   apiAccount.middleware,
   apiObject.middleware,
+  apiObjectsAccounts.middleware,
   apiAdmissions.middleware,
   apiRecord.middleware
 ]
