@@ -39,7 +39,7 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/accounts/:id" element={<FormEditDirectories />} />
             <Route path="/objects/:id" element={<FormEditDirectories />} />
             <Route path="/employees/:id" element={<FormEditDirectories />} />
-            <Route path="/admissions" element={<AdmissionsPage />} />
+            <Route path="/objects" element={<ObjectsPage />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
