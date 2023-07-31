@@ -15,7 +15,6 @@ export type Account = {
   surname: string
   last_name: string
   username: string
-  password: string
 }
 
 export type ExpandSearchAdmissionsBody = {
@@ -44,7 +43,7 @@ export type AccountHistory = {
 }
 
 export type Login = {
-  userId: string
+  account_id: string
   access: string
   refresh: string
   access_exp: number

@@ -1,16 +1,11 @@
 import { FormControl, Typography } from '@mui/material'
 import { useState } from 'react'
-import { useLoginMutation } from '../../../__data__/service/auth.api'
+import { useLoginMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
-import {
-  LoginButton,
-  PasswordTextField,
-  SignInContainer,
-  SignInTextField,
-  TitleTypography
-} from '../../../styles/login'
-import { setToken } from '../../../states/auth'
+import { LoginButton, PasswordTextField, SignInContainer, SignInTextField, TitleTypography } from '../../styles/login'
+import { setToken } from '../../states/auth'
 import { useDispatch } from 'react-redux'
+import { setAccountId } from '../../states/account'
 
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
@@ -23,7 +18,8 @@ export const LoginForm = () => {
     try {
       const response = await loginMutation({ username: login, password: password }).unwrap()
       dispatch(setToken(response.access))
-      return response ? navigate('/objects') : null
+      dispatch(setAccountId({ id: response.account_id }))
+      return response ? navigate('/navigation') : null
     } catch (error) {
       console.log(error)
     }

@@ -1,8 +1,8 @@
 import * as React from 'react'
 import Box from '@mui/material/Box'
-import { CustomButton, CustomListItem } from '../../../styles/button-group'
+import { CustomButton, CustomListItem } from '../../styles/button-group'
 import { Container, List, ListItemText } from '@mui/material'
-import { ReactComponent as ArrowIcon } from '../../../assets/arrow.svg'
+import { ReactComponent as ArrowIcon } from '../../assets/arrow.svg'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 

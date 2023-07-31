@@ -16,7 +16,7 @@ export const ObjectsPage = () => {
             height: '800px'
           }}
         />
-        <Sidebar isSearch={false} isObjects={true} isButton={true} />
+        <Sidebar isSearch={true} isObjects={true} isButton={true} />
       </SideBarContainer>
     </>
   )

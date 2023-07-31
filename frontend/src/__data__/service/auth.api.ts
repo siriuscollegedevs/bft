@@ -10,16 +10,15 @@ export const apiAuth = createApi({
   endpoints: builder => ({
     login: builder.mutation<Login, { username: string; password: string }>({
       query: ({ username, password }) => ({
-        url: '/auth/login/',
+        url: '/auth/login',
         method: 'POST',
         body: { username: username, password: password }
       })
     }),
     logout: builder.mutation<void, { refreshToken: string }>({
-      query: refreshToken => ({
-        url: '/logout/blacklist',
-        method: 'POST',
-        body: { refresh_token: refreshToken }
+      query: () => ({
+        url: '/auth/logout',
+        method: 'POST'
       })
     }),
     refresh: builder.mutation<{ access: string }, { refreshToken: string }>({
