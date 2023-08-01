@@ -19,10 +19,8 @@ export const apiAuth = createApi({
       }),
       invalidatesTags: [{ type: 'Login' }],
       transformResponse: async (response, meta: any) => {
-        const setCookieHeaders = meta.response.headers.get('Set-Cookie')
-        console.log(setCookieHeaders)
-        
-
+        const CSRFToken = await meta.response.headers.get('X-CSRFToken')
+        console.log(CSRFToken)
         return response
       }
     }),
