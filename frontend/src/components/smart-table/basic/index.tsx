@@ -9,6 +9,8 @@ import { Size } from '..'
 import { Objects, Admissions } from '../../../types/api'
 import { useGetAllObjectsQuery } from '../../../__data__/service/object.api'
 import { useGetAllAdmissionsMutation } from '../../../__data__/service/admission.api'
+import { useSelector } from 'react-redux'
+import { useEffect, useState } from 'react'
 
 export type CurrentURL = '/objects' | '/admissions'
 
@@ -18,24 +20,32 @@ type URL = {
 
 export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { size: Size }) => {
   const objectsURL = currentURL === '/objects'
+  const currentAccountObjects = useSelector(
+    (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
+  )
+  const idArray: string[] = currentAccountObjects.map(object => object.id)
 
   const { data: objectData, error: objectError, isLoading: objectLoading } = useGetAllObjectsQuery()
   const [getAllAdmissions, { data: admissionData, error: admissionError, isLoading: admissionLoading }] =
     useGetAllAdmissionsMutation()
 
-  let rowsData = null
-  if (objectsURL) {
-    rowsData = objectData
-  } else {
-    // getAllAdmissions()
-    rowsData = admissionData
-  }
+  const [rowsData, setRowsData] = useState<Objects[] | Admissions[]>([])
+
+  // TODO: изменить условия useEffect, сейчас он спамит запросами
+  useEffect(() => {
+    if (objectsURL) {
+      setRowsData(objectData ?? [])
+    } else {
+      getAllAdmissions(idArray)
+      setRowsData(admissionData ?? [])
+    }
+  }, [objectsURL, idArray, objectData, admissionData, getAllAdmissions])
 
   return (
     <TableContainer sx={{ width: size.width, height: size.height }}>
       <Table aria-label="simple table">
         <TableBody>
-          {rowsData?.map((row: Objects | Admissions) => (
+          {rowsData.map((row: Objects | Admissions) => (
             <TableRow key={'name' in row ? row.name : row.code}>
               {objectsURL ? (
                 <>

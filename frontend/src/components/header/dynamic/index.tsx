@@ -13,7 +13,7 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useGetAccountByIdQuery } from '../../../__data__/service/account.api'
 import { useDispatch, useSelector } from 'react-redux'
-import { CurrentAccountId, setAccountData } from '../../../states/account'
+import { CurrentAccountId, clearAccount, setAccountData } from '../../../states/account'
 import React, { useEffect } from 'react'
 import { Typography } from '@mui/material'
 import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
@@ -101,7 +101,14 @@ export const DynamicHeader = () => {
                 ) : (
                   <CustomTypography>{`${currentAccountData?.first_name}`}</CustomTypography>
                 )}
-                <CustomExitButton color="inherit" variant="contained" onClick={() => navigate('/')}>
+                <CustomExitButton
+                  color="inherit"
+                  variant="contained"
+                  onClick={() => {
+                    dispatch(clearAccount())
+                    navigate('/')
+                  }}
+                >
                   Выход
                 </CustomExitButton>
               </>
