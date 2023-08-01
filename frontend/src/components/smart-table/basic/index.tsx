@@ -8,7 +8,7 @@ import { Box } from '@mui/material'
 import { Size } from '..'
 import { Objects, Admissions } from '../../../types/api'
 import { useGetAllObjectsQuery } from '../../../__data__/service/object.api'
-import { useGetAllAdmissionsQuery } from '../../../__data__/service/admission.api'
+import { useGetAllAdmissionsMutation } from '../../../__data__/service/admission.api'
 
 export type CurrentURL = '/objects' | '/admissions'
 
@@ -20,12 +20,14 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
   const objectsURL = currentURL === '/objects'
 
   const { data: objectData, error: objectError, isLoading: objectLoading } = useGetAllObjectsQuery()
-  const { data: admissionData, error: admissionError, isLoading: admissionLoading } = useGetAllAdmissionsQuery()
+  const [getAllAdmissions, { data: admissionData, error: admissionError, isLoading: admissionLoading }] =
+    useGetAllAdmissionsMutation()
 
   let rowsData = null
   if (objectsURL) {
     rowsData = objectData
   } else {
+    // getAllAdmissions()
     rowsData = admissionData
   }
 

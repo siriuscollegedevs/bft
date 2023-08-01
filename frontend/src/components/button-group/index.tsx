@@ -56,7 +56,7 @@ export const ButtonGroup = () => {
               Справочники
               <ArrowIcon />
             </CustomButton>
-            <CustomButton variant="outlined">
+            <CustomButton variant="outlined" onClick={() => navigate('/admissions')}>
               Заявки
               <ArrowIcon />
             </CustomButton>
@@ -64,7 +64,7 @@ export const ButtonGroup = () => {
         )}
         {role === roles.sb && (
           <>
-            <CustomButton variant="outlined">
+            <CustomButton variant="outlined" onClick={() => navigate('/admissions')}>
               Заявки
               <ArrowIcon />
             </CustomButton>

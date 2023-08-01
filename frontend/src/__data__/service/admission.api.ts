@@ -6,8 +6,14 @@ export const apiAdmissions = createApi({
   reducerPath: 'apiAdmissions',
   baseQuery,
   endpoints: builder => ({
-    getAllAdmissions: builder.query<Admissions[], void>({
-      query: () => '/request/all'
+    getAllAdmissions: builder.mutation<Admissions[], string[]>({
+      query: objectsIds => ({
+        url: '/request/all',
+        method: 'POST',
+        body: {
+          ids: objectsIds
+        }
+      })
     }),
     getAllArchiveAdmissions: builder.query<Admissions[], void>({
       query: () => '/admissions/archive'
@@ -53,7 +59,7 @@ export const apiAdmissions = createApi({
 })
 
 export const {
-  useGetAllAdmissionsQuery,
+  useGetAllAdmissionsMutation,
   useGetAllArchiveAdmissionsQuery,
   useCreateAdmissionsMutation,
   useGetAdmissionsHistoryByIdQuery,
