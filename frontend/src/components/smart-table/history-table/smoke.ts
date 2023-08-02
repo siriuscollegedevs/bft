@@ -136,6 +136,26 @@ export const dataAccount: DataAccounts[] = [
     timestamp: '2019-09-08 09:12:12.473393',
     action: 'edit',
     modified_by: 'username1'
+  },
+  {
+    role: 'Руководитель',
+    first_name: 'Олег',
+    surname: 'Олегов',
+    last_name: 'Петрушка',
+    username: 'Olegoleg',
+    timestamp: '2019-09-08 09:12:12.473393',
+    action: 'edit',
+    modified_by: 'username1'
+  },
+  {
+    role: 'Руководитель',
+    first_name: 'Олег',
+    surname: 'Олегов',
+    last_name: 'Петрушка',
+    username: 'Olegoleg',
+    timestamp: '2019-09-08 09:12:12.473393',
+    action: 'edit',
+    modified_by: 'username1'
   }
 ]
 
@@ -143,17 +163,17 @@ export const dataAdmissions: DataAdmissions[] = [
   {
     timestamp: '2019-09-08 09:12:12.473393',
     action: 'edit',
-    car_number: 'У569ТО',
-    car_brand: 'someCarBrand',
-    car_model: 'someCarModel',
+    car_number: '',
+    car_brand: '-',
+    car_model: '-',
     modified_by: 'username1',
     object: 'ГМЦ',
     type: 'разовый',
     first_name: 'Иван',
     surname: 'Иванов',
     last_name: 'Петрушка',
-    from_date: '2023-09-08 09:12:12.473393',
-    to_date: '2023-09-08 09:12:12.473393',
+    from_date: '2023-10-08 09:12:12.473393',
+    to_date: '2023-09-08 09:12:15.473393',
     note: 'SomeNote'
   },
   {

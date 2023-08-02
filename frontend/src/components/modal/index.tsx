@@ -1,9 +1,11 @@
 import * as React from 'react'
 import Typography from '@mui/material/Typography'
 import Modal from '@mui/material/Modal'
-import { Cards, CardsContainer, InfoCards, ListEntries, ModalContainer } from '../../styles/modal'
+import { Cards, CardsContainer, InfoCards, ModalContainer, StyledListEntries } from '../../styles/modal'
 import { Row } from '../smart-table/history-table'
+import { useLocation } from 'react-router-dom'
 
+//TODO если данные отличаются выделять цветом
 
 type Props = {
   open: boolean
@@ -27,8 +29,8 @@ const keyTranslations: { [key: string]: string } = {
   objects: 'Объект(-ы)',
   object: 'Объект(-ы)',
   type: 'Тип',
-  from_date: 'Дата',
-  to_date: 'Дата',
+  from_date: 'Дата(от)',
+  to_date: 'Дата(до)',
   note: 'Примечание',
   car_number: 'Гос.номер',
   car_brand: 'Марка',
@@ -43,17 +45,60 @@ const getKeyTranslation = (key: string): string => {
   return keyTranslations[key] || key
 }
 
-const formatValue = (value: string | string[]) => {
+const formatValue = (value: string | string[], key: string) => {
   if (Array.isArray(value)) {
     return value.join(', ')
+  } else if (value === '') {
+    return '-'
+  } else if (key === 'to_date' || key === 'from_date') {
+    return value.split('.')[0]
   }
   return value
 }
 
 export const BasicModal = ({ open, handleClose, selectedRow }: Props): JSX.Element => {
+  const desiredFields: { [key: string]: string[] } = {
+    '/accounts/': ['first_name', 'surname', 'last_name', 'username', 'role'],
+    '/objects/': ['name'],
+    '/employees/': ['first_name', 'surname', 'last_name', 'username', 'role', 'objects'],
+    '/admissions/': ['car_number', 'car_brand', 'car_model', 'object', 'type', 'from_date', 'to_date', 'note']
+  }
+
+  const location = useLocation()
+  const urlPath = location.pathname
+
+  const matchingPaths = Object.keys(desiredFields).filter(path => urlPath.startsWith(path))
+
   if (!selectedRow) {
     return <></>
   }
+
+  if (selectedRow.data) {
+    const { car_number, car_brand, car_model } = selectedRow.data as Record<string, string>
+    if (
+      car_number === '' ||
+      car_number === '-' ||
+      car_brand === '' ||
+      car_brand === '-' ||
+      car_model === '' ||
+      car_model === '-'
+    ) {
+      desiredFields['/admissions/'] = [
+        'first_name',
+        'surname',
+        'last_name',
+        'object',
+        'type',
+        'from_date',
+        'to_date',
+        'note'
+      ]
+    }
+  }
+
+  const fieldsToDisplay = matchingPaths.length > 0 ? desiredFields[matchingPaths[0]] : []
+  const isDifferent = false
+
   return (
     <Modal
       open={open}
@@ -78,20 +123,23 @@ export const BasicModal = ({ open, handleClose, selectedRow }: Props): JSX.Eleme
             <InfoCards>
               <>
                 {selectedRow.data &&
-                  Object.entries(selectedRow.data).map(([key, value]) => (
-                    <React.Fragment key={key}>
-                      {selectedRow.action === 'cancel' && key === 'note' && (
-                        <ListEntries>
-                          {getKeyTranslation(key)}: {formatValue(value)}
-                        </ListEntries>
-                      )}
-                        {selectedRow.action === 'edit' && (
-                            <ListEntries>
-                                {getKeyTranslation(key)}: {formatValue(value)}
-                            </ListEntries>
+                  fieldsToDisplay.map(key => {
+                    const value = (selectedRow.data as Record<string, string[]>)[key]
+                    return (
+                      <React.Fragment key={key}>
+                        {selectedRow.action === 'cancel' && key === 'note' && (
+                          <StyledListEntries isDifferent={isDifferent}>
+                            {getKeyTranslation(key)}: {formatValue(value, key)}
+                          </StyledListEntries>
                         )}
-                    </React.Fragment>
-                  ))}
+                        {selectedRow.action === 'edit' && (
+                          <StyledListEntries isDifferent={isDifferent}>
+                            {getKeyTranslation(key)}: {formatValue(value, key)}
+                          </StyledListEntries>
+                        )}
+                      </React.Fragment>
+                    )
+                  })}
               </>
             </InfoCards>
           </Cards>
@@ -102,20 +150,23 @@ export const BasicModal = ({ open, handleClose, selectedRow }: Props): JSX.Eleme
             <InfoCards>
               <>
                 {selectedRow.data &&
-                  Object.entries(selectedRow.data).map(([key, value]) => (
-                    <React.Fragment key={key}>
+                  fieldsToDisplay.map(key => {
+                    const value = (selectedRow.data as Record<string, string[]>)[key]
+                    return (
+                      <React.Fragment key={key}>
                         {selectedRow.action === 'cancel' && key === 'note' && (
-                            <ListEntries>
-                                {getKeyTranslation(key)}: {formatValue(value)}
-                            </ListEntries>
+                          <StyledListEntries isDifferent={isDifferent}>
+                            {getKeyTranslation(key)}: {formatValue(value, key)}
+                          </StyledListEntries>
                         )}
                         {selectedRow.action === 'edit' && (
-                            <ListEntries>
-                                {getKeyTranslation(key)}: {formatValue(value)}
-                            </ListEntries>
+                          <StyledListEntries isDifferent={isDifferent}>
+                            {getKeyTranslation(key)}: {formatValue(value, key)}
+                          </StyledListEntries>
                         )}
-                    </React.Fragment>
-                  ))}
+                      </React.Fragment>
+                    )
+                  })}
               </>
             </InfoCards>
           </Cards>

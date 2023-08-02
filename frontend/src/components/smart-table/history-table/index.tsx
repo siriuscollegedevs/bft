@@ -59,39 +59,46 @@ export const HistoryTable = () => {
   return (
     <>
       <TableContainer component={Paper} sx={{ width: '100%', height: '550px' }}>
-        <Table sx={{ minWidth: 650, height: '400px' }} aria-label="simple table">
+        <Table sx={{ minWidth: 650 }} aria-label="simple table" size="medium">
           <TableBody>
             {getRowsData().map(row => (
-              <TableRow key={row.id} sx={{ '&:last-child td, &:last-child th': { border: 0 }, height: '70px' }}>
-                <TableCell component="th" scope="row">
+              <TableRow
+                key={row.id}
+                sx={{
+                  '&:last-child td, &:last-child th': { border: 0 }
+                }}
+              >
+                <TableCell component="th" scope="row" align="left" sx={{ width: '20%' }}>
                   {row.timestamp}
                 </TableCell>
-                <TableCell align="left">{row.modifiedBy}</TableCell>
-                  {row.action === 'cancel' || row.action === 'edit' ? (
-                      <StyledTableCell align="center" color={getRowColor(row.action)}>
-                          {getActionTranslation(row.action)}
-                          <Tooltip
-                              title={row.action === 'cancel' ? 'Посмотреть причину аннулирования' : 'Посмотреть изменения'}
-                              placement="top"
-                          >
-                              <InfoOutlinedIcon
-                                  sx={{
-                                      verticalAlign: 'bottom',
-                                      ml: '5px',
-                                      '&:hover': {
-                                          cursor: 'pointer'
-                                      }
-                                  }}
-                                  color="primary"
-                                  onClick={() => handleOpenModal(row)}
-                              />
-                          </Tooltip>
-                      </StyledTableCell>
-                  ) : (
-                      <StyledTableCell align="center" color={getRowColor(row.action)}>
-                          {getActionTranslation(row.action)}
-                      </StyledTableCell>
-                  )}
+                <TableCell align="left" sx={{ width: '25%' }}>
+                  {row.modifiedBy}
+                </TableCell>
+                {row.action === 'cancel' || row.action === 'edit' ? (
+                  <StyledTableCell align="center" color={getRowColor(row.action)}>
+                    {getActionTranslation(row.action)}
+                    <Tooltip
+                      title={row.action === 'cancel' ? 'Посмотреть причину аннулирования' : 'Посмотреть изменения'}
+                      placement="top"
+                    >
+                      <InfoOutlinedIcon
+                        sx={{
+                          verticalAlign: 'bottom',
+                          ml: '5px',
+                          '&:hover': {
+                            cursor: 'pointer'
+                          }
+                        }}
+                        color="primary"
+                        onClick={() => handleOpenModal(row)}
+                      />
+                    </Tooltip>
+                  </StyledTableCell>
+                ) : (
+                  <StyledTableCell align="center" color={getRowColor(row.action)}>
+                    {getActionTranslation(row.action)}
+                  </StyledTableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

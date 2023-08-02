@@ -1,4 +1,4 @@
-import { Box, styled } from '@mui/system'
+import { Box, css, styled } from '@mui/system'
 
 export const ModalContainer = styled(Box)`
   position: absolute;
@@ -6,7 +6,6 @@ export const ModalContainer = styled(Box)`
   left: 50%;
   transform: translate(-50%, -50%);
   width: 50%;
-  //height: 55%;
   background-color: #dbdde5;
   border-radius: 30px;
   padding: 46px 32px;
@@ -18,7 +17,7 @@ export const ModalContainer = styled(Box)`
 export const CardsContainer = styled(Box)`
   display: flex;
   flex-direction: row;
-  gap: 20px;
+  gap: 10px;
   justify-content: space-around;
 `
 
@@ -26,18 +25,17 @@ export const Cards = styled(Box)`
   display: flex;
   flex-direction: column;
   gap: 20px;
-  width: 40%;
+  width: 45%;
 `
 
 export const InfoCards = styled(Box)`
   background-color: white;
   border-radius: 25px;
-  //height: 270px;
-  padding: 16px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 10px;
+  gap: 13px;
 `
 
 export const ListEntries = styled(Box)`
@@ -47,4 +45,12 @@ export const ListEntries = styled(Box)`
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+`
+
+export const StyledListEntries = styled(ListEntries)<{ isDifferent: boolean }>`
+  ${({ isDifferent }) =>
+    isDifferent &&
+    css`
+      background-color: rgba(255, 199, 0, 0.38);
+    `}
 `
