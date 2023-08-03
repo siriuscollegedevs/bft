@@ -103,7 +103,7 @@ class ObjectsInMatchSerializer(serializers.Serializer):
 
 class AccountToObjectSerializer(UUIDMixin, serializers.Serializer):
     role = serializers.CharField(max_length=ACCOUNT_TYPE_LEN)
-    first_name = serializers.CharField(max_length=NAMES_LEN, required=False)
+    first_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
     surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
     last_name = serializers.CharField(max_length=NAMES_LEN)
     username = serializers.CharField(max_length=NAMES_LEN)
