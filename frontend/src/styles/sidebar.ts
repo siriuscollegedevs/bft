@@ -21,4 +21,5 @@ export const SideBarContainer = styled(Box)`
   margin: 0 auto;
   padding-top: 15px;
   gap: 15px;
+  height: 70vh;
 `

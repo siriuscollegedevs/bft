@@ -132,3 +132,18 @@ export type SearchOfAdmissions = {
 export type RootState = {
   auth: AuthState
 }
+
+export type ObjectInArray = {
+  match_id: string
+  name: string
+}
+
+export type AccountToObject = {
+  id: string
+  role: string
+  first_name?: string
+  surname?: string
+  last_name: string
+  username: string
+  objects: ObjectInArray[]
+}
