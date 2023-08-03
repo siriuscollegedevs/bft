@@ -9,10 +9,9 @@ import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
-export const EmployeesPage = () => {
-  //TODO вынести это отдельно, тк используется в 3 справочниках
+export const AccountsPage = () => {
   const location = useLocation()
-  const isArchivePage = location.pathname === '/employees/archive'
+  const isArchivePage = location.pathname === '/accounts/archive'
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
   let buttonNames: ButtonName[] = []
@@ -34,7 +33,7 @@ export const EmployeesPage = () => {
           buttonNames={buttonNames}
           size={{
             width: '100%',
-            height: '100%'
+            height: '800px'
           }}
         />
         <Sidebar isSearch={true} isObjects={true} isButton={true} />

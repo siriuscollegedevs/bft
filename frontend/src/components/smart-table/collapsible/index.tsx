@@ -2,17 +2,19 @@ import { Table, TableBody, TableContainer } from '@mui/material'
 
 import { ButtonNames } from '../../shortcut-buttons'
 
-import { rowsAccounts, rowsAdmissions, DataAccount, DataAdmission } from './smoke'
+import { rowsAdmissions, DataAdmission } from './smoke'
 import { Row } from './row'
 import { Size } from '..'
 import {
   useGetAllAccountToObjectArchiveQuery,
   useGetAllAccountToObjectQuery
 } from '../../../__data__/service/object-account'
-import { AccountToObject } from '../../../types/api'
+import { Accounts, AccountToObject } from '../../../types/api'
+import { useGetAllAccountsQuery } from '../../../__data__/service/account.api'
 
 export type myURL =
   | '/accounts'
+  | '/accounts/archive'
   | '/accounts/search'
   | '/employees'
   | '/employees/search'
@@ -21,10 +23,12 @@ export type myURL =
   | '/admissions/:admission_id'
   | '/admissions/search'
 
-export type CommonData = DataAccount | AccountToObject | DataAdmission
+export type CommonData = Accounts | AccountToObject | DataAdmission
 
 export const itsAcccount = ({ currentURL }: { currentURL: myURL }): boolean =>
   currentURL === '/accounts' || currentURL === '/accounts/search'
+
+export const itsAccountsArchive = ({ currentURL }: { currentURL: myURL }): boolean => currentURL === '/accounts/archive'
 
 export const itsEmployees = ({ currentURL }: { currentURL: myURL }): boolean =>
   currentURL === '/employees' || currentURL === '/employees/search'
@@ -50,8 +54,17 @@ export const Collapsible = ({
     isLoading: employeesArchiveLoading
   } = useGetAllAccountToObjectArchiveQuery()
 
+  const { data: accountsData, error: accountsError, isLoading: accountsLoading } = useGetAllAccountsQuery()
+  const {
+    data: accountsArchiveData,
+    error: accountsArchiveError,
+    isLoading: accountsArchiveLoading
+  } = useGetAllAccountToObjectArchiveQuery()
+
   const filteredRows: CommonData[] = itsAcccount({ currentURL })
-    ? rowsAccounts
+    ? accountsData ?? []
+    : itsAccountsArchive({ currentURL })
+    ? accountsArchiveData ?? []
     : itsEmployees({ currentURL })
     ? employeesData ?? []
     : itsEmployeesArchive({ currentURL })
