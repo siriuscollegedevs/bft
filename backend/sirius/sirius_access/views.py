@@ -205,8 +205,7 @@ class PostAccount(APIView):
                       **account_history_data
                     )
                     return Response(status=status.HTTP_201_CREATED)
-            except Exception as ex:
-                print(ex)
+            except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
 
@@ -358,7 +357,10 @@ class AccountExpandSearch(APIView):
         name='account_expand_search',
         fields={key: ser.CharField() for key in GET_ACCOUNT_FIELDS}))
     def post(self, request):
-        search_data = {key: value for key, value in request.data.items() if value}
+        if all(map(lambda key: key in GET_ACCOUNT_FIELDS, request.data.keys())):
+            search_data = {key: value for key, value in request.data.items() if value}
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE переданы неизвестные атрибуты
         try:
             with transaction.atomic():
                 if all([(not bool(value)) for value in list(request.data.values())]):
@@ -366,16 +368,16 @@ class AccountExpandSearch(APIView):
                     for account in Account.objects.filter(status=self.status):
                         res.append(account.get_last_version().to_dict())
                     return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
-                active_accounts = Account.objects.filter(status=self.status)
+                accounts = Account.objects.filter(status=self.status)
                 res = []
-                for account in active_accounts:
+                for account in accounts:
                     res.append(account.get_last_version())
                 res = list_to_queryset(AccountHistory, res).filter(**search_data).values(
                     'first_name', 'last_name', 'surname'
                 ).annotate(username=F('account__user__username'), id=F('account__id'), role=F('account__role'))
                 return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
 
 
 class ActualAccountExpandSearch(AccountExpandSearch):
@@ -558,7 +560,10 @@ class GetPutAccountToObjectView(APIView):
         try:
             with transaction.atomic():
                 res = []
-                for record in AccountToObject.objects.filter(account=account, status='active'):
+                all_records = AccountToObject.objects.filter(account=account, status='active')
+                if not all_records:
+                    return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE за данным аккаунтом не найдено закреплений
+                for record in all_records:
                     res.append({'id': record.object.id, 'name': record.object.get_info().name})
                 return Response(serializers.ObjectSerializer(res, many=True).data)
         except Exception:
@@ -575,7 +580,7 @@ class GetPutAccountToObjectView(APIView):
                'object_ids': ser.ListField(child=ser.UUIDField())
             }))
     def put(self, request, AccountId):
-        object_ids = request.data.pop('object_ids', None)
+        object_ids = request.data.get('object_ids', None)
         if not object_ids:
             return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE список с id пустой
         try:
@@ -621,3 +626,51 @@ class DeleteAccountToObjbectView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
+
+
+class AccountToObjectExpandSearchView(APIView):
+
+    def post(self, request):
+        account_keys = ('first_name', 'last_name', 'surname')
+        search_account = {key: value for key, value in request.data.items() if key in account_keys and value}
+        accounts = list_to_queryset(
+            AccountHistory,
+            [account.get_last_version() for account in Account.objects.filter(status='active')]
+        ).filter(**search_account)
+        if accounts:
+            active_accounts = [account.account for account in accounts]
+        object_search = request.data.get('objects')
+        if object_search:
+            objects = [
+                object_ins for object_ins in Object.objects.filter(status='active') if object_ins.get_info().name in object_search
+                ]
+        res = []
+        if active_accounts and objects:
+            for account in active_accounts:
+                account_res = account.get_last_version().to_dict()
+                account_res['objects'] = []
+                for object_ins in objects:
+                    if AccountToObject.objects.filter(account=account, object=object_ins, status='active').exists():
+                        account_res['objects'].append({
+                            'match_id': str(object_ins.id),
+                            'name': object_ins.get_info().name
+                        })
+                res.append(account_res)
+        elif active_accounts:
+            for account in active_accounts:
+                account_res = account.get_last_version().to_dict()
+                account_res['objects'] = []
+                all_matches = AccountToObject.objects.filter(account=account, status='active')
+                if all_matches:
+                    for record in all_matches:
+                        account_res['objects'].append({
+                            'match_id': str(record.id),
+                            'name': record.object.get_info().name
+                        })
+                res.append(account_res)
+        elif objects:
+            res_accounts = set()
+            for object_ins in objects:
+                for record in AccountToObject.objects.filter(object=object_ins, status='active'):
+                    res_accounts.add()
+
