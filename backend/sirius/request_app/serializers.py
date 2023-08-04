@@ -11,24 +11,23 @@ class UUIDMixin(serializers.Serializer):
 class RequestSerializer(UUIDMixin, serializers.Serializer):
     timestamp = serializers.DateTimeField(required=False)
     code = serializers.CharField(max_length=50, allow_blank=True, allow_null=True, required=False)
-    object_ids = serializers.ListField(write_only=True, child=serializers.UUIDField(), allow_empty=False)
-    objects = serializers.ListField(read_only=True, child=serializers.CharField())
+    object_ids = serializers.ListField(child=serializers.UUIDField(), allow_empty=False)
 
 
 class RecordSerializer(UUIDMixin, serializers.Serializer):
-    timestamp = serializers.DateTimeField(required=False)
-    action = serializers.CharField(required=False)
+    timestamp = serializers.DateTimeField(read_only=True)
+    action = serializers.CharField(read_only=True)
     modified_by = serializers.CharField(read_only=True)
-    type = serializers.CharField(allow_null=True)
-    first_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_null=True)
-    surname_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True, allow_null=True)
-    last_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_null=True)
-    car_number = serializers.CharField(required=False, allow_null=True)
-    car_brand = serializers.CharField(required=False, allow_null=True)
-    car_model = serializers.CharField(required=False, allow_null=True)
-    from_date = serializers.DateTimeField(allow_null=True)
-    to_date = serializers.DateTimeField(required=False, allow_null=True)
-    note = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    type = serializers.CharField()
+    first_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
+    surname_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
+    last_name = serializers.CharField(max_length=NAMES_LEN)
+    car_number = serializers.CharField(required=False, allow_blank=True)
+    car_brand = serializers.CharField(required=False, allow_blank=True)
+    car_model = serializers.CharField(required=False, allow_blank=True)
+    from_date = serializers.DateTimeField()
+    to_date = serializers.DateTimeField(required=False)
+    note = serializers.CharField(required=False, allow_blank=True)
 
     def __init__(self, *args, **kwargs):
         fields = kwargs.pop('fields', None)
