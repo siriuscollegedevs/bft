@@ -18,21 +18,6 @@ export const App: React.FC = (): JSX.Element => {
     const isAccessRoute = location.pathname === '/navigation'
     const showBackButton = !isLoginRoute && !isAccessRoute
 
-    const getCSRFToken = () => {
-      const cookies = document.cookie.split(';')
-      for (const cookie of cookies) {
-        const [name, value] = cookie.trim().split('=')
-        if (name === 'csrftoken') {
-          return value
-        }
-      }
-      return null
-    }
-
-    const csrfToken = getCSRFToken()
-
-    console.log('CSRF Token:', csrfToken)
-
     return (
       <>
         {showBackButton && <BackButton />}

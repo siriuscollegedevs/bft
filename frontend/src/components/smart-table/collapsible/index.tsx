@@ -43,6 +43,7 @@ export const Collapsible = ({
     : []
 
   return (
+    
     <TableContainer sx={{ width: size.width, height: size.height }}>
       <Table aria-label="collapsible table">
         <TableBody>

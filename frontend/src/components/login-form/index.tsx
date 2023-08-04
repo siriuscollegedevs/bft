@@ -3,9 +3,10 @@ import { useState } from 'react'
 import { useLoginMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { LoginButton, PasswordTextField, SignInContainer, SignInTextField, TitleTypography } from '../../styles/login'
-import { setToken } from '../../states/auth'
+import { setAccessToken, setCSRFToken } from '../../states/auth'
 import { useDispatch } from 'react-redux'
 import { setAccountId } from '../../states/account'
+import { getCookie } from '../../utils/cookie-parser'
 
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
@@ -17,8 +18,9 @@ export const LoginForm = () => {
   const handleLogin = async () => {
     try {
       const response = await loginMutation({ username: login, password: password }).unwrap()
-      dispatch(setToken(response.access))
+      dispatch(setAccessToken(response.access))
       dispatch(setAccountId({ id: response.account_id }))
+      dispatch(setCSRFToken(getCookie('csrftoken')))
       return response ? navigate('/navigation') : null
     } catch (error) {
       console.log(error)
