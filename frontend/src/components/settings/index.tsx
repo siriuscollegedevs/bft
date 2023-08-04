@@ -15,6 +15,7 @@ import { Account } from '../../types/api'
 import { useSelector } from 'react-redux'
 import { useChangeAccountPasswordMutation } from '../../__data__/service/account.api'
 import { CurrentAccountId } from '../../states/account'
+import { useNavigate } from 'react-router-dom'
 
 export const UserSettings = () => {
   const [showOldPassword, setShowOldPassword] = useState(false)
@@ -26,6 +27,7 @@ export const UserSettings = () => {
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [repeatPassword, setRepeatPassword] = useState('')
+  const navigate = useNavigate()
 
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
   const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
@@ -52,19 +54,11 @@ export const UserSettings = () => {
 
     const regex = /^(?=.*[A-Z])(?=.*\d).{8,}$/
 
-    if (regex.test(newPassword)) {
-      setPasswordRegex(true)
-    } else {
-      setPasswordRegex(false)
-      return
-    }
+    const isPasswordValid = regex.test(newPassword)
+    const doPasswordsMatch = newPassword === repeatPassword
 
-    if (newPassword !== repeatPassword) {
-      setPasswordMatch(false)
-      return
-    } else {
-      setPasswordMatch(true)
-    }
+    setPasswordRegex(isPasswordValid)
+    setPasswordMatch(doPasswordsMatch)
 
     сhangeAccountPasswordMutation({
       accountId: currentAccountId,
@@ -74,6 +68,7 @@ export const UserSettings = () => {
         new_password: newPassword
       }
     })
+    navigate('/')
   }
 
   return (
