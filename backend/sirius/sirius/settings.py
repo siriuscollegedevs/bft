@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'authorization_app',
     'request_app',
-    'drf_spectacular'
+    'drf_spectacular',
+    'sslserver',
 ]
 
 MIDDLEWARE = [
@@ -184,7 +185,7 @@ CORS_ALLOW_ALL_ORIGINS = True  # TODO change to CSRF_TRUSTED_ORIGINS
 
 CORS_ALLOW_CREDENTIALS = True
 
-CSRF_COOKIE_SECUER = True
+CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTP_ONLY = True
 
 CSRF_TRUSTED_ORIGINS = [    
