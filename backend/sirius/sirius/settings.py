@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'authorization_app',
     'request_app',
-    'drf_spectacular'
+    'drf_spectacular',
+    'sslserver',
 ]
 
 MIDDLEWARE = [
