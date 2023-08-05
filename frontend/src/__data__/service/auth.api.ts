@@ -26,11 +26,10 @@ export const apiAuth = createApi({
         method: 'POST'
       })
     }),
-    refresh: builder.mutation<{ access: string }, { refreshToken: string }>({
-      query: refreshToken => ({
-        url: '/refresh',
-        method: 'POST',
-        body: { refresh: refreshToken }
+    refresh: builder.mutation<{ access: string }, void>({
+      query: () => ({
+        url: '/auth/refresh',
+        method: 'POST'
       })
     })
   })
