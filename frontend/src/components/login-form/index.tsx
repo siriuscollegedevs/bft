@@ -1,12 +1,12 @@
 import { FormControl, Typography } from '@mui/material'
 import { useEffect, useState } from 'react'
-import { useLoginMutation, useRefreshMutation } from '../../__data__/service/auth.api'
+import { useLoginMutation, useLogoutMutation, useRefreshMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { LoginButton, PasswordTextField, SignInContainer, SignInTextField, TitleTypography } from '../../styles/login'
 import { AuthState, setAccessToken, setCSRFToken, setTimeAccessToken } from '../../states/auth'
 import { useDispatch, useSelector } from 'react-redux'
 import { setAccountId } from '../../states/account'
-import { getCookie } from '../../utils/cookie-parser'
+import { clearAllCookies, getCookie } from '../../utils/cookie-parser'
 
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
@@ -16,7 +16,7 @@ export const LoginForm = () => {
   const [refreshTokenMutation, { isLoading: refreshTokenLoading, isError: refreshTokenError }] = useRefreshMutation()
   const dispatch = useDispatch()
 
-  const accessTokenUpdateInterval = useSelector((state: { auth: AuthState }) => state.auth.accessTokenUpdateInterval)
+  const [logout] = useLogoutMutation()
 
   const handleLogin = async () => {
     try {
@@ -26,9 +26,7 @@ export const LoginForm = () => {
       dispatch(setTimeAccessToken(response.access_exp))
       dispatch(setCSRFToken(getCookie('csrftoken')))
 
-      refreshToken()
-      const refreshInterval = 60 * 20
-      setInterval(refreshToken, refreshInterval)
+      setInterval(refreshToken, response.access_exp * 60 * 1000)
 
       return response ? navigate('/navigation') : null
     } catch (error) {
@@ -40,21 +38,13 @@ export const LoginForm = () => {
     try {
       const response = await refreshTokenMutation()
       if ('data' in response) {
+        console.log(response.data.access)
         dispatch(setAccessToken(response.data.access))
       }
     } catch (error) {
       console.error('Error refreshing token:', error)
     }
   }
-
-  // useEffect(() => {
-  //   if (accessToken) {
-  //     const refreshInterval = 29
-  //     // const refreshInterval = (accessTokenUpdateInterval * 1000);
-  //     const intervalId = setInterval(refreshToken, refreshInterval)
-  //     return () => clearInterval(intervalId)
-  //   }
-  // }, [accessToken])
 
   return (
     <>
