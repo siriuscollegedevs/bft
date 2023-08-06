@@ -23,13 +23,15 @@ export const apiAuth = createApi({
     logout: builder.mutation<void, void>({
       query: () => ({
         url: '/auth/logout',
-        method: 'POST'
+        method: 'POST',
+        credentials: 'include'
       })
     }),
     refresh: builder.mutation<{ access: string }, void>({
       query: () => ({
         url: '/auth/refresh',
-        method: 'POST'
+        method: 'POST',
+        credentials: 'include'
       })
     })
   })

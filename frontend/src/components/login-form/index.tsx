@@ -16,8 +16,6 @@ export const LoginForm = () => {
   const [refreshTokenMutation, { isLoading: refreshTokenLoading, isError: refreshTokenError }] = useRefreshMutation()
   const dispatch = useDispatch()
 
-  const [logout] = useLogoutMutation()
-
   const handleLogin = async () => {
     try {
       const response = await loginMutation({ username: login, password: password }).unwrap()
@@ -26,7 +24,7 @@ export const LoginForm = () => {
       dispatch(setTimeAccessToken(response.access_exp))
       dispatch(setCSRFToken(getCookie('csrftoken')))
 
-      setInterval(refreshToken, response.access_exp * 60 * 1000)
+      setInterval(refreshToken, response.access_exp * 1000)
 
       return response ? navigate('/navigation') : null
     } catch (error) {
