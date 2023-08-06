@@ -71,10 +71,10 @@ class LogoutView(APIView):
             token = tokens.RefreshToken(refresh_token)
             token.blacklist()
             res = Response()
-            res.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'])
-            res.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_ACCESS'])
-            res.delete_cookie('X-CSRFToken')
-            res.delete_cookie('csrftoken')
+            res.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'], samesite='None')
+            res.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_ACCESS'], samesite='None')
+            res.delete_cookie('X-CSRFToken', samesite='None')
+            res.delete_cookie('csrftoken', samesite='None')
             return res
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
