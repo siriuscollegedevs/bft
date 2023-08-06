@@ -56,7 +56,7 @@ class LoginView(APIView):
                     "access_exp": float(getenv('REFRESH_TOKEN_LIFETIME')),
                     "account_id": str(Account.objects.get(user=user).id)
                 }
-                # res['X-CSRFToken'] = csrf.get_token(request)
+                res['X-CSRFToken'] = csrf.get_token(request)
                 return res
             return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -71,10 +71,10 @@ class LogoutView(APIView):
             token = tokens.RefreshToken(refresh_token)
             token.blacklist()
             res = Response()
-            res.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'])
-            res.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_ACCESS'])
-            # res.delete_cookie('X-CSRFToken')
-            # res.delete_cookie('csrftoken')
+            res.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'], samesite='None')
+            res.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_ACCESS'], samesite='None')
+            res.delete_cookie('X-CSRFToken', samesite='None')
+            res.delete_cookie('csrftoken', samesite='None')
             return res
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -94,5 +94,5 @@ class CookieTokenRefreshView(jwt_views.TokenRefreshView):
                     samesite = settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
                 )
             del response.data['refresh']
-        # response['X-CSRFToken'] = request.COOKIES.get('csrftoken')
+        response['X-CSRFToken'] = request.COOKIES.get('csrftoken')
         return super().finalize_response(request, response, *args, **kwargs)

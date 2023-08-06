@@ -1,31 +1,37 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { Login } from '../../types/api'
-import { config } from '../config'
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { baseQuery } from '../utils'
 
 export const apiAuth = createApi({
   reducerPath: 'apiAuth',
-  baseQuery: fetchBaseQuery({
-    baseUrl: config.baseAPI
-  }),
+  baseQuery,
   endpoints: builder => ({
-    login: builder.mutation<Login, { username: string; password: string }>({
+    login: builder.mutation<any, { username: string; password: string }>({
       query: ({ username, password }) => ({
         url: '/auth/login',
         method: 'POST',
-        body: { username: username, password: password }
-      })
+        body: { username: username, password: password },
+        credentials: 'include'
+      }),
+      transformResponse: async (response, meta: any) => {
+        const CSRFToken = meta.response.headers.get('X-CSRFToken')
+        if (CSRFToken) {
+          document.cookie = `csrftoken=${CSRFToken};`
+        }
+        return response
+      }
     }),
-    logout: builder.mutation<void, { refreshToken: string }>({
+    logout: builder.mutation<void, void>({
       query: () => ({
         url: '/auth/logout',
-        method: 'POST'
+        method: 'POST',
+        credentials: 'include'
       })
     }),
-    refresh: builder.mutation<{ access: string }, { refreshToken: string }>({
-      query: refreshToken => ({
-        url: '/refresh',
+    refresh: builder.mutation<{ access: string }, void>({
+      query: () => ({
+        url: '/auth/refresh',
         method: 'POST',
-        body: { refresh: refreshToken }
+        credentials: 'include'
       })
     })
   })
