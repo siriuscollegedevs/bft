@@ -3,7 +3,7 @@ import Box from '@mui/material/Box'
 import { CustomDefaultButton, CustomFormControl } from '../../styles/settings'
 import { CustomTypography } from '../../styles/header'
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import InputLabel from '@mui/material/InputLabel'
 import InputAdornment from '@mui/material/InputAdornment'
 import Visibility from '@mui/icons-material/Visibility'
@@ -15,7 +15,7 @@ import { Account } from '../../types/api'
 import { useSelector } from 'react-redux'
 import { useChangeAccountPasswordMutation } from '../../__data__/service/account.api'
 import { CurrentAccountId } from '../../states/account'
-import { useNavigate } from 'react-router-dom'
+import { useLogout } from '../../hooks/logout'
 
 export const UserSettings = () => {
   const [showOldPassword, setShowOldPassword] = useState(false)
@@ -27,7 +27,7 @@ export const UserSettings = () => {
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [repeatPassword, setRepeatPassword] = useState('')
-  const navigate = useNavigate()
+  const logout = useLogout()
 
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
   const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
@@ -68,7 +68,6 @@ export const UserSettings = () => {
         new_password: newPassword
       }
     })
-    navigate('/')
   }
 
   return (
@@ -88,7 +87,6 @@ export const UserSettings = () => {
           <CustomTypography variant="h6" sx={{ color: 'black' }}>
             Смена пароля
           </CustomTypography>
-
           <Box
             sx={{
               display: 'flex',
@@ -138,7 +136,6 @@ export const UserSettings = () => {
                 )}
               </FormControl>
             ) : null}
-
             <FormControl
               sx={{ m: 1, width: '85%' }}
               variant="outlined"
@@ -186,7 +183,6 @@ export const UserSettings = () => {
                 </FormHelperText>
               )}
             </FormControl>
-
             <FormControl
               sx={{ m: 1, width: '85%' }}
               variant="outlined"
@@ -230,8 +226,14 @@ export const UserSettings = () => {
               )}
             </FormControl>
           </Box>
-
-          <CustomDefaultButton variant="contained" color="primary" onClick={handleSave}>
+          <CustomDefaultButton
+            variant="contained"
+            color="primary"
+            onClick={async () => {
+              await handleSave()
+              logout()
+            }}
+          >
             Сохранить
           </CustomDefaultButton>
         </CustomFormControl>

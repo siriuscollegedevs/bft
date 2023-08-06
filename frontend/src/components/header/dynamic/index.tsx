@@ -13,19 +13,18 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useGetAccountByIdQuery } from '../../../__data__/service/account.api'
 import { useDispatch, useSelector } from 'react-redux'
-import { CurrentAccountId, clearAccount, setAccountData } from '../../../states/account'
+import { CurrentAccountId, setAccountData } from '../../../states/account'
 import React, { useEffect } from 'react'
 import { Typography } from '@mui/material'
 import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
-import { clearAuth } from '../../../states/auth'
-import { useLogoutMutation } from '../../../__data__/service/auth.api'
-import { deleteCookie } from '../../../utils/cookie-parser'
+import { useLogout } from '../../../hooks/logout'
 
 export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
+  const logout = useLogout()
 
   const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
 
@@ -34,8 +33,6 @@ export const DynamicHeader = () => {
     isLoading: currentAccountLoading,
     isError: currentAccountError
   } = useGetAccountByIdQuery(currentAccountId)
-
-  const [logout] = useLogoutMutation()
 
   if (currentAccountData) {
     dispatch(setAccountData(currentAccountData))
@@ -106,17 +103,7 @@ export const DynamicHeader = () => {
                 ) : (
                   <CustomTypography>{`${currentAccountData?.first_name}`}</CustomTypography>
                 )}
-                <CustomExitButton
-                  color="inherit"
-                  variant="contained"
-                  onClick={() => {
-                    logout()
-                    deleteCookie('csrftoken')
-                    dispatch(clearAccount())
-                    dispatch(clearAuth())
-                    navigate('/')
-                  }}
-                >
+                <CustomExitButton color="inherit" variant="contained" onClick={() => logout()}>
                   Выход
                 </CustomExitButton>
               </>
