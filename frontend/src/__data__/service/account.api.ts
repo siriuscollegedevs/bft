@@ -71,7 +71,8 @@ export const apiAccount = createApi({
           status: admissionsBody.status,
           current_password: admissionsBody.current_password,
           new_password: admissionsBody.new_password
-        }
+        },
+        credentials: 'include'
       })
     })
   })

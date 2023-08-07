@@ -296,7 +296,7 @@ class ChangePasswordApi(APIView):
             data = serializer.validated_data
             account = Account.objects.get(id=AccountId)
             user = User.objects.get(account=account)
-            if data['status'] == 'Administrator' or (user.check_password(data['current_password']) and account == get_user(request)):
+            if data['status'] == 'administrator' or (user.check_password(data['current_password']) and account == get_user(request)):
                 try:
                     with transaction.atomic():
                         user.set_password(data['new_password'])
