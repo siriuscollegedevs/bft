@@ -14,7 +14,6 @@ export const LoginForm = () => {
   const [showLoader, setShowLoader] = useState(false)
   const navigate = useNavigate()
   const [loginMutation, { isLoading: loginLoading, isError: loginError }] = useLoginMutation()
-  const [currentAcc] = useLoginMutation()
   const [refreshTokenMutation] = useRefreshMutation()
   const dispatch = useDispatch()
 
@@ -29,13 +28,7 @@ export const LoginForm = () => {
 
       setInterval(refreshToken, response.access_exp * 1000)
 
-      
-
-      if (response) {
-        navigate('/navigation')
-      } else {
-        return null
-      }
+      return response ? navigate('/navigation') : null
     } catch (error) {
       console.log(error)
     } finally {
