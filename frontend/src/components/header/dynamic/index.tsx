@@ -17,6 +17,9 @@ import { CurrentAccountId, clearAccount, setAccountData } from '../../../states/
 import React, { useEffect } from 'react'
 import { Typography } from '@mui/material'
 import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
+import { clearAuth } from '../../../states/auth'
+import { useLogoutMutation } from '../../../__data__/service/auth.api'
+import { deleteCookie } from '../../../utils/cookie-parser'
 
 export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')
@@ -31,6 +34,8 @@ export const DynamicHeader = () => {
     isLoading: currentAccountLoading,
     isError: currentAccountError
   } = useGetAccountByIdQuery(currentAccountId)
+
+  const [logout] = useLogoutMutation()
 
   if (currentAccountData) {
     dispatch(setAccountData(currentAccountData))
@@ -105,7 +110,10 @@ export const DynamicHeader = () => {
                   color="inherit"
                   variant="contained"
                   onClick={() => {
+                    logout()
+                    deleteCookie('csrftoken')
                     dispatch(clearAccount())
+                    dispatch(clearAuth())
                     navigate('/')
                   }}
                 >
@@ -119,5 +127,3 @@ export const DynamicHeader = () => {
     </>
   )
 }
-
-//TODO сделать адекватный выход(когда будет api)

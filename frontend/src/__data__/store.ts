@@ -31,7 +31,7 @@ const apiMiddleware = [
 
 export const store = configureStore({
   reducer: rootReducer,
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(apiMiddleware)
+  middleware: getDefaultMiddleware => getDefaultMiddleware({}).concat(apiMiddleware)
 })
 
 setupListeners(store.dispatch)
