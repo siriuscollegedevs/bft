@@ -5,6 +5,7 @@ import { baseQuery } from '../utils'
 export const apiAdmissions = createApi({
   reducerPath: 'apiAdmissions',
   baseQuery,
+  tagTypes: ['admissions'],
   endpoints: builder => ({
     getAllAdmissions: builder.mutation<Admissions[], string[]>({
       query: objectsIds => ({
@@ -12,7 +13,9 @@ export const apiAdmissions = createApi({
         method: 'POST',
         body: {
           ids: objectsIds
-        }
+        },
+        providesTags: ['admissions'],
+        credentials: 'include'
       })
     }),
     getAllArchiveAdmissions: builder.query<Admissions[], void>({
