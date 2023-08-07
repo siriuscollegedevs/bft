@@ -26,14 +26,15 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
   const idArray: string[] = currentAccountObjects.map(object => object.id)
   console.log(idArray)
 
-  // const { data: objectData, error: objectError, isLoading: objectLoading } = useGetAllObjectsQuery()
   const [admissionsMutation] = useGetAllAdmissionsMutation()
+  const [hasData, setHasData] = useState(false)
 
   useEffect(() => {
-    if (idArray.length > 0) {
+    if (idArray.length > 0 && !hasData) {
       admissionsMutation(idArray)
+      setHasData(true)
     }
-  }, [idArray])
+  }, [idArray, hasData])
 
   // TODO: изменить условия useEffect, сейчас он спамит запросами
   // useEffect(() => {
