@@ -5,34 +5,43 @@ import { baseQuery } from '../utils'
 export const apiAdmissions = createApi({
   reducerPath: 'apiAdmissions',
   baseQuery,
+  tagTypes: ['admissions'],
   endpoints: builder => ({
-    getAllAdmissions: builder.query<Admissions[], void>({
-      query: () => '/admissionss'
+    getAllAdmissions: builder.mutation<Admissions[], string[]>({
+      query: objectsIds => ({
+        url: '/request/requests',
+        method: 'POST',
+        body: {
+          ids: objectsIds
+        },
+        providesTags: ['admissions'],
+        credentials: 'include'
+      })
     }),
     getAllArchiveAdmissions: builder.query<Admissions[], void>({
-      query: () => '/admissionss/archive'
+      query: () => '/request/archive'
     }),
     createAdmissions: builder.mutation<Admissions, void>({
       query: () => ({
-        url: '/admissions',
+        url: '/request',
         method: 'POST'
       })
     }),
     getAdmissionsHistoryById: builder.query<AdmissionsHistory[], string>({
-      query: admissionsId => `/admissions/history/${admissionsId}`
+      query: admissionsId => `/request/history/${admissionsId}`
     }),
     getRecordOfAdmissions: builder.query<AdmissionsHistory[], string>({
-      query: admissionsId => `/admissions/${admissionsId}`
+      query: admissionsId => `/request/${admissionsId}`
     }),
     deleteAdmissionsById: builder.mutation<void, string>({
       query: admissionsId => ({
-        url: `/admissions/${admissionsId}`,
+        url: `/request/${admissionsId}`,
         method: 'DELETE'
       })
     }),
     admissionsSearch: builder.mutation<Admissions[], SearchOfAdmissions>({
       query: admissionsData => ({
-        url: '/admissions/expand_search',
+        url: '/request/expand_search',
         method: 'POST',
         body: {
           car_number: admissionsData.car_number,
@@ -53,7 +62,7 @@ export const apiAdmissions = createApi({
 })
 
 export const {
-  useGetAllAdmissionsQuery,
+  useGetAllAdmissionsMutation,
   useGetAllArchiveAdmissionsQuery,
   useCreateAdmissionsMutation,
   useGetAdmissionsHistoryByIdQuery,
