@@ -9,7 +9,7 @@ export const apiAdmissions = createApi({
   endpoints: builder => ({
     getAllAdmissions: builder.mutation<Admissions[], string[]>({
       query: objectsIds => ({
-        url: '/request/all',
+        url: '/request/requests',
         method: 'POST',
         body: {
           ids: objectsIds
@@ -19,29 +19,29 @@ export const apiAdmissions = createApi({
       })
     }),
     getAllArchiveAdmissions: builder.query<Admissions[], void>({
-      query: () => '/admissions/archive'
+      query: () => '/request/archive'
     }),
     createAdmissions: builder.mutation<Admissions, void>({
       query: () => ({
-        url: '/admissions',
+        url: '/request',
         method: 'POST'
       })
     }),
     getAdmissionsHistoryById: builder.query<AdmissionsHistory[], string>({
-      query: admissionsId => `/admissions/history/${admissionsId}`
+      query: admissionsId => `/request/history/${admissionsId}`
     }),
     getRecordOfAdmissions: builder.query<AdmissionsHistory[], string>({
-      query: admissionsId => `/admissions/${admissionsId}`
+      query: admissionsId => `/request/${admissionsId}`
     }),
     deleteAdmissionsById: builder.mutation<void, string>({
       query: admissionsId => ({
-        url: `/admissions/${admissionsId}`,
+        url: `/request/${admissionsId}`,
         method: 'DELETE'
       })
     }),
     admissionsSearch: builder.mutation<Admissions[], SearchOfAdmissions>({
       query: admissionsData => ({
-        url: '/admissions/expand_search',
+        url: '/request/expand_search',
         method: 'POST',
         body: {
           car_number: admissionsData.car_number,

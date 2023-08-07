@@ -26,27 +26,14 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
   const idArray: string[] = currentAccountObjects.map(object => object.id)
   console.log(idArray)
 
-  const { data: objectData, error: objectError, isLoading: objectLoading } = useGetAllObjectsQuery()
-  const [getAllAdmissions, { data: admissionData, error: admissionError, isLoading: admissionLoading }] =
-    useGetAllAdmissionsMutation()
+  // const { data: objectData, error: objectError, isLoading: objectLoading } = useGetAllObjectsQuery()
+  const [admissionsMutation] = useGetAllAdmissionsMutation()
 
-  // const [rowsData, setRowsData] = useState<Objects[] | Admissions[]>([])
-
-  getAllAdmissions(idArray)
-  // useEffect(() => {
-  //   if (idArray.length > 0) {
-  //     const fetchData = async () => {
-  //       try {
-  //         const data = await getAllAdmissions(idArray)
-  //         console.log(data)
-  //       } catch (error) {
-  //         console.error('Error fetching admissions:', error)
-  //       }
-  //     }
-
-  //     fetchData()
-  //   }
-  // }, [idArray])
+  useEffect(() => {
+    if (idArray.length > 0) {
+      admissionsMutation(idArray)
+    }
+  }, [idArray])
 
   // TODO: изменить условия useEffect, сейчас он спамит запросами
   // useEffect(() => {
