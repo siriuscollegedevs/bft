@@ -17,7 +17,6 @@ ACCOUNT_TYPE_LEN = 16
 GET_ACCOUNTS_FIELDS = ('id', 'role', 'first_name', 'surname', 'last_name', 'username')
 ACCOUNT_GET_REQUEST_FIELDS = ('role', 'first_name', 'surname', 'last_name', 'username', 'password')
 GET_ACCOUNT_FIELDS = ('role', 'first_name', 'surname', 'last_name', 'username')
-GET_ACCOUNT_OBJECTS_FIELDS = ('id', 'role', 'first_name', 'surname', 'last_name', 'username', 'objects')
 
 ACCOUNT_TYPES = ('administrator', 'manager', 'specialist', 'security_officer')
 

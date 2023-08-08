@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from .models import Request, RequestHistory, Record, RecordHistory, RequestToObject
-from sirius_access.models import Object
+from sirius_access.models import Object, Account
 from rest_framework import status
 from django.db import transaction
 from rest_framework.views import APIView
@@ -9,7 +9,6 @@ from sirius.general_functions import get_user
 from .config import *
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
-from sirius.config import USELESS_FIELDS, FIELDS_TO_ADD
 
 
 def get_request(RequestId):
