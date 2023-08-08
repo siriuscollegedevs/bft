@@ -95,6 +95,7 @@ export type Admissions = {
   id: string
   timestamp: string
   code: string
+  object_ids: string[]
 }
 
 export type AdmissionsHistory = {

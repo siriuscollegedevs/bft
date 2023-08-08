@@ -11,6 +11,7 @@ import { useGetAllAdmissionsMutation } from '../../../__data__/service/admission
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useGetAllObjectsQuery } from '../../../__data__/service/object.api'
 
 export type CurrentURL = '/objects' | '/admissions'
 
@@ -20,21 +21,30 @@ type URL = {
 
 export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { size: Size }) => {
   const objectsURL = currentURL === '/objects'
+  const [data, setData] = useState<Objects[] | Admissions[]>()
   const currentAccountObjects = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
   const idArray: string[] = currentAccountObjects.map(object => object.id)
-  const [admissionsMutation, { data }] = useGetAllAdmissionsMutation()
+  const { data: objectsData } = useGetAllObjectsQuery()
+  const [admissionsMutation, { data: admissionsData }] = useGetAllAdmissionsMutation()
   const [hasData, setHasData] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (idArray.length > 0 && !hasData) {
+    if (idArray.length > 0 && !hasData && !objectsURL) {
       admissionsMutation(idArray)
       setHasData(true)
     }
   }, [idArray, hasData])
-  console.log(data)
+
+  useEffect(() => {
+    if (admissionsData && !objectsURL) {
+      setData(admissionsData)
+    } else {
+      setData(objectsData)
+    }
+  }, [admissionsData, objectsData])
 
   const dateParser = (row: Admissions) => {
     const date = new Date(row.timestamp)
