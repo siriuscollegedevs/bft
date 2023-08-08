@@ -15,7 +15,6 @@ export type Account = {
   surname: string
   last_name: string
   username: string
-  password: string
 }
 
 export type ExpandSearchAdmissionsBody = {
@@ -27,8 +26,8 @@ export type ExpandSearchAdmissionsBody = {
 }
 
 export type ChangePasswordData = {
-  status: string
-  current_password: string
+  status: string | null
+  current_password: string | null
   new_password: string
 }
 
@@ -44,7 +43,7 @@ export type AccountHistory = {
 }
 
 export type Login = {
-  userId: string
+  account_id: string
   access: string
   refresh: string
   access_exp: number

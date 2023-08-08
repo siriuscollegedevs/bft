@@ -1,23 +1,36 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
 export type AuthState = {
-  token: string | null
+  access: string
+  accessTokenUpdateInterval: number
+  csrf: string
 }
 
 const initialState: AuthState = {
-  token: null
+  access: '',
+  accessTokenUpdateInterval: 0,
+  csrf: ''
 }
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    setToken: (state, action: PayloadAction<string | null>) => {
-      state.token = action.payload
+    setAccessToken: (state, action: PayloadAction<string>) => {
+      return { ...state, access: action.payload }
+    },
+    setTimeAccessToken: (state, action: PayloadAction<number>) => {
+      return { ...state, accessTokenUpdateInterval: action.payload }
+    },
+    setCSRFToken: (state, action: PayloadAction<string>) => {
+      return { ...state, csrf: action.payload }
+    },
+    clearAuth: () => {
+      return { ...initialState }
     }
   }
 })
 
-export const { setToken } = authSlice.actions
+export const { setAccessToken, setTimeAccessToken, setCSRFToken, clearAuth } = authSlice.actions
 export const authReducer = authSlice.reducer
-export const selectToken = (state: AuthState) => state.token
+export const selectToken = (state: AuthState) => state.access

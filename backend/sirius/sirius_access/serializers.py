@@ -32,14 +32,14 @@ class ObjectHistorySerializer(serializers.Serializer):
 
 
 class AccountSerializer(UUIDMixin, serializers.Serializer):
-    role = serializers.CharField(required=False)
-    first_name = serializers.CharField(max_length=NAMES_LEN, allow_null=True)
-    surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True, allow_null=True)
-    last_name = serializers.CharField(max_length=NAMES_LEN, allow_null=True)
-    username = serializers.CharField(required=False)
+    role = serializers.CharField(read_only=True)
+    first_name = serializers.CharField(max_length=NAMES_LEN, allow_blank=True)
+    surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
+    last_name = serializers.CharField(max_length=NAMES_LEN)
+    username = serializers.CharField(read_only=True)
     modified_by = serializers.CharField(max_length=DEFAULT_LEN, read_only=True)
     action = serializers.CharField(max_length=ACTION_ACCOUNT_LEN, read_only=True)
-    password = serializers.CharField(trim_whitespace=False, max_length=128, write_only=True, allow_null=True)
+    password = serializers.CharField(trim_whitespace=False, max_length=128, write_only=True, required=False)
     timestamp = serializers.DateTimeField(read_only=True)
 
     def __init__(self, *args, **kwargs):
@@ -70,13 +70,7 @@ class AccountSerializer(UUIDMixin, serializers.Serializer):
             else:
                 return serializers.ValidationError
         return value
-    
-    def validate_username(self, value):
-        if self.request_type == 'post':
-            if value:
-                return value 
-            raise serializers.ValidationError
-        return value
+
 
 class ChangePasswordSerializer(serializers.Serializer):
     status = serializers.CharField(max_length=ACCOUNT_TYPE_LEN)

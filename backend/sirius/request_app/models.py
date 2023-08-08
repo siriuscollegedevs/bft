@@ -24,11 +24,11 @@ class Request(UUIDMixin, models.Model):
         info['id'] = self.id
         info['timestamp'] = self.get_last_version().timestamp
         info['code'] = self.get_last_version().code
-        info['objects'] = self.get_objects()
+        info['object_ids'] = self.get_objects()
         return info
 
     def get_objects(self):
-        return [line.object.get_info().name for line in RequestToObject.objects.filter(request=self)]
+        return [line.object.id for line in RequestToObject.objects.filter(request=self)]
 
     def make_outdated(self, user, action, note=''):
         """

@@ -1,43 +1,37 @@
 import { Container, FormControl, FormHelperText } from '@mui/material'
 import Box from '@mui/material/Box'
-import { CustomDefaultButton, CustomFormControl } from '../../../styles/settings'
-import { CustomTypography } from '../../../styles/header'
+import { CustomDefaultButton, CustomFormControl } from '../../styles/settings'
+import { CustomTypography } from '../../styles/header'
 import * as React from 'react'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import InputLabel from '@mui/material/InputLabel'
 import InputAdornment from '@mui/material/InputAdornment'
 import Visibility from '@mui/icons-material/Visibility'
 import VisibilityOff from '@mui/icons-material/VisibilityOff'
 import IconButton from '@mui/material/IconButton'
 import OutlinedInput from '@mui/material/OutlinedInput'
+import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
+import { Account } from '../../types/api'
+import { useSelector } from 'react-redux'
+import { useChangeAccountPasswordMutation } from '../../__data__/service/account.api'
+import { CurrentAccountId } from '../../states/account'
+import { useLogout } from '../../hooks/logout'
 
 export const UserSettings = () => {
-  const roles = {
-    manager: 'manager',
-    sb: 'sb',
-    administrator: 'admin',
-    security: 'security'
-  }
-
-  const [role, setRole] = React.useState('')
-
-  useEffect(() => {
-    // Fetch
-    setRole(roles.manager)
-  }, [])
-
   const [showOldPassword, setShowOldPassword] = useState(false)
   const [showNewPassword, setShowNewPassword] = useState(false)
   const [showRepeatPassword, setShowRepeatPassword] = useState(false)
-
   const [passwordMatch, setPasswordMatch] = useState(true)
   const [passwordRegex, setPasswordRegex] = useState(true)
-
   const [formSubmitted, setFormSubmitted] = useState(false)
-
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [repeatPassword, setRepeatPassword] = useState('')
+  const logout = useLogout()
+
+  const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
+  const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
+  const [сhangeAccountPasswordMutation, { isLoading, isSuccess, isError, error }] = useChangeAccountPasswordMutation()
 
   const handleClickShowOldPassword = () => {
     setShowOldPassword(!showOldPassword)
@@ -60,19 +54,20 @@ export const UserSettings = () => {
 
     const regex = /^(?=.*[A-Z])(?=.*\d).{8,}$/
 
-    if (!regex.test(newPassword)) {
-      setPasswordRegex(false)
-      return
-    } else {
-      setPasswordRegex(true)
-    }
+    const isPasswordValid = regex.test(newPassword)
+    const doPasswordsMatch = newPassword === repeatPassword
 
-    if (newPassword !== repeatPassword) {
-      setPasswordMatch(false)
-      return
-    } else {
-      setPasswordMatch(true)
-    }
+    setPasswordRegex(isPasswordValid)
+    setPasswordMatch(doPasswordsMatch)
+
+    сhangeAccountPasswordMutation({
+      accountId: currentAccountId,
+      admissionsBody: {
+        status: currentAccountRole === Object.keys(ACCOUNT_ROLES)[0] ? currentAccountRole : '',
+        current_password: currentAccountRole === Object.keys(ACCOUNT_ROLES)[0] ? '' : oldPassword,
+        new_password: newPassword
+      }
+    })
   }
 
   return (
@@ -92,7 +87,6 @@ export const UserSettings = () => {
           <CustomTypography variant="h6" sx={{ color: 'black' }}>
             Смена пароля
           </CustomTypography>
-
           <Box
             sx={{
               display: 'flex',
@@ -103,7 +97,7 @@ export const UserSettings = () => {
               width: '100%'
             }}
           >
-            {role !== roles.administrator && (
+            {currentAccountRole !== Object.keys(ACCOUNT_ROLES)[0] ? (
               <FormControl
                 sx={{ m: 1, width: '85%' }}
                 variant="outlined"
@@ -141,8 +135,7 @@ export const UserSettings = () => {
                   </FormHelperText>
                 )}
               </FormControl>
-            )}
-
+            ) : null}
             <FormControl
               sx={{ m: 1, width: '85%' }}
               variant="outlined"
@@ -190,7 +183,6 @@ export const UserSettings = () => {
                 </FormHelperText>
               )}
             </FormControl>
-
             <FormControl
               sx={{ m: 1, width: '85%' }}
               variant="outlined"
@@ -234,8 +226,14 @@ export const UserSettings = () => {
               )}
             </FormControl>
           </Box>
-
-          <CustomDefaultButton variant="contained" color="primary" onClick={handleSave}>
+          <CustomDefaultButton
+            variant="contained"
+            color="primary"
+            onClick={async () => {
+              await handleSave()
+              logout()
+            }}
+          >
             Сохранить
           </CustomDefaultButton>
         </CustomFormControl>

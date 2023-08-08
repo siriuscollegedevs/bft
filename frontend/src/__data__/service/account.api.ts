@@ -21,8 +21,7 @@ export const apiAccount = createApi({
           first_name: accountData.first_name,
           surname: accountData.surname,
           last_name: accountData.last_name,
-          username: accountData.username,
-          password: accountData.password
+          username: accountData.username
         }
       })
     }),
@@ -38,8 +37,7 @@ export const apiAccount = createApi({
           first_name: accountData.first_name,
           surname: accountData.surname,
           last_name: accountData.last_name,
-          username: accountData.username,
-          password: accountData.password
+          username: accountData.username
         }
       })
     }),
@@ -73,7 +71,8 @@ export const apiAccount = createApi({
           status: admissionsBody.status,
           current_password: admissionsBody.current_password,
           new_password: admissionsBody.new_password
-        }
+        },
+        credentials: 'include'
       })
     })
   })

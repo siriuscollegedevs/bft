@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'authorization_app',
     'request_app',
-    'drf_spectacular'
+    'drf_spectacular',
+    'sslserver',
 ]
 
 MIDDLEWARE = [
@@ -103,10 +104,10 @@ SIMPLE_JWT = {
     "AUTH_COOKIE_ACCESS": "access",
     "AUTH_COOKIE_REFRESH": "refresh",
     "AUTH_COOKIE_DOMAIN": None,
-    "AUTH_COOKIE_SECURE": False,
+    "AUTH_COOKIE_SECURE": True,
     "AUTH_COOKIE_HTTP_ONLY": True,
     "AUTH_COOKIE_PATH": "/",
-    "AUTH_COOKIE_SAMESITE": None,
+    "AUTH_COOKIE_SAMESITE": 'None',
 }
 
 ROOT_URLCONF = 'sirius.urls'
@@ -187,15 +188,15 @@ CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = True
 CSRF_COOKIE_HTTP_ONLY = True
 
-# CSRF_TRUSTED_ORIGINS = [    
-#     'http://localhost:3000'
-# ]
+CSRF_TRUSTED_ORIGINS = [    
+    'http://localhost:3000'
+]
 
 CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
 
 SESSION_COOKIE_SECURE = True
 
-CSRF_COOKIE_SAMESITE = 'Lax'
-SESSION_COOKIE_SAMESITE = 'Lax'
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
 
 APPEND_SLASH = False

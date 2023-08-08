@@ -1,4 +1,4 @@
-import { UserSettings } from './settings'
+import { UserSettings } from '../../components/settings'
 
 export const Settings = () => {
   return (

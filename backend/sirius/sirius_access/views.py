@@ -10,7 +10,6 @@ from django.contrib.auth.models import User
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
 from .config import *
-from sirius.config import USELESS_FIELDS, FIELDS_TO_ADD
 
 
 def check_name(name):
@@ -148,7 +147,7 @@ class ObjectHistoryApiView(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=OBJECTID_ERROR_MSG)
         res = ObjectHistory.objects.filter(object=obj).values(
-          "name", "version", "timestamp", "action"
+            "name", "version", "timestamp", "action"
         ).annotate(modified_by=F('modified_by__user__username'))
         return Response(serializers.ObjectHistorySerializer(res, many=True).data)
 
@@ -197,12 +196,13 @@ class PostAccount(APIView):
                     new_user = User.objects.create_user(username=data['username'], password=data['password'])
                     new_user.save()
                     new_account = Account.objects.create(status='active', user=new_user, role=data['role'])
-                    account_history_data = {key: data[key] for key in data if key not in ['password', 'role', 'username']}
+                    account_history_data = {key: data[key]
+                                            for key in data if key not in ['password', 'role', 'username']}
                     AccountHistory.objects.create(
-                      action='created',
-                      account=new_account,
-                      modified_by=get_user(request),
-                      **account_history_data
+                        action='created',
+                        account=new_account,
+                        modified_by=get_user(request),
+                        **account_history_data
                     )
                     return Response(status=status.HTTP_201_CREATED)
             except Exception:
@@ -227,10 +227,10 @@ class GetPutDeleteAccount(APIView):
 
     @extend_schema(responses={
         status.HTTP_200_OK: None,
-        status.HTTP_401_UNAUTHORIZED : None,
-        status.HTTP_400_BAD_REQUEST : None
-    }, request=inline_serializer(name='put_account', 
-    fields={key : ser.CharField() for key in ['first_name', 'surname', 'last_name', 'password']}))
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
+    }, request=inline_serializer(name='put_account',
+                                 fields={key: ser.CharField() for key in ['first_name', 'surname', 'last_name', 'password']}))
     def put(self, request, AccountId):
         serializer = serializers.AccountSerializer(data=request.data)
         if serializer.is_valid():
@@ -247,16 +247,12 @@ class GetPutDeleteAccount(APIView):
                         action = 'password_changed'
                     else:
                         action = 'modified'
-                    new_data = {key : data[key] for key in data if data[key] and key != 'password'}
-                    info = account.get_last_version().__dict__
-                    old_data = {key : info[key] for key in info if key not in new_data.keys() and key not in USELESS_FIELDS + FIELDS_TO_ADD}
                     AccountHistory.objects.create(
-                      action=action,
-                      account=account,
-                      modified_by=get_user(request), 
-                     **old_data,
-                      **new_data
-                    ) 
+                        action=action,
+                        account=account,
+                        modified_by=get_user(request),
+                        **data
+                    )
                     return Response(status=status.HTTP_200_OK)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -299,7 +295,7 @@ class ChangePasswordApi(APIView):
             data = serializer.validated_data
             account = Account.objects.get(id=AccountId)
             user = User.objects.get(account=account)
-            if data['status'] == 'Administrator' or (user.check_password(data['current_password']) and account == get_user(request)):
+            if data['status'] == 'administrator' or (user.check_password(data['current_password']) and account == get_user(request)):
                 try:
                     with transaction.atomic():
                         user.set_password(data['new_password'])
@@ -341,7 +337,7 @@ class AccountHistoryApiView(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=ACCOUNTID_ERROR_MSG)
         res = AccountHistory.objects.filter(account=account).values("first_name", "last_name", "surname", "timestamp", "action")\
-                .annotate(modified_by=F('modified_by__user__username'), username=F('account__user__username'), role=F('account__role'))
+            .annotate(modified_by=F('modified_by__user__username'), username=F('account__user__username'), role=F('account__role'))
         return Response(serializers.AccountSerializer(res, many=True).data)
 
 
@@ -394,10 +390,10 @@ class GetAccountByObjectView(APIView):
     status: str
 
     @extend_schema(responses={
-            status.HTTP_200_OK:serializers.AccountSerializer(many=True, fields=GET_ACCOUNTS_FIELDS), 
-            status.HTTP_401_UNAUTHORIZED : None,
-            status.HTTP_400_BAD_REQUEST : None
-        },
+        status.HTTP_200_OK: serializers.AccountSerializer(many=True, fields=GET_ACCOUNTS_FIELDS),
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
+    },
         request=inline_serializer(
         name='account_to_object_search',
            fields={'ids': ser.ListField(child=ser.UUIDField())}))
@@ -465,21 +461,21 @@ class GetPostActualAccountsObjectsView(APIView):
                     res.append(account_dict)
                 return Response(serializers.AccountToObjectSerializer(res, many=True).data)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка в транзакции
+            return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE ошибка в транзакции
 
     @extend_schema(responses={
-            status.HTTP_201_CREATED: None, 
-            status.HTTP_401_UNAUTHORIZED : None,
-            status.HTTP_400_BAD_REQUEST : None
-        },
+        status.HTTP_201_CREATED: None,
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
+    },
         request=inline_serializer(
         name='account_to_object_create',
-           fields={
-               'first_name': ser.CharField(),
-               'last_name': ser.CharField(),
-               'surname': ser.CharField(),
-               'ids': ser.ListField()
-            }))
+        fields={
+            'first_name': ser.CharField(),
+            'last_name': ser.CharField(),
+            'surname': ser.CharField(),
+            'ids': ser.ListField()
+        }))
     def post(self, request):
         serializer = serializers.AccountObjectSerializer(data=request.data)
         if serializer.is_valid():
@@ -522,8 +518,8 @@ class GetArchiveAccountsObjectsView(APIView):
 
     @extend_schema(responses={
             status.HTTP_200_OK: serializers.AccountToObjectSerializer(many=True),
-            status.HTTP_401_UNAUTHORIZED: None,
-            status.HTTP_400_BAD_REQUEST: None
+            status.HTTP_401_UNAUTHORIZED : None,
+            status.HTTP_400_BAD_REQUEST : None
         })
     def get(self, _):
         res = []
@@ -542,21 +538,22 @@ class GetArchiveAccountsObjectsView(APIView):
                     res.append(account_dict)
                 return Response(serializers.AccountToObjectSerializer(res, many=True).data)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка в транзакции
+            return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE ошибка в транзакции
 
 
 class GetPutAccountToObjectView(APIView):
 
     @extend_schema(responses={
-            status.HTTP_200_OK : serializers.ObjectSerializer(many=True),
-            status.HTTP_401_UNAUTHORIZED : None,
-            status.HTTP_400_BAD_REQUEST : None
-        })
+        status.HTTP_200_OK: serializers.ObjectSerializer(many=True),
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
+    })
     def get(self, _, AccountId):
         try:
             account = Account.objects.get(id=AccountId)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE аккаунта с таким id не существует или id не верен
+            # NOTE аккаунта с таким id не существует или id не верен
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         try:
             with transaction.atomic():
                 res = []
@@ -567,28 +564,28 @@ class GetPutAccountToObjectView(APIView):
                     res.append({'id': record.object.id, 'name': record.object.get_info().name})
                 return Response(serializers.ObjectSerializer(res, many=True).data)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
+            return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE ошибка транзакции
 
     @extend_schema(responses={
-            status.HTTP_200_OK: None, 
-            status.HTTP_401_UNAUTHORIZED : None,
-            status.HTTP_400_BAD_REQUEST : None
-        },
+        status.HTTP_200_OK: None,
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
+    },
         request=inline_serializer(
         name='account_to_object_put',
-           fields={
-               'object_ids': ser.ListField(child=ser.UUIDField())
-            }))
+        fields={
+            'object_ids': ser.ListField(child=ser.UUIDField())
+        }))
     def put(self, request, AccountId):
         object_ids = request.data.get('object_ids', None)
         if not object_ids:
-            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE список с id пустой
+            return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE список с id пустой
         try:
             account = Account.objects.get(id=AccountId)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE аккаунта с таким id не существует или id не верен
-        if account.status == 'outdated':
-            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE аккаунт находится в архиве
+            if account.status == 'outdated':
+                return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE аккаунт находится в архиве
         try:
             with transaction.atomic():
                 AccountToObject.objects.filter(account=account, status='active').delete()
@@ -596,11 +593,11 @@ class GetPutAccountToObjectView(APIView):
                     try:
                         object_ins = Object.objects.get(id=object_id)
                     except Exception:
-                        return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE объекта с таким id не существует
+                        return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE объекта с таким id не существует
                     AccountToObject.objects.create(object=object_ins, account=account, status='active')
                 return Response(status=status.HTTP_200_OK)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE ошибка транзакции
+            return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE ошибка транзакции
 
 
 class DeleteAccountToObjbectView(APIView):
@@ -612,13 +609,13 @@ class DeleteAccountToObjbectView(APIView):
     })
     def delete(self, request, MatchId):
         if not check_administrator(request):
-            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE роль аккаунта НЕ администратор
+            return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE роль аккаунта НЕ администратор
         try:
             match = AccountToObject.objects.get(id=MatchId)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE закрепления с таким id нет
+            return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE закрепления с таким id нет
         if match.status == 'outdated':
-            return Response(status=status.HTTP_400_BAD_REQUEST) ## NOTE закрепление уже находится в архиве
+            return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE закрепление уже находится в архиве
         try:
             with transaction.atomic():
                 match.status = 'outdated'
