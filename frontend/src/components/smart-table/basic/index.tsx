@@ -49,11 +49,7 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
       <Table aria-label="simple table">
         <TableBody>
           {data?.map((row: Objects | Admissions) => (
-            <TableRow
-              key={'name' in row ? row.name : row.code}
-              onClick={() => (objectsURL ? null : navigate(`/admissions/view/${row.id}`))}
-              style={{ cursor: 'pointer' }}
-            >
+            <TableRow key={'name' in row ? row.name : row.code}>
               {objectsURL ? (
                 <>
                   <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
@@ -67,10 +63,20 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
                 </>
               ) : (
                 <>
-                  <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
+                  <TableCell
+                    onClick={() => navigate(`/admissions/view/${row.id}`)}
+                    style={{ cursor: 'pointer' }}
+                    align="left"
+                    sx={{ height: '47px', width: '200px' }}
+                  >
                     {'timestamp' in row ? dateParser(row) : ''}
                   </TableCell>
-                  <TableCell align="left" padding={'checkbox'}>
+                  <TableCell
+                    onClick={() => navigate(`/admissions/view/${row.id}`)}
+                    style={{ cursor: 'pointer' }}
+                    align="left"
+                    padding={'checkbox'}
+                  >
                     {'code' in row ? `#${row.code}` : ''}
                   </TableCell>
                   <TableCell align="right">
