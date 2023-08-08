@@ -630,47 +630,105 @@ class DeleteAccountToObjbectView(APIView):
 
 class AccountToObjectExpandSearchView(APIView):
 
+    @extend_schema(responses={
+            status.HTTP_200_OK: serializers.AccountToObjectSerializer(many=True),
+            status.HTTP_401_UNAUTHORIZED : None,
+            status.HTTP_400_BAD_REQUEST : None
+        },
+        request=inline_serializer(
+        name='account_to_object_search',
+           fields={
+               'first_name': ser.CharField(),
+               'last_name': ser.CharField(),
+               'surname': ser.CharField(),
+               'objects': ser.ListField(child=ser.CharField())
+            }))
     def post(self, request):
         account_keys = ('first_name', 'last_name', 'surname')
         search_account = {key: value for key, value in request.data.items() if key in account_keys and value}
-        accounts = list_to_queryset(
-            AccountHistory,
-            [account.get_last_version() for account in Account.objects.filter(status='active')]
-        ).filter(**search_account)
-        if accounts:
-            active_accounts = [account.account for account in accounts]
+        if search_account:
+            try:
+                with transaction.atomic():
+                    accounts = list_to_queryset(
+                        AccountHistory,
+                        [account.get_last_version() for account in Account.objects.filter(status='active')]
+                    ).filter(**search_account)
+                    if accounts:
+                        active_accounts = [account.account for account in accounts]
+                    else:
+                        return Response(status=status.HTTP_400_BAD_REQUEST) # NOTE аккаунты по запросу не найдены
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST) # NOTE ошибка транзакции
         object_search = request.data.get('objects')
         if object_search:
-            objects = [
-                object_ins for object_ins in Object.objects.filter(status='active') if object_ins.get_info().name in object_search
-                ]
+            try:
+                with transaction.atomic():
+                    objects = [
+                        object_ins for object_ins in Object.objects.filter(status='active') if object_ins.get_info().name in object_search
+                        ]
+                    if not objects:
+                        return Response(status=status.HTTP_400_BAD_REQUEST) # NOTE объекты по запросу не найдены
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
         res = []
         if active_accounts and objects:
-            for account in active_accounts:
-                account_res = account.get_last_version().to_dict()
-                account_res['objects'] = []
-                for object_ins in objects:
-                    if AccountToObject.objects.filter(account=account, object=object_ins, status='active').exists():
-                        account_res['objects'].append({
-                            'match_id': str(object_ins.id),
-                            'name': object_ins.get_info().name
-                        })
-                res.append(account_res)
+            try:
+                with transaction.atomic():
+                    for account in active_accounts:
+                        account_res = account.get_last_version().to_dict()
+                        account_res['objects'] = []
+                        for object_ins in objects:
+                            if AccountToObject.objects.filter(account=account, object=object_ins, status='active').exists():
+                                account_res['objects'].append({
+                                    'match_id': str(object_ins.id),
+                                    'name': object_ins.get_info().name
+                                })
+                        res.append(account_res)
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST) # NOTE ошбка транзакции
         elif active_accounts:
-            for account in active_accounts:
-                account_res = account.get_last_version().to_dict()
-                account_res['objects'] = []
-                all_matches = AccountToObject.objects.filter(account=account, status='active')
-                if all_matches:
-                    for record in all_matches:
-                        account_res['objects'].append({
-                            'match_id': str(record.id),
-                            'name': record.object.get_info().name
-                        })
-                res.append(account_res)
+            try:
+                with transaction.atomic():
+                    for account in active_accounts:
+                        account_res = account.get_last_version().to_dict()
+                        account_res['objects'] = []
+                        all_matches = AccountToObject.objects.filter(account=account, status='active')
+                        if all_matches:
+                            for record in all_matches:
+                                account_res['objects'].append({
+                                    'match_id': str(record.id),
+                                    'name': record.object.get_info().name
+                                })
+                        res.append(account_res)
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST) # NOTE ошибка транзакции
         elif objects:
-            res_accounts = set()
-            for object_ins in objects:
-                for record in AccountToObject.objects.filter(object=object_ins, status='active'):
-                    res_accounts.add()
-
+            try:
+                with transaction.atomic():
+                    res_accounts = set()
+                    for iter, object_ins in enumerate(objects):
+                            accounts = set()
+                            db_records = AccountToObject.objects.filter(object=object_ins, status='active')
+                            if not db_records:
+                                return Response(status=status.HTTP_400) # NOTE закрепления по переданным объектам не найдены
+                            for db_record in db_records:
+                                if iter == 0:
+                                    res_accounts.add(db_record.account.id)
+                                else:
+                                    accounts.add(db_record.account.id)
+                            if iter != 0:
+                                res_accounts.intersection_update(accounts)
+                    for account in res_accounts:
+                        account_res = account.get_last_version().to_dict()
+                        account_res['objects'] = []
+                        for record in AccountToObject.objects.filter(account=account, status='active'):
+                            account_res['objects'].append({
+                                'match_id': str(record.id),
+                                'name': record.object.get_info().name
+                            })
+                        res.append(account_res)
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST) # NOTE ошибка транзакции
+        if res:
+            return Response(serializers.AccountToObjectSerializer(res, many=True).data)
+        return Response(status=status.HTTP_400_BAD_REQUEST) # NOTE данные не найдены
