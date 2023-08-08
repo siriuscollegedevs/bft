@@ -2,13 +2,14 @@ import { TableRow, TableCell, IconButton, Collapse, Table, TableBody } from '@mu
 import { Box } from '@mui/system'
 import React from 'react'
 import { ButtonNames, ShortcutButtons } from '../../../shortcut-buttons'
-import { value, Objects, AdmissionsValue } from '../smoke'
-import { itsAcccount, itsEmployees, itsAdmissions, itsAdmissionsView, myURL } from '..'
+import { value, AdmissionsValue } from '../smoke'
+import { itsAcccount, itsEmployees, itsAdmissions, itsAdmissionsView, myURL, itsEmployeesArchive } from '..'
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { ReactComponent as HumanIcon } from '../../../../assets/human.svg'
 import { ReactComponent as CarIcon } from '../../../../assets/car.svg'
+import { ObjectInArray } from '../../../../types/api'
 
 export const Row = ({ row, buttonNames, currentURL }: any & ButtonNames & { currentURL: myURL }) => {
   const [open, setOpen] = React.useState(false)
@@ -36,8 +37,20 @@ export const Row = ({ row, buttonNames, currentURL }: any & ButtonNames & { curr
         )}
         {itsEmployees({ currentURL }) && (
           <>
-            <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
-              {row.name}
+            <TableCell align="left" sx={{ height: '47px', width: '100%' }}>
+              {row.last_name} {row.first_name} {row.surname}
+            </TableCell>
+            <TableCell align="right">
+              <Box display="flex" alignItems="center" justifyContent="flex-end">
+                <ShortcutButtons buttonNames={buttonNames} />
+              </Box>
+            </TableCell>
+          </>
+        )}
+        {itsEmployeesArchive({ currentURL }) && (
+          <>
+            <TableCell align="left" sx={{ height: '47px', width: '100%' }}>
+              {row.last_name} {row.first_name} {row.surname}
             </TableCell>
             <TableCell align="right">
               <Box display="flex" alignItems="center" justifyContent="flex-end">
@@ -90,14 +103,20 @@ export const Row = ({ row, buttonNames, currentURL }: any & ButtonNames & { curr
                         <TableCell align="left">{valueRow.email}</TableCell>
                       </TableRow>
                     ))}
-                  {itsEmployees({ currentURL }) &&
-                    row.Objects.map((valueRow: Objects) => (
-                      <>
-                        <TableRow>
-                          <TableCell align="left">{valueRow.objects.join(', ')}</TableCell>
-                        </TableRow>
-                      </>
-                    ))}
+                  {itsEmployees({ currentURL }) && (
+                    <TableRow>
+                      <TableCell align="left">
+                        {row.objects?.map((valueRow: ObjectInArray) => valueRow.name).join(', ')}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {itsEmployeesArchive({ currentURL }) && (
+                    <TableRow>
+                      <TableCell align="left">
+                        {row.objects?.map((valueRow: ObjectInArray) => valueRow.name).join(', ')}
+                      </TableCell>
+                    </TableRow>
+                  )}
                   {itsAdmissions({ currentURL }) &&
                     row.value.map((valueRow: AdmissionsValue) => (
                       <>
