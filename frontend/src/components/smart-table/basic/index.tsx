@@ -38,10 +38,7 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
 
   const dateParser = (row: Admissions) => {
     const date = new Date(row.timestamp)
-    const day = date.getDate()
-    const month = date.getMonth() + 1
-    const year = date.getFullYear()
-    return <>{`${day}.${month}.${year}`}</>
+    return <>{`${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`}</>
   }
 
   return (
