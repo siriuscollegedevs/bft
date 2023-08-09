@@ -11,6 +11,7 @@ import { DynamicHeader } from './components/header/dynamic'
 import { StaticHeader } from './components/header/static'
 import { BackButton } from './components/button-back'
 import { AdmissionsPage } from './pages/admissions'
+import { AdmissionViewPage } from './pages/admission-view'
 
 export const App: React.FC = (): JSX.Element => {
   function Header() {
@@ -42,6 +43,7 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/employees/:id" element={<FormEditDirectories />} />
             <Route path="/objects" element={<ObjectsPage />} />
             <Route path="/admissions" element={<AdmissionsPage />} />
+            <Route path="/admissions/view/:id" element={<AdmissionViewPage />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

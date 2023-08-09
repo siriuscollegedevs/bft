@@ -7,6 +7,7 @@ import { SearchField } from '../search-field'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 type IsSwitchProps = {
+  isSearchField: boolean
   isSwitch: boolean
 }
 
@@ -20,7 +21,7 @@ const urlTitle: UrlTitle = [
   ['/admissions', 'Заявки']
 ]
 
-export const EntityTitle: React.FC<IsSwitchProps> = ({ isSwitch }) => {
+export const EntityTitle: React.FC<IsSwitchProps> = ({ isSearchField, isSwitch }) => {
   const [checked, setChecked] = React.useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -81,12 +82,24 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSwitch }) => {
               width: '20%'
             }}
           >
-            <SearchField />
-            <FormControlLabel
-              sx={{ display: isSwitch ? 'inline-flex' : 'none' }}
-              control={<Switch checked={checked} onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />}
-              label="архив записей"
-            />
+            {isSearchField ? (
+              <>
+                <SearchField />
+              </>
+            ) : (
+              <></>
+            )}
+
+            {isSwitch ? (
+              <FormControlLabel
+                control={
+                  <Switch checked={checked} onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />
+                }
+                label="архив записей"
+              />
+            ) : (
+              <></>
+            )}
           </Box>
         </Box>
       </Container>
