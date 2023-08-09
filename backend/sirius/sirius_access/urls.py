@@ -24,5 +24,6 @@ urlpatterns = [
     path('object/accounts/archive', views.GetArchiveAccountByObjectView.as_view()),
     path('account_to_objects/<uuid:AccountId>', views.GetPutAccountToObjectView.as_view()),
     path('object/accounts/<uuid:MatchId>', views.DeleteAccountToObjbectView.as_view()),
-    path('account_to_object/expand_search', views.AccountToObjectExpandSearchView.as_view())
+    path('account_to_object/expand_search', views.ActualAccountToObjectExpandSearchView.as_view()),
+    path('account_to_object/expand_search/archive', views.ArchiveAccountToObjectExpandSearchView.as_view()),
 ]
