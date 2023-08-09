@@ -93,13 +93,14 @@ export type Car = {
 
 export type Admissions = {
   id: string
-  timestemp: string
+  timestamp: string
   code: string
+  object_ids: string[]
 }
 
 export type AdmissionsHistory = {
   id: string
-  timestemp: string
+  timestamp: string
   status: string
   car_number: string
   car_brand: string
