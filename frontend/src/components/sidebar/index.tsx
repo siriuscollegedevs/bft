@@ -8,7 +8,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select'
 import OutlinedInput from '@mui/material/OutlinedInput'
 import MenuItem from '@mui/material/MenuItem'
 import Checkbox from '@mui/material/Checkbox'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useSelector, useDispatch } from 'react-redux'
 import { Account } from '../../types/api'
@@ -25,7 +25,6 @@ type SidebarProps = {
 export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton }) => {
   const [objectName, setObjectName] = React.useState<string[]>([])
   const location = useLocation()
-  const navigate = useNavigate()
   const dispatch = useDispatch()
   const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
@@ -43,11 +42,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
   const handleChange = ({ target: { value } }: SelectChangeEvent<typeof objectName>) => {
     setObjectName(typeof value === 'string' ? value.split(',') : value)
   }
-
-  const navigateToId = (id: string) => {
-    const newPath = `${location.pathname}/${id}`;
-    navigate(newPath);
-  };
 
   const MenuProps = {
     PaperProps: {
@@ -144,7 +138,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
             )}
           </Box>
           {isButton && currentAccountRole !== ACCOUNT_ROLES.security ? (
-            <SidebarButton variant="contained" color="primary" onClick={() => navigateToId(':id')}>
+            <SidebarButton variant="contained" color="primary">
               {location.pathname.startsWith('/admissions') ? 'Создать заявку' : 'Создать запись'}
             </SidebarButton>
           ) : (
