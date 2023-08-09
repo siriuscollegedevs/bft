@@ -108,13 +108,16 @@ class Migration(migrations.Migration):
                 created_account = account.get_data_from_history()
                 existing_accounts.append((created_account['first_name'], created_account['last_name'], created_account['surname']))
                 ACCOUNT_HISTORY.append(ACCOUNT_HISTORY.pop(0))
+            existing_objects = []
             for object_data in OBJECT_DATA:
                 object_inst = Object.objects.create(status='active')
                 ObjectHistory.objects.create(object=object_inst, modified_by=account, action='created', **object_data)
                 vers = 0
                 for record in OBJECT_HISTORY:
-                    vers += 1
-                    ObjectHistory.objects.create(version=vers, object=object_inst, modified_by=account, action='modified', **record)
+                    if record['name'] not in existing_objects:
+                        vers += 1
+                        ObjectHistory.objects.create(version=vers, object=object_inst, modified_by=account, action='modified', **record)
+                existing_objects.append(object_inst.get_info().name)
                 OBJECT_HISTORY.append(OBJECT_HISTORY.pop(0))
                 object_inst = Object.objects.create(status='outdated')
                 ObjectHistory.objects.create(object=object_inst, modified_by=account, action='created', **object_data)

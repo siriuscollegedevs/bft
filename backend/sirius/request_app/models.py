@@ -132,7 +132,6 @@ class RecordHistory(UUIDMixin, models.Model):
 class RequestHistory(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     request = models.ForeignKey(Request, on_delete=models.PROTECT)
-    object = models.ForeignKey(Object, on_delete=models.PROTECT)
     code = models.CharField(max_length=DEFAULT_LEN)
     action = models.CharField(max_length=ACTION_RECORD_LEN, choices=STATUS_CHOICES_RECORD)
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT)
