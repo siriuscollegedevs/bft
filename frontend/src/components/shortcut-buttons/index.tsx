@@ -5,6 +5,7 @@ import { ReactComponent as HistoryIcon } from '../../assets/history.svg'
 import { ReactComponent as TrashIcon } from '../../assets/trash.svg'
 import { ReactComponent as CancelIcon } from '../../assets/cancel.svg'
 import { ReactComponent as ToRepayIcon } from '../../assets/toRepay.svg'
+import { useNavigate } from 'react-router-dom';
 
 type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
 
@@ -45,6 +46,7 @@ const iconMapping: IconMapping = {
 }
 
 export const ShortcutButtons = ({ buttonNames }: ButtonNames) => {
+  const navigate = useNavigate()
   if (buttonNames.length === 0 || buttonNames.length > 3) {
     return <h6>Error</h6>
   }
@@ -63,6 +65,13 @@ export const ShortcutButtons = ({ buttonNames }: ButtonNames) => {
               },
               height: '35px',
               width: '35px'
+            }}
+            onClick={() => {
+              if (title === 'edit') {
+                const id = 'id';
+                const newPath = `${location.pathname}/${id}`;
+                navigate(newPath);
+              }
             }}
           >
             {iconMapping[title].node}
