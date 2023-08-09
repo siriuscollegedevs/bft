@@ -1,7 +1,5 @@
 import { Table, TableBody, TableContainer } from '@mui/material'
-
 import { ButtonNames } from '../../shortcut-buttons'
-
 import { rowsAccounts, rowsAdmissions, DataAccount, DataAdmission } from './smoke'
 import { Row } from './row'
 import { Size } from '..'
@@ -10,6 +8,8 @@ import {
   useGetAllAccountToObjectQuery
 } from '../../../__data__/service/object-account'
 import { AccountToObject } from '../../../types/api'
+import { useSelector } from 'react-redux'
+import { FiltersState } from '../../../states/filters'
 
 export type myURL =
   | '/accounts'
@@ -49,11 +49,17 @@ export const Collapsible = ({
     error: employeesArchiveError,
     isLoading: employeesArchiveLoading
   } = useGetAllAccountToObjectArchiveQuery()
+  const filters = useSelector((state: { filters: FiltersState }) => state.filters)
 
   const filteredRows: CommonData[] = itsAcccount({ currentURL })
     ? rowsAccounts
     : itsEmployees({ currentURL })
-    ? employeesData ?? []
+    ? employeesData?.filter(employee => {
+        return (
+          filters.objectNameFilter.length === 0 ||
+          employee.objects.some(object => filters.objectNameFilter.includes(object.name))
+        )
+      }) || []
     : itsEmployeesArchive({ currentURL })
     ? employeesArchiveData ?? []
     : itsAdmissions({ currentURL })
@@ -61,7 +67,6 @@ export const Collapsible = ({
     : []
 
   return (
-    
     <TableContainer sx={{ width: size.width, height: size.height }}>
       <Table aria-label="collapsible table">
         <TableBody>

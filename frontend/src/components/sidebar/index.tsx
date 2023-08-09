@@ -10,11 +10,12 @@ import MenuItem from '@mui/material/MenuItem'
 import Checkbox from '@mui/material/Checkbox'
 import { useLocation } from 'react-router-dom'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { Account } from '../../types/api'
-import { CurrentAccountId } from '../../states/account'
+import { CurrentAccountId, setAccountObjects } from '../../states/account'
 import { useGetAccountToObjectsQuery } from '../../__data__/service/object-account'
 import CircularProgress from '@mui/material/CircularProgress'
+import { setObjectNamesFilter } from '../../states/filters'
 
 type SidebarProps = {
   isSearch: boolean
@@ -25,6 +26,7 @@ type SidebarProps = {
 export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton }) => {
   const [objectName, setObjectName] = React.useState<string[]>([])
   const location = useLocation()
+  const dispatch = useDispatch()
   const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
@@ -34,8 +36,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
     isError: currentAccountObjectsError
   } = useGetAccountToObjectsQuery(currentAccountId)
 
+  if (currentAccountObjectsData) {
+    dispatch(setAccountObjects(currentAccountObjectsData))
+  }
+
   const handleChange = ({ target: { value } }: SelectChangeEvent<typeof objectName>) => {
-    setObjectName(typeof value === 'string' ? value.split(',') : value)
+    const selectedObjects = typeof value === 'string' ? value.split(',') : value
+    setObjectName(selectedObjects)
+    dispatch(setObjectNamesFilter(selectedObjects))
   }
 
   const MenuProps = {
