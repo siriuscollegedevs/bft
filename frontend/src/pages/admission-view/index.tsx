@@ -3,10 +3,15 @@ import { Box } from '@mui/system'
 import { EntityTitle } from '../../components/entity-title'
 import { SearchField } from '../../components/search-field'
 import { SmartTable } from '../../components/smart-table'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useUpdateAdmissionStatusMutation } from '../../__data__/service/admission.api'
+import { CanceledDialog } from '../../components/canceled-dialog'
 
 export const AdmissionViewPage = () => {
+  const { id } = useParams<string>()
   const navigate = useNavigate()
+  const [updateStatus] = useUpdateAdmissionStatusMutation()
+
   return (
     <>
       <EntityTitle isSwitch={false} isSearchField={false} />
@@ -24,14 +29,26 @@ export const AdmissionViewPage = () => {
             <SearchField />
           </Box>
           <Box>
-            <Button variant="contained" sx={{ marginRight: '14px' }} onClick={() => navigate('')}>
+            <Button
+              variant="contained"
+              sx={{ marginRight: '14px' }}
+              onClick={() => navigate(`/admissions/${id}/entries/create`)}
+            >
               Добавить запись
             </Button>
-            <Button variant="contained" sx={{ marginRight: '14px' }}>
+            <Button variant="contained" sx={{ marginRight: '14px' }} onClick={() => navigate(`/admissions/${id}`)}>
               Редактировать
             </Button>
-            <Button variant="contained">Аннулировать</Button>
-            <Button variant="contained" sx={{ marginLeft: '14px' }}>
+            {id && <CanceledDialog admissionId={id} />}
+            <Button
+              variant="contained"
+              sx={{ marginLeft: '14px' }}
+              onClick={() => {
+                if (id) {
+                  updateStatus({ admissionId: id, admissionData: { status: 'closed', reason: '' } })
+                }
+              }}
+            >
               Погасить
             </Button>
           </Box>

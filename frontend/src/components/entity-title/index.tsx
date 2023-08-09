@@ -36,6 +36,12 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSearchField, isSwitch }
   const getTitleFromUrl = (url: string): string => {
     const hasHistory = url.includes('/history')
 
+    if (url.includes('/admissions/view/')) {
+      const parts = url.split('/')
+      const admissionId = parts[parts.length - 1]
+      return '#' + admissionId
+    }
+
     for (const [subUrl, title] of urlTitle) {
       if (url.includes(subUrl)) {
         if (hasHistory) {
