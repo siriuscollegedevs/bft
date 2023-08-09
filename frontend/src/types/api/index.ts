@@ -26,8 +26,8 @@ export type ExpandSearchAdmissionsBody = {
 }
 
 export type ChangePasswordData = {
-  status: string
-  current_password: string
+  status: string | null
+  current_password: string | null
   new_password: string
 }
 

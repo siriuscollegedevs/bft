@@ -17,12 +17,14 @@ import { CurrentAccountId, setAccountData } from '../../../states/account'
 import React, { useEffect } from 'react'
 import { Typography } from '@mui/material'
 import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
+import { useLogout } from '../../../hooks/logout'
 
 export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
+  const logout = useLogout()
 
   const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
 
@@ -101,7 +103,7 @@ export const DynamicHeader = () => {
                 ) : (
                   <CustomTypography>{`${currentAccountData?.first_name}`}</CustomTypography>
                 )}
-                <CustomExitButton color="inherit" variant="contained" onClick={() => navigate('/')}>
+                <CustomExitButton color="inherit" variant="contained" onClick={() => logout()}>
                   Выход
                 </CustomExitButton>
               </>
@@ -112,5 +114,3 @@ export const DynamicHeader = () => {
     </>
   )
 }
-
-//TODO сделать адекватный выход(когда будет api)
