@@ -1,4 +1,4 @@
-import { Box, Container } from '@mui/material'
+import { Box, Button, Container } from '@mui/material'
 import FormControlLabel from '@mui/material/FormControlLabel'
 import Switch from '@mui/material/Switch'
 import { CustomTypography } from '../../styles/header'
@@ -70,7 +70,7 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSearchField, isSwitch }
             justifyContent: 'space-between',
             width: '97%',
             height: '140px',
-            borderBottom: '1px solid #CBCBCB'
+            borderBottom: currentUrl.startsWith('/admissions/view/') ? 'none' : '1px solid #CBCBCB'
           }}
         >
           <Box sx={{ width: '20%' }} />
@@ -89,7 +89,6 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSearchField, isSwitch }
             ) : (
               <></>
             )}
-
             {isSwitch ? (
               <FormControlLabel
                 control={
