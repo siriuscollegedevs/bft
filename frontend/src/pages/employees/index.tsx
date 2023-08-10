@@ -4,17 +4,17 @@ import { SmartTable } from '../../components/smart-table'
 import { SideBarContainer } from '../../styles/sidebar'
 import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import { Account } from '../../types/api'
+import {Account, AccountToObject} from '../../types/api'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import {
   useGetAllAccountToObjectArchiveQuery,
   useGetAllAccountToObjectQuery
 } from '../../__data__/service/object-account'
+import { FiltersState } from '../../states/filters';
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
 export const EmployeesPage = () => {
-  //TODO вынести это отдельно, тк используется в 3 справочниках
   const location = useLocation()
   const isArchivePage = location.pathname === '/employees/archive'
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
@@ -26,6 +26,8 @@ export const EmployeesPage = () => {
     isLoading: employeesArchiveLoading
   } = useGetAllAccountToObjectArchiveQuery()
 
+  const filters = useSelector((state: { filters: FiltersState }) => state.filters)
+
   let buttonNames: ButtonName[] = []
 
   if (isArchivePage) {
@@ -35,6 +37,15 @@ export const EmployeesPage = () => {
   } else if (currentAccountRole === Object.keys(ACCOUNT_ROLES)[1]) {
     buttonNames = ['history']
   }
+
+  const dataFilters = (data: AccountToObject[]) => {
+    return data
+        ? data.filter(employee =>
+            filters.objectNameFilter.length === 0 ||
+            employee.objects.some(object => filters.objectNameFilter.includes(object.name))
+        )
+        : [];
+  };
 
   return (
     <>
@@ -47,9 +58,9 @@ export const EmployeesPage = () => {
               buttonNames={buttonNames}
               size={{
                 width: '100%',
-                height: '800px'
+                height: '100%'
               }}
-              data={employeesArchiveData}
+              data={dataFilters(employeesArchiveData)}
             />
           ) : (
             <></>
@@ -59,9 +70,9 @@ export const EmployeesPage = () => {
             buttonNames={buttonNames}
             size={{
               width: '100%',
-              height: '800px'
+              height: '100%'
             }}
-            data={employeesData}
+            data={dataFilters(employeesData)}
           />
         ) : (
           <></>

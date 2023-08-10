@@ -13,10 +13,10 @@ export const ObjectsPage = () => {
           buttonNames={['edit', 'history', 'trash']}
           size={{
             width: '100%',
-            height: '800px'
+            height: '100%'
           }}
         />
-        <Sidebar isSearch={true} isObjects={true} isButton={true} />
+        <Sidebar isSearch={false} isObjects={false} isButton={true} />
       </SideBarContainer>
     </>
   )

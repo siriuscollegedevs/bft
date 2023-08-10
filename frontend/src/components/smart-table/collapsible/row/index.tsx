@@ -37,8 +37,6 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
     return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
   }
 
-  console.log(row)
-
   return (
     <>
       <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>

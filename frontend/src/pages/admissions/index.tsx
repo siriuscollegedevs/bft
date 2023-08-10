@@ -13,7 +13,7 @@ export const AdmissionsPage = () => {
           buttonNames={['edit', 'history', 'trash']}
           size={{
             width: '100%',
-            height: '800px'
+            height: '100%'
           }}
         />
         <Sidebar isSearch={true} isObjects={true} isButton={true} />

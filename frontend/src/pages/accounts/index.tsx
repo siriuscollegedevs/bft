@@ -43,7 +43,7 @@ export const AccountsPage = () => {
               buttonNames={buttonNames}
               size={{
                 width: '100%',
-                height: '800px'
+                height: '100%'
               }}
               data={accountsArchiveData}
             />
@@ -55,7 +55,7 @@ export const AccountsPage = () => {
             buttonNames={buttonNames}
             size={{
               width: '100%',
-              height: '800px'
+              height: '100%'
             }}
             data={accountsData}
           />
