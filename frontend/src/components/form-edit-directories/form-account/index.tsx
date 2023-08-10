@@ -1,11 +1,12 @@
 import { TextField } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import MenuItem from '@mui/material/MenuItem'
 import * as React from 'react'
 import { CustomDefaultButton } from '../../../styles/settings'
 import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
 import { useCreateAccountMutation } from '../../../__data__/service/account.api'
 import { Account } from '../../../types/api'
+import { useNavigate } from 'react-router-dom'
 
 type Errors = {
   role: boolean
@@ -17,7 +18,8 @@ type Errors = {
 }
 
 export const FormAccount = () => {
-  const [accountsMutation, { data: accountData, isLoading: accountLoading, isError: accountError }] =
+  const navigate = useNavigate()
+  const [accountsMutation, { data: accountData, isLoading: accountLoading, isError: accountError, isSuccess }] =
     useCreateAccountMutation()
 
   const [fields, setFields] = useState<Account>({
@@ -62,8 +64,17 @@ export const FormAccount = () => {
     })
 
     setErrors(newErrors)
-    accountsMutation(fields)
+
+    if (fields && !errors) {
+      accountsMutation(fields)
+    }
   }
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate(-1)
+    }
+  }, [isSuccess, navigate])
 
   if (accountLoading) {
     return <p>Сохранение...</p>
