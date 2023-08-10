@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Account, Objects } from '../../types/api'
+import { Account, Objects } from '../../../types/api'
 
 export type CurrentAccountId = {
   id: string

@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGetAllObjectsQuery } from '../../../__data__/service/object.api'
-import { FiltersState } from '../../../states/filters'
+import { FiltersState } from '../../../__data__/states/filters'
 
 export type CurrentURL = '/objects' | '/admissions'
 
@@ -57,14 +57,15 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
     .filter(obj => filters.objectNameFilter.includes(obj.name))
     .map(obj => obj.id)
 
-  const filteredData = filters.objectNameFilter.length > 0 ? (
-      admissionsData?.filter(row => {
-        if ('object_ids' in row) {
-          return row.object_ids.some(id => filteredObjectIds.includes(id))
-        }
-        return false
-      })
-  ) : admissionsData;
+  const filteredData =
+    filters.objectNameFilter.length > 0
+      ? admissionsData?.filter(row => {
+          if ('object_ids' in row) {
+            return row.object_ids.some(id => filteredObjectIds.includes(id))
+          }
+          return false
+        })
+      : admissionsData
 
   const getObjectNamesFromIds = (objectIds: string[]): (string | undefined)[] => {
     return objectIds

@@ -13,11 +13,11 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useGetAccountByIdQuery } from '../../../__data__/service/account.api'
 import { useDispatch, useSelector } from 'react-redux'
-import { CurrentAccountId, setAccountData } from '../../../states/account'
 import React, { useEffect } from 'react'
 import { Typography } from '@mui/material'
 import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
 import { useLogout } from '../../../hooks/logout'
+import { CurrentAccountId, setAccountData } from '../../../__data__/states/account'
 
 export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')

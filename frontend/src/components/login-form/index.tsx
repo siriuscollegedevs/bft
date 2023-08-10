@@ -3,9 +3,9 @@ import { useState } from 'react'
 import { useLoginMutation, useRefreshMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { LoginButton, PasswordTextField, SignInContainer, SignInTextField, TitleTypography } from '../../styles/login'
-import { setAccessToken, setCSRFToken, setTimeAccessToken } from '../../states/auth'
+import { setAccessToken, setCSRFToken, setTimeAccessToken } from '../../__data__/states/auth'
 import { useDispatch } from 'react-redux'
-import { setAccountId } from '../../states/account'
+import { setAccountId } from '../../__data__/states/account'
 import { getCookie } from '../../utils/cookie-parser'
 
 export const LoginForm = () => {

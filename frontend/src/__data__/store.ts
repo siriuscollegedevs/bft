@@ -5,9 +5,9 @@ import { apiAccount } from './service/account.api'
 import { apiObject } from './service/object.api'
 import { apiAdmissions } from './service/admission.api'
 import { apiRecord } from './service/record.api'
-import { authReducer } from '../states/auth'
-import { accountReducer } from '../states/account'
-import { filterReducer } from '../states/filters'
+import { authReducer } from './states/auth'
+import { accountReducer } from './states/account'
+import { filterReducer } from './states/filters'
 import { apiObjectsAccounts } from './service/object-account'
 
 const rootReducer = combineReducers({

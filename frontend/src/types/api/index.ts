@@ -1,4 +1,4 @@
-import { AuthState } from '../../states/auth'
+import { AuthState } from '../../__data__/states/auth'
 
 export type Accounts = {
   id: string
