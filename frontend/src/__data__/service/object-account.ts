@@ -14,9 +14,25 @@ export const apiObjectsAccounts = createApi({
     }),
     getAllAccountToObjectArchive: builder.query<AccountToObject[], void>({
       query: () => '/account_to_objects/archive'
+    }),
+    createAccountToObject: builder.mutation<void, AccountToObject>({
+      query: (objectAccountData: AccountToObject) => ({
+        url: '/account_to_objects',
+        method: 'POST',
+        body: {
+          first_name: objectAccountData.first_name,
+          last_name: objectAccountData.last_name,
+          surname: objectAccountData.surname,
+          object_ids: objectAccountData.objects.map(obj => obj.match_id)
+        }
+      })
     })
   })
 })
 
-export const { useGetAccountToObjectsQuery, useGetAllAccountToObjectQuery, useGetAllAccountToObjectArchiveQuery } =
-  apiObjectsAccounts
+export const {
+  useGetAccountToObjectsQuery,
+  useGetAllAccountToObjectQuery,
+  useGetAllAccountToObjectArchiveQuery,
+  useCreateAccountToObjectMutation
+} = apiObjectsAccounts
