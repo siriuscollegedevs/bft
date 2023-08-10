@@ -4,29 +4,23 @@ import { SmartTable } from '../../components/smart-table'
 import { SideBarContainer } from '../../styles/sidebar'
 import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import {Account, AccountToObject} from '../../types/api'
+import { Account } from '../../types/api'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
-import {
-  useGetAllAccountToObjectArchiveQuery,
-  useGetAllAccountToObjectQuery
-} from '../../__data__/service/object-account'
-import { FiltersState } from '../../states/filters';
+import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
-export const EmployeesPage = () => {
+export const AccountsPage = () => {
   const location = useLocation()
-  const isArchivePage = location.pathname === '/employees/archive'
+  const isArchivePage = location.pathname === '/accounts/archive'
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
-  const { data: employeesData, error: employeesError, isLoading: employeesLoading } = useGetAllAccountToObjectQuery()
+  const { data: accountsData, error: accountsError, isLoading: accountsLoading } = useGetAllAccountsQuery()
   const {
-    data: employeesArchiveData,
-    error: employeesArchiveError,
-    isLoading: employeesArchiveLoading
-  } = useGetAllAccountToObjectArchiveQuery()
-
-  const filters = useSelector((state: { filters: FiltersState }) => state.filters)
+    data: accountsArchiveData,
+    error: accountsArchiveError,
+    isLoading: accountsArchiveLoading
+  } = useGetAllArchiveAccountsQuery()
 
   let buttonNames: ButtonName[] = []
 
@@ -38,41 +32,32 @@ export const EmployeesPage = () => {
     buttonNames = ['history']
   }
 
-  const dataFilters = (data: AccountToObject[]) => {
-    return data
-        ? data.filter(employee =>
-            filters.objectNameFilter.length === 0 ||
-            employee.objects.some(object => filters.objectNameFilter.includes(object.name))
-        )
-        : [];
-  };
-
   return (
     <>
       <EntityTitle isSwitch={true} isSearchField={true} />
 
       <SideBarContainer>
         {isArchivePage ? (
-          employeesArchiveData ? (
+          accountsArchiveData ? (
             <SmartTable
               buttonNames={buttonNames}
               size={{
                 width: '100%',
                 height: '100%'
               }}
-              data={dataFilters(employeesArchiveData)}
+              data={accountsArchiveData}
             />
           ) : (
             <></>
           )
-        ) : employeesData ? (
+        ) : accountsData ? (
           <SmartTable
             buttonNames={buttonNames}
             size={{
               width: '100%',
               height: '100%'
             }}
-            data={dataFilters(employeesData)}
+            data={accountsData}
           />
         ) : (
           <></>

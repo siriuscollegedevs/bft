@@ -6,14 +6,14 @@ import { SideBarContainer } from '../../styles/sidebar'
 export const ObjectsPage = () => {
   return (
     <>
-      <EntityTitle isSwitch={true} />
+      <EntityTitle isSearchField={true} isSwitch={true} />
 
       <SideBarContainer>
         <SmartTable
           buttonNames={['edit', 'history', 'trash']}
           size={{
             width: '100%',
-            height: '800px'
+            height: '100%'
           }}
         />
         <Sidebar isSearch={false} isObjects={false} isButton={true} />

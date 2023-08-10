@@ -1,12 +1,12 @@
-import { CircularProgress, FormControl, Typography } from '@mui/material'
-import { useEffect, useState } from 'react'
-import { useLoginMutation, useLogoutMutation, useRefreshMutation } from '../../__data__/service/auth.api'
+import { CircularProgress, FormControl } from '@mui/material'
+import { useState } from 'react'
+import { useLoginMutation, useRefreshMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { LoginButton, PasswordTextField, SignInContainer, SignInTextField, TitleTypography } from '../../styles/login'
-import { AuthState, setAccessToken, setCSRFToken, setTimeAccessToken } from '../../states/auth'
-import { useDispatch, useSelector } from 'react-redux'
+import { setAccessToken, setCSRFToken, setTimeAccessToken } from '../../states/auth'
+import { useDispatch } from 'react-redux'
 import { setAccountId } from '../../states/account'
-import { clearAllCookies, getCookie } from '../../utils/cookie-parser'
+import { getCookie } from '../../utils/cookie-parser'
 
 export const LoginForm = () => {
   const [login, setLogin] = useState('')

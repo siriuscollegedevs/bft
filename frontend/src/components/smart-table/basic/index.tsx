@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGetAllObjectsQuery } from '../../../__data__/service/object.api'
-import { FiltersState } from '../../../states/filters';
+import { FiltersState } from '../../../states/filters'
 
 export type CurrentURL = '/objects' | '/admissions'
 
@@ -31,7 +31,7 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
   const [admissionsMutation, { data: admissionsData }] = useGetAllAdmissionsMutation()
   const [hasData, setHasData] = useState(false)
   const navigate = useNavigate()
-  const filters = useSelector((state: { filters: FiltersState }) => state.filters);
+  const filters = useSelector((state: { filters: FiltersState }) => state.filters)
 
   useEffect(() => {
     if (idArray.length > 0 && !hasData && !objectsURL) {
@@ -54,22 +54,24 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
   }
 
   const filteredObjectIds = currentAccountObjects
-      .filter(obj => filters.objectNameFilter.includes(obj.name))
-      .map(obj => obj.id);
+    .filter(obj => filters.objectNameFilter.includes(obj.name))
+    .map(obj => obj.id)
 
-  const filteredData = admissionsData?.filter(row => {
-    if ('object_ids' in row) {
-      return row.object_ids.some(id => filteredObjectIds.includes(id));
-    }
-    return false;
-  });
+  const filteredData = filters.objectNameFilter.length > 0 ? (
+      admissionsData?.filter(row => {
+        if ('object_ids' in row) {
+          return row.object_ids.some(id => filteredObjectIds.includes(id))
+        }
+        return false
+      })
+  ) : admissionsData;
 
   const getObjectNamesFromIds = (objectIds: string[]): (string | undefined)[] => {
     return objectIds
-        .map(id => currentAccountObjects.find(obj => obj.id === id))
-        .filter(obj => obj)
-        .map(obj => obj?.name);
-  };
+      .map(id => currentAccountObjects.find(obj => obj.id === id))
+      .filter(obj => obj)
+      .map(obj => obj?.name)
+  }
 
   return (
     <TableContainer sx={{ width: size.width, height: size.height }}>
