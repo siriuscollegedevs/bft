@@ -59,7 +59,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        height: '550px',
         alignItems: 'center'
       }}
     >

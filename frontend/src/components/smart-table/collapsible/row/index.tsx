@@ -2,28 +2,29 @@ import { TableRow, TableCell, IconButton, Collapse, Table, TableBody } from '@mu
 import { Box } from '@mui/system'
 import { useState } from 'react'
 import { ButtonNames, ShortcutButtons } from '../../../shortcut-buttons'
-import { value, Objects, AdmissionsValue } from '../smoke'
 import { myURL } from '..'
-
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { ReactComponent as HumanIcon } from '../../../../assets/human.svg'
 import { ReactComponent as CarIcon } from '../../../../assets/car.svg'
 import { RECORD_FIELDS, RECORD_TYPE, getObjectValueByKey } from '../../../../__data__/consts/record'
-import { AdmissionsHistory } from '../../../../types/api'
+import { Accounts, AdmissionsHistory, ObjectInArray } from '../../../../types/api'
+import { ACCOUNT_ROLES } from '../../../../__data__/consts/account-roles'
 
-export const Row = ({
-  row,
-  buttonNames,
-  currentURL
-}: { row: AdmissionsHistory } & ButtonNames & { currentURL: myURL }) => {
+type CommonData = AdmissionsHistory | Accounts
+
+export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & ButtonNames & { currentURL: myURL }) => {
   const [open, setOpen] = useState(false)
 
   const itsAcccount = ({ currentURL }: { currentURL: myURL }): boolean =>
     currentURL === '/accounts' || currentURL === '/accounts/search'
 
+  const itsAccountsArchive = ({ currentURL }: { currentURL: myURL }): boolean => currentURL === '/accounts/archive'
+
   const itsEmployees = ({ currentURL }: { currentURL: myURL }): boolean =>
     currentURL === '/employees' || currentURL === '/employees/search'
+
+  const itsEmployeesArchive = ({ currentURL }: { currentURL: myURL }): boolean => currentURL === '/employees/archive'
 
   const itsAdmissions = ({ currentURL }: { currentURL: myURL }): boolean =>
     currentURL.startsWith('/admissions/') || currentURL === '/admissions/search'
@@ -44,12 +45,12 @@ export const Row = ({
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        {/* {itsAcccount({ currentURL }) && (
+        {(itsAcccount({ currentURL }) || itsAccountsArchive({ currentURL })) && 'role' in row && (
           <>
-            <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
-              {row.name}
+            <TableCell align="left" sx={{ height: '47px', width: '40%' }}>
+              {row.last_name} {row.first_name} {row.surname}
             </TableCell>
-            <TableCell align="left">{row.role}</TableCell>
+            <TableCell align="left">{ACCOUNT_ROLES[row?.role]}</TableCell>
             <TableCell align="right">
               <Box display="flex" alignItems="center" justifyContent="flex-end">
                 <ShortcutButtons buttonNames={buttonNames} />
@@ -57,19 +58,19 @@ export const Row = ({
             </TableCell>
           </>
         )}
-        {itsEmployees({ currentURL }) && (
-          <>
-            <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
-              {row.name}
-            </TableCell>
-            <TableCell align="right">
-              <Box display="flex" alignItems="center" justifyContent="flex-end">
-                <ShortcutButtons buttonNames={buttonNames} />
-              </Box>
-            </TableCell>
-          </>
-        )} */}
-        {itsAdmissions({ currentURL }) && (
+        {/*{(itsEmployees({ currentURL }) || itsEmployeesArchive({ currentURL })) && (*/}
+        {/*  <>*/}
+        {/*    <TableCell align="left" sx={{ height: '47px', width: '100%' }}>*/}
+        {/*      {row.last_name} {row.first_name} {row.surname}*/}
+        {/*    </TableCell>*/}
+        {/*    <TableCell align="right">*/}
+        {/*      <Box display="flex" alignItems="center" justifyContent="flex-end">*/}
+        {/*        <ShortcutButtons buttonNames={buttonNames} />*/}
+        {/*      </Box>*/}
+        {/*    </TableCell>*/}
+        {/*  </>*/}
+        {/*)}*/}
+        {itsAdmissions({ currentURL }) && 'type' in row && (
           <>
             <TableCell align="left" padding={'checkbox'}>
               {row.first_name !== null ? (
@@ -113,21 +114,21 @@ export const Row = ({
             <Box sx={{ margin: 0 }}>
               <Table size="small">
                 <TableBody>
-                  {/* {itsAcccount({ currentURL }) &&
-                    row.value.map((valueRow: value) => (
-                      <TableRow key={valueRow.email}>
-                        <TableCell align="left">{valueRow.email}</TableCell>
-                      </TableRow>
-                    ))}
-                  {itsEmployees({ currentURL }) &&
-                    row.Objects.map((valueRow: Objects) => (
-                      <>
-                        <TableRow>
-                          <TableCell align="left">{valueRow.objects.join(', ')}</TableCell>
-                        </TableRow>
-                      </>
-                    ))} */}
-                  {itsAdmissions({ currentURL }) && (
+                  {(itsAcccount({ currentURL }) || itsAccountsArchive({ currentURL })) && 'role' in row && (
+                    <TableRow key={row.id} sx={{ height: '47px' }}>
+                      <TableCell align="left" sx={{ paddingLeft: '70px' }}>
+                        {row.username}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {/*{(itsEmployees({ currentURL }) || itsEmployeesArchive({ currentURL })) && ('objects' in row) && (*/}
+                  {/*  <TableRow sx={{ height: '47px'}}>*/}
+                  {/*    <TableCell align="left" sx={{ paddingLeft: '70px' }}>*/}
+                  {/*      {row.objects?.map((valueRow: ObjectInArray) => valueRow.name).join(', ')}*/}
+                  {/*    </TableCell>*/}
+                  {/*  </TableRow>*/}
+                  {/*)}*/}
+                  {itsAdmissions({ currentURL }) && 'type' in row && (
                     <>
                       <TableRow>
                         <TableCell align="left" padding={'checkbox'}>
