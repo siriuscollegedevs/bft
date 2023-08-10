@@ -6,6 +6,7 @@ darglint==1.8.1
 Django==4.2.2
 django-cors-headers==4.2.0
 django-extensions==3.2.3
+django-sslserver==0.22
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 docutils==0.20.1

@@ -3,7 +3,7 @@ import { Sidebar } from '../../components/sidebar'
 import { SmartTable } from '../../components/smart-table'
 import { SideBarContainer } from '../../styles/sidebar'
 
-export const ObjectsPage = () => {
+export const AdmissionsPage = () => {
   return (
     <>
       <EntityTitle isSearchField={true} isSwitch={true} />

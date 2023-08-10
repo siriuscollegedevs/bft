@@ -6,6 +6,7 @@ import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Account } from '../../types/api'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
+import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -13,6 +14,13 @@ export const AccountsPage = () => {
   const location = useLocation()
   const isArchivePage = location.pathname === '/accounts/archive'
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
+
+  const { data: accountsData, error: accountsError, isLoading: accountsLoading } = useGetAllAccountsQuery()
+  const {
+    data: accountsArchiveData,
+    error: accountsArchiveError,
+    isLoading: accountsArchiveLoading
+  } = useGetAllArchiveAccountsQuery()
 
   let buttonNames: ButtonName[] = []
 
@@ -26,16 +34,34 @@ export const AccountsPage = () => {
 
   return (
     <>
-      <EntityTitle isSwitch={true} />
+      <EntityTitle isSwitch={true} isSearchField={true} />
 
       <SideBarContainer>
-        <SmartTable
-          buttonNames={buttonNames}
-          size={{
-            width: '100%',
-            height: '800px'
-          }}
-        />
+        {isArchivePage ? (
+          accountsArchiveData ? (
+            <SmartTable
+              buttonNames={buttonNames}
+              size={{
+                width: '100%',
+                height: '800px'
+              }}
+              data={accountsArchiveData}
+            />
+          ) : (
+            <></>
+          )
+        ) : accountsData ? (
+          <SmartTable
+            buttonNames={buttonNames}
+            size={{
+              width: '100%',
+              height: '800px'
+            }}
+            data={accountsData}
+          />
+        ) : (
+          <></>
+        )}
         <Sidebar isSearch={true} isObjects={true} isButton={true} />
       </SideBarContainer>
     </>

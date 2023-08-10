@@ -4,7 +4,7 @@ import { Classic } from './styles/theme'
 import { Login } from './pages/login'
 import { Main } from './pages/main'
 import { ObjectsPage } from './pages/objects'
-import { Settings } from './components/user-settings'
+import { Settings } from './pages/settings'
 import { MainDirectories } from './components/main-directories'
 import { FormEditDirectories } from './components/form-edit-directories'
 import { DynamicHeader } from './components/header/dynamic'
@@ -12,6 +12,8 @@ import { StaticHeader } from './components/header/static'
 import { BackButton } from './components/button-back'
 import { EmployeesPage } from './pages/employees'
 import { AccountsPage } from './pages/accounts'
+import { AdmissionsPage } from './pages/admissions'
+import { AdmissionViewPage } from './pages/admission-view'
 
 export const App: React.FC = (): JSX.Element => {
   function Header() {
@@ -42,6 +44,8 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/objects/:id" element={<FormEditDirectories />} />
             <Route path="/employees/:id" element={<FormEditDirectories />} />
             <Route path="/objects" element={<ObjectsPage />} />
+            <Route path="/admissions" element={<AdmissionsPage />} />
+            <Route path="/admissions/view/:id" element={<AdmissionViewPage />} />
             <Route path="/employees" element={<EmployeesPage />} />
             <Route path="/employees/archive" element={<EmployeesPage />} />
             <Route path="/accounts" element={<AccountsPage />} />

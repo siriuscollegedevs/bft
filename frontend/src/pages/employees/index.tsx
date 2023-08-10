@@ -27,7 +27,7 @@ export const EmployeesPage = () => {
 
   return (
     <>
-      <EntityTitle isSwitch={true} />
+      <EntityTitle isSwitch={true} isSearchField={true} />
 
       <SideBarContainer>
         <SmartTable

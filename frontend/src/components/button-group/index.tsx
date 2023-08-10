@@ -1,32 +1,39 @@
-import * as React from 'react'
 import Box from '@mui/material/Box'
 import { CustomButton, CustomListItem } from '../../styles/button-group'
 import { Container, List, ListItemText } from '@mui/material'
 import { ReactComponent as ArrowIcon } from '../../assets/arrow.svg'
-import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
+import { useSelector, useDispatch } from 'react-redux'
+import { Account } from '../../types/api'
+import { useGetAccountToObjectsQuery } from '../../__data__/service/object-account'
+import { CurrentAccountId, setAccountObjects } from '../../states/account'
+import { useGetAccountByIdQuery } from '../../__data__/service/account.api'
 
 export const ButtonGroup = () => {
-  //TODO
-  const roles = {
-    manager: 'manager',
-    sb: 'sb'
+  const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
+  const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const {
+    data: currentAccountObjectsData,
+    isLoading: currentAccountObjectsLoading,
+    isError: currentAccountObjectsError
+  } = useGetAccountToObjectsQuery(currentAccountId)
+
+  if (currentAccountObjectsData) {
+    dispatch(setAccountObjects(currentAccountObjectsData))
   }
 
-  const availableObjects = [
-    { id: 1, name: 'Наименование 1' },
-    { id: 2, name: 'Наименование 2' },
-    { id: 3, name: 'Наименование 3' },
-    { id: 4, name: 'Наименование 4' },
-    { id: 5, name: 'Наименование 5' }
-  ]
-
-  const [role, setRole] = React.useState('')
-  const navigate = useNavigate()
-  useEffect(() => {
-    // Fetch
-    setRole(roles.manager)
-  }, [])
+  switch (currentAccountRole) {
+    case Object.keys(ACCOUNT_ROLES)[0]: {
+      navigate('/directories')
+      break
+    }
+    case Object.keys(ACCOUNT_ROLES)[3]: {
+      navigate('/admissions')
+    }
+  }
 
   return (
     <Container
@@ -50,21 +57,21 @@ export const ButtonGroup = () => {
           gap: '15px'
         }}
       >
-        {role === roles.manager && (
+        {currentAccountRole === Object.keys(ACCOUNT_ROLES)[1] && (
           <>
             <CustomButton variant="outlined" onClick={() => navigate('/directories')}>
               Справочники
               <ArrowIcon />
             </CustomButton>
-            <CustomButton variant="outlined">
+            <CustomButton variant="outlined" onClick={() => navigate('/admissions')}>
               Заявки
               <ArrowIcon />
             </CustomButton>
           </>
         )}
-        {role === roles.sb && (
+        {currentAccountRole === Object.keys(ACCOUNT_ROLES)[2] && (
           <>
-            <CustomButton variant="outlined">
+            <CustomButton variant="outlined" onClick={() => navigate('/admissions')}>
               Заявки
               <ArrowIcon />
             </CustomButton>
@@ -75,11 +82,17 @@ export const ButtonGroup = () => {
             >
               Доступные объекты
               <List component="div">
-                {availableObjects.map(object => (
-                  <CustomListItem key={object.id}>
-                    <ListItemText primary={object.name} />
-                  </CustomListItem>
-                ))}
+                {currentAccountObjectsLoading && <>Loading...</>}
+                {currentAccountObjectsError && <>Error</>}
+                {currentAccountObjectsData && (
+                  <>
+                    {currentAccountObjectsData?.map(object => (
+                      <CustomListItem key={object.id}>
+                        <ListItemText primary={object.name} />
+                      </CustomListItem>
+                    ))}
+                  </>
+                )}
               </List>
             </CustomButton>
           </>
