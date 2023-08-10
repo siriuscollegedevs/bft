@@ -52,7 +52,6 @@ class LoginView(APIView):
                 )
                 res.data = {
                     "access": tokens['access_token'],
-                    "refresh_exp": float(getenv('ACCESS_TOKEN_LIFETIME')),
                     "access_exp": float(getenv('REFRESH_TOKEN_LIFETIME')),
                     "account_id": str(Account.objects.get(user=user).id)
                 }
