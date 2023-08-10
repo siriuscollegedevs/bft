@@ -9,11 +9,13 @@ import { authReducer } from './states/auth'
 import { accountReducer } from './states/account'
 import { filterReducer } from './states/filters'
 import { apiObjectsAccounts } from './service/object-account'
+import { persistReducer, persistStore } from 'redux-persist'
+import { persistedAccountReducer, persistedAuthReducer, persistedFilterReducer } from './redux-persist'
 
 const rootReducer = combineReducers({
-  auth: authReducer,
-  currentAccount: accountReducer,
-  filters: filterReducer,
+  auth: persistedAuthReducer,
+  currentAccount: persistedAccountReducer,
+  filters: persistedFilterReducer,
   [apiAuth.reducerPath]: apiAuth.reducer,
   [apiAccount.reducerPath]: apiAccount.reducer,
   [apiObject.reducerPath]: apiObject.reducer,
@@ -36,4 +38,5 @@ export const store = configureStore({
   middleware: getDefaultMiddleware => getDefaultMiddleware({}).concat(apiMiddleware)
 })
 
+export const persistor = persistStore(store)
 setupListeners(store.dispatch)
