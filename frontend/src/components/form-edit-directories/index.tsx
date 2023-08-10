@@ -12,9 +12,9 @@ export const FormEditDirectories = () => {
   const location = useLocation()
   const { id } = useParams()
 
-  const objectUrl = `/objects/${id}`
-  const accountUrl = `/accounts/${id}`
-  const employeeUrl = `/employees/${id}`
+  const objectUrl = '/objects'
+  const accountUrl = '/accounts'
+  const employeeUrl = '/employees'
 
   return (
     <>
@@ -31,9 +31,9 @@ export const FormEditDirectories = () => {
       >
         <CustomFormControl color="primary">
           <CustomTypography variant="h6" sx={{ color: 'black' }}>
-            {location.pathname === accountUrl && 'Учетная запись'}
-            {location.pathname === objectUrl && 'Объект Фонда'}
-            {location.pathname === employeeUrl && 'Закрепление сотрудника за объектами Фонда'}
+            {location.pathname.startsWith(accountUrl) && 'Учетная запись'}
+            {location.pathname.startsWith(objectUrl) && 'Объект Фонда'}
+            {location.pathname.startsWith(employeeUrl) && 'Закрепление сотрудника за объектами Фонда'}
           </CustomTypography>
 
           <Box
@@ -50,9 +50,9 @@ export const FormEditDirectories = () => {
               }
             }}
           >
-            {location.pathname === accountUrl && <FormAccount />}
-            {location.pathname === objectUrl && <FormObject />}
-            {location.pathname === employeeUrl && <FormEmployee />}
+            {location.pathname.startsWith(accountUrl) && <FormAccount />}
+            {location.pathname.startsWith(objectUrl) && <FormObject />}
+            {location.pathname.startsWith(employeeUrl) && <FormEmployee />}
           </Box>
         </CustomFormControl>
       </Container>

@@ -4,13 +4,13 @@ import { SmartTable } from '../../components/smart-table'
 import { SideBarContainer } from '../../styles/sidebar'
 import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
-import {Account, AccountToObject} from '../../types/api'
+import { Account, AccountToObject } from '../../types/api'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import {
   useGetAllAccountToObjectArchiveQuery,
   useGetAllAccountToObjectQuery
 } from '../../__data__/service/object-account'
-import { FiltersState } from '../../states/filters';
+import { FiltersState } from '../../states/filters'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -40,12 +40,13 @@ export const EmployeesPage = () => {
 
   const dataFilters = (data: AccountToObject[]) => {
     return data
-        ? data.filter(employee =>
+      ? data.filter(
+          employee =>
             filters.objectNameFilter.length === 0 ||
             employee.objects.some(object => filters.objectNameFilter.includes(object.name))
         )
-        : [];
-  };
+      : []
+  }
 
   return (
     <>

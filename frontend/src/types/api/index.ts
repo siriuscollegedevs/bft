@@ -15,6 +15,7 @@ export type Account = {
   surname: string
   last_name: string
   username: string
+  password: string
 }
 
 export type ExpandSearchAdmissionsBody = {

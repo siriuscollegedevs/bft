@@ -20,7 +20,6 @@ export const Collapsible = ({
   size,
   data
 }: { currentURL: myURL } & ButtonNames & { size: Size } & any) => {
-
   return (
     <TableContainer sx={{ width: size.width, height: size.height }}>
       <Table aria-label="collapsible table">
