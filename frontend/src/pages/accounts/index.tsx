@@ -6,25 +6,21 @@ import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Account } from '../../types/api'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
-import {
-  useGetAllAccountToObjectArchiveQuery,
-  useGetAllAccountToObjectQuery
-} from '../../__data__/service/object-account'
+import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
-export const EmployeesPage = () => {
-  //TODO вынести это отдельно, тк используется в 3 справочниках
+export const AccountsPage = () => {
   const location = useLocation()
-  const isArchivePage = location.pathname === '/employees/archive'
+  const isArchivePage = location.pathname === '/accounts/archive'
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
-  const { data: employeesData, error: employeesError, isLoading: employeesLoading } = useGetAllAccountToObjectQuery()
+  const { data: accountsData, error: accountsError, isLoading: accountsLoading } = useGetAllAccountsQuery()
   const {
-    data: employeesArchiveData,
-    error: employeesArchiveError,
-    isLoading: employeesArchiveLoading
-  } = useGetAllAccountToObjectArchiveQuery()
+    data: accountsArchiveData,
+    error: accountsArchiveError,
+    isLoading: accountsArchiveLoading
+  } = useGetAllArchiveAccountsQuery()
 
   let buttonNames: ButtonName[] = []
 
@@ -42,26 +38,26 @@ export const EmployeesPage = () => {
 
       <SideBarContainer>
         {isArchivePage ? (
-          employeesArchiveData ? (
+          accountsArchiveData ? (
             <SmartTable
               buttonNames={buttonNames}
               size={{
                 width: '100%',
                 height: '800px'
               }}
-              data={employeesArchiveData}
+              data={accountsArchiveData}
             />
           ) : (
             <></>
           )
-        ) : employeesData ? (
+        ) : accountsData ? (
           <SmartTable
             buttonNames={buttonNames}
             size={{
               width: '100%',
               height: '800px'
             }}
-            data={employeesData}
+            data={accountsData}
           />
         ) : (
           <></>

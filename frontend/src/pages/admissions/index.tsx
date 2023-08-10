@@ -6,7 +6,7 @@ import { SideBarContainer } from '../../styles/sidebar'
 export const AdmissionsPage = () => {
   return (
     <>
-      <EntityTitle isSwitch={true} />
+      <EntityTitle isSearchField={true} isSwitch={true} />
 
       <SideBarContainer>
         <SmartTable

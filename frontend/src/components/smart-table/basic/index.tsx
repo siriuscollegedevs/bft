@@ -19,6 +19,11 @@ type URL = {
   currentURL: CurrentURL
 }
 
+export const dateParser = (row: Admissions) => {
+  const date = new Date(row.timestamp)
+  return <>{`${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`}</>
+}
+
 export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { size: Size }) => {
   const objectsURL = currentURL === '/objects'
   const [data, setData] = useState<Objects[] | Admissions[]>()
@@ -45,11 +50,6 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
       setData(objectsData)
     }
   }, [admissionsData, objectsData])
-
-  const dateParser = (row: Admissions) => {
-    const date = new Date(row.timestamp)
-    return <>{`${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`}</>
-  }
 
   return (
     <TableContainer sx={{ width: size.width, height: size.height }}>

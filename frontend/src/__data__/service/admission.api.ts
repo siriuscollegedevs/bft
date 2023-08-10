@@ -27,6 +27,22 @@ export const apiAdmissions = createApi({
         method: 'POST'
       })
     }),
+    updateAdmissionStatus: builder.mutation<
+      void,
+      {
+        admissionId: string
+        admissionData: { status: string; reason: string }
+      }
+    >({
+      query: ({ admissionId, admissionData }) => ({
+        url: `/request/change_status/${admissionId}`,
+        method: 'PUT',
+        body: {
+          status: admissionData.status,
+          reason: admissionData.reason
+        }
+      })
+    }),
     getAdmissionsHistoryById: builder.query<AdmissionsHistory[], string>({
       query: admissionsId => `/request/history/${admissionsId}`
     }),
@@ -65,6 +81,7 @@ export const {
   useGetAllAdmissionsMutation,
   useGetAllArchiveAdmissionsQuery,
   useCreateAdmissionsMutation,
+  useUpdateAdmissionStatusMutation,
   useGetAdmissionsHistoryByIdQuery,
   useGetRecordOfAdmissionsQuery,
   useDeleteAdmissionsByIdMutation,
