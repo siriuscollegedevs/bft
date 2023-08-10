@@ -4,13 +4,14 @@ import { EntityTitle } from '../../components/entity-title'
 import { SearchField } from '../../components/search-field'
 import { SmartTable } from '../../components/smart-table'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useUpdateAdmissionStatusMutation } from '../../__data__/service/admission.api'
+import { useGetRecordOfAdmissionsQuery, useUpdateAdmissionStatusMutation } from '../../__data__/service/admission.api'
 import { CanceledDialog } from '../../components/canceled-dialog'
 
 export const AdmissionViewPage = () => {
   const { id } = useParams<string>()
   const navigate = useNavigate()
   const [updateStatus] = useUpdateAdmissionStatusMutation()
+  const { data: RecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(id ?? '')
 
   return (
     <>
@@ -53,13 +54,18 @@ export const AdmissionViewPage = () => {
             </Button>
           </Box>
         </Box>
-        <SmartTable
-          buttonNames={[]}
-          size={{
-            width: '1148px',
-            height: '540px'
-          }}
-        />
+        {RecordsOfAdmissionData ? (
+          <SmartTable
+            buttonNames={[]}
+            size={{
+              width: '1148px',
+              height: '100%'
+            }}
+            data={RecordsOfAdmissionData}
+          />
+        ) : (
+          <></>
+        )}
       </Box>
     </>
   )

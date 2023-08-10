@@ -1,17 +1,40 @@
 import { TableRow, TableCell, IconButton, Collapse, Table, TableBody } from '@mui/material'
 import { Box } from '@mui/system'
-import React from 'react'
+import { useState } from 'react'
 import { ButtonNames, ShortcutButtons } from '../../../shortcut-buttons'
 import { value, Objects, AdmissionsValue } from '../smoke'
-import { itsAcccount, itsEmployees, itsAdmissions, itsAdmissionsView, myURL } from '..'
+import { myURL } from '..'
 
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { ReactComponent as HumanIcon } from '../../../../assets/human.svg'
 import { ReactComponent as CarIcon } from '../../../../assets/car.svg'
+import { RECORD_FIELDS, RECORD_TYPE, getObjectValueByKey } from '../../../../__data__/consts/record'
+import { AdmissionsHistory } from '../../../../types/api'
 
-export const Row = ({ row, buttonNames, currentURL }: any & ButtonNames & { currentURL: myURL }) => {
-  const [open, setOpen] = React.useState(false)
+export const Row = ({
+  row,
+  buttonNames,
+  currentURL
+}: { row: AdmissionsHistory } & ButtonNames & { currentURL: myURL }) => {
+  const [open, setOpen] = useState(false)
+
+  const itsAcccount = ({ currentURL }: { currentURL: myURL }): boolean =>
+    currentURL === '/accounts' || currentURL === '/accounts/search'
+
+  const itsEmployees = ({ currentURL }: { currentURL: myURL }): boolean =>
+    currentURL === '/employees' || currentURL === '/employees/search'
+
+  const itsAdmissions = ({ currentURL }: { currentURL: myURL }): boolean =>
+    currentURL.startsWith('/admissions/') || currentURL === '/admissions/search'
+
+  const itsAdmissionsView = ({ currentURL }: { currentURL: myURL }): boolean =>
+    currentURL.startsWith('/admissions/view')
+
+  const dateParser = (str: string) => {
+    const date = new Date(str)
+    return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
+  }
 
   return (
     <>
@@ -21,7 +44,7 @@ export const Row = ({ row, buttonNames, currentURL }: any & ButtonNames & { curr
             {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
           </IconButton>
         </TableCell>
-        {itsAcccount({ currentURL }) && (
+        {/* {itsAcccount({ currentURL }) && (
           <>
             <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
               {row.name}
@@ -45,11 +68,11 @@ export const Row = ({ row, buttonNames, currentURL }: any & ButtonNames & { curr
               </Box>
             </TableCell>
           </>
-        )}
+        )} */}
         {itsAdmissions({ currentURL }) && (
           <>
             <TableCell align="left" padding={'checkbox'}>
-              {'name' in row ? (
+              {row.first_name !== null ? (
                 <>
                   <HumanIcon style={{ height: '42px', width: '42px' }} />
                 </>
@@ -59,9 +82,15 @@ export const Row = ({ row, buttonNames, currentURL }: any & ButtonNames & { curr
                 </>
               )}
             </TableCell>
-            <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
-              {row.name}
-            </TableCell>
+            {row.first_name !== null ? (
+              <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
+                {row.first_name + ' ' + row.last_name}
+              </TableCell>
+            ) : (
+              <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
+                {row.car_brand + ' ' + row.car_model + ' ' + row.car_number}
+              </TableCell>
+            )}
             {itsAdmissionsView({ currentURL }) ? (
               <>
                 <TableCell align="right"></TableCell>
@@ -84,7 +113,7 @@ export const Row = ({ row, buttonNames, currentURL }: any & ButtonNames & { curr
             <Box sx={{ margin: 0 }}>
               <Table size="small">
                 <TableBody>
-                  {itsAcccount({ currentURL }) &&
+                  {/* {itsAcccount({ currentURL }) &&
                     row.value.map((valueRow: value) => (
                       <TableRow key={valueRow.email}>
                         <TableCell align="left">{valueRow.email}</TableCell>
@@ -97,28 +126,49 @@ export const Row = ({ row, buttonNames, currentURL }: any & ButtonNames & { curr
                           <TableCell align="left">{valueRow.objects.join(', ')}</TableCell>
                         </TableRow>
                       </>
-                    ))}
-                  {itsAdmissions({ currentURL }) &&
-                    row.value.map((valueRow: AdmissionsValue) => (
-                      <>
-                        <TableRow>
-                          <TableCell align="left" padding={'checkbox'}>
-                            {valueRow.passType}
-                          </TableCell>
-                          <TableCell align="left" sx={{ width: '200px' }}>
-                            {valueRow.dete}
-                          </TableCell>
-                          <TableCell align="left">{'Примечание: ' + valueRow.note}</TableCell>
-                          {!itsAdmissionsView({ currentURL }) && (
-                            <TableCell align="right">
-                              <Box display="flex" alignItems="center" justifyContent="flex-end">
-                                <ShortcutButtons buttonNames={['history']} />
-                              </Box>
+                    ))} */}
+                  {itsAdmissions({ currentURL }) && (
+                    <>
+                      <TableRow>
+                        <TableCell align="left" padding={'checkbox'}>
+                          {getObjectValueByKey(row.type, RECORD_TYPE)}
+                        </TableCell>
+                        {row.from_date !== null && row.type === 'for_long_time' ? (
+                          <>
+                            <TableCell align="left" sx={{ width: '200px' }}>
+                              {RECORD_FIELDS.from_date +
+                                ' ' +
+                                dateParser(row.from_date) +
+                                ' ' +
+                                RECORD_FIELDS.to_date +
+                                ' ' +
+                                dateParser(row.to_date)}
                             </TableCell>
-                          )}
-                        </TableRow>
-                      </>
-                    ))}
+                          </>
+                        ) : (
+                          <>
+                            <>
+                              <TableCell align="left" sx={{ width: '200px' }}>
+                                {RECORD_FIELDS.to_date + ' ' + dateParser(row.to_date)}
+                              </TableCell>
+                            </>
+                          </>
+                        )}
+                        {row.note === null ? (
+                          <TableCell align="left">{'Примечание: '}</TableCell>
+                        ) : (
+                          <TableCell align="left">{'Примечание: ' + row.note}</TableCell>
+                        )}
+                        {!itsAdmissionsView({ currentURL }) && (
+                          <TableCell align="right">
+                            <Box display="flex" alignItems="center" justifyContent="flex-end">
+                              <ShortcutButtons buttonNames={['history']} />
+                            </Box>
+                          </TableCell>
+                        )}
+                      </TableRow>
+                    </>
+                  )}
                 </TableBody>
               </Table>
             </Box>
