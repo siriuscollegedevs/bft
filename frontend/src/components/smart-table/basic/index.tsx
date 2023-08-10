@@ -6,7 +6,7 @@ import TableRow from '@mui/material/TableRow'
 import { ButtonNames, ShortcutButtons } from '../../shortcut-buttons'
 import { Box } from '@mui/material'
 import { Size } from '..'
-import { Objects, Admissions } from '../../../types/api'
+import { Objects, Admissions, AdmissionsHistory } from '../../../types/api'
 import { useGetAllAdmissionsMutation } from '../../../__data__/service/admission.api'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
@@ -17,6 +17,11 @@ export type CurrentURL = '/objects' | '/admissions'
 
 type URL = {
   currentURL: CurrentURL
+}
+
+export const dateParser = (row: Admissions) => {
+  const date = new Date(row.timestamp)
+  return <>{`${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`}</>
 }
 
 export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { size: Size }) => {
@@ -45,11 +50,6 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
       setData(objectsData)
     }
   }, [admissionsData, objectsData])
-
-  const dateParser = (row: Admissions) => {
-    const date = new Date(row.timestamp)
-    return <>{`${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`}</>
-  }
 
   return (
     <TableContainer sx={{ width: size.width, height: size.height }}>
