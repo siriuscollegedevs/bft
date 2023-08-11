@@ -1,4 +1,6 @@
-import { AuthState } from '../../states/auth'
+import { CurrentAccountId } from '../../__data__/states/account'
+import { AuthState } from '../../__data__/states/auth'
+import { FiltersState } from '../../__data__/states/filters'
 
 export type Accounts = {
   id: string
@@ -132,7 +134,9 @@ export type SearchOfAdmissions = {
 }
 
 export type RootState = {
+  currentAccount: CurrentAccountId & Account & { accountObjects: Objects[] }
   auth: AuthState
+  filters: FiltersState
 }
 
 export type ObjectInArray = {

@@ -10,7 +10,7 @@ import {
   useGetAllAccountToObjectArchiveQuery,
   useGetAllAccountToObjectQuery
 } from '../../__data__/service/object-account'
-import { FiltersState } from '../../states/filters'
+import { FiltersState } from '../../__data__/states/filters'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { RootState } from '../../../types/api'
 
 export type FiltersState = {
   objectNameFilter: string[]
@@ -20,3 +21,5 @@ const filtersSlice = createSlice({
 
 export const { setObjectNamesFilter } = filtersSlice.actions
 export const filterReducer = filtersSlice.reducer
+
+export const selectFilters = (state: RootState) => state.filters

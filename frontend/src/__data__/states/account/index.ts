@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { Account, Objects } from '../../types/api'
+import { Account, Objects, RootState } from '../../../types/api'
 
 export type CurrentAccountId = {
   id: string
@@ -41,3 +41,4 @@ const accountSlice = createSlice({
 
 export const { setAccountId, setAccountData, setAccountObjects, clearAccount } = accountSlice.actions
 export const accountReducer = accountSlice.reducer
+export const selectAccount = (state: RootState) => state.currentAccount

@@ -12,10 +12,10 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useSelector, useDispatch } from 'react-redux'
 import { Account } from '../../types/api'
-import { CurrentAccountId, setAccountObjects } from '../../states/account'
+import { CurrentAccountId, setAccountObjects } from '../../__data__/states/account'
 import { useGetAccountToObjectsQuery } from '../../__data__/service/object-account'
 import CircularProgress from '@mui/material/CircularProgress'
-import { setObjectNamesFilter } from '../../states/filters'
+import { setObjectNamesFilter } from '../../__data__/states/filters'
 
 type SidebarProps = {
   isSearch: boolean

@@ -2,7 +2,7 @@ import { fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { config } from './config'
 import { RootState } from '../types/api'
 import { useSelector } from 'react-redux'
-import { AuthState } from '../states/auth'
+import { AuthState } from './states/auth'
 
 export const baseQuery = fetchBaseQuery({
   baseUrl: config.baseAPI,

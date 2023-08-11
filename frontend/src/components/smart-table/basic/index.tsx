@@ -12,7 +12,7 @@ import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGetAllObjectsQuery } from '../../../__data__/service/object.api'
-import { FiltersState } from '../../../states/filters'
+import { FiltersState } from '../../../__data__/states/filters'
 
 export type CurrentURL = '/objects' | '/admissions'
 

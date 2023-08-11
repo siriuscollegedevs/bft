@@ -14,7 +14,7 @@ import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { Account } from '../../types/api'
 import { useSelector } from 'react-redux'
 import { useChangeAccountPasswordMutation } from '../../__data__/service/account.api'
-import { CurrentAccountId } from '../../states/account'
+import { CurrentAccountId } from '../../__data__/states/account'
 import { useLogout } from '../../hooks/logout'
 
 export const UserSettings = () => {
