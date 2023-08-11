@@ -1,20 +1,27 @@
-import { FormAccount } from './form-account'
-import { Container } from '@mui/material'
+import { FormAccount } from './account'
+import { Container, FormControl, Select, MenuItem, SelectChangeEvent } from '@mui/material'
 import { CustomFormControl } from '../../styles/settings'
 import { CustomTypography } from '../../styles/header'
 import Box from '@mui/material/Box'
-import * as React from 'react'
-import { FormObject } from './form-object'
-import { FormEmployee } from './form-employee'
+import { useState } from 'react'
+import { FormObject } from './object'
+import { FormEmployee } from './employee'
 import { useLocation, useParams } from 'react-router-dom'
+import { FormRecord } from './record'
 
 export const FormEditDirectories = () => {
   const location = useLocation()
   const { id } = useParams()
+  const [gender, setGender] = useState('Человек')
+
+  const handleChange = (event: SelectChangeEvent) => {
+    setGender(event.target.value as string)
+  }
 
   const objectUrl = `/objects/${id}`
   const accountUrl = `/accounts/${id}`
   const employeeUrl = `/employees/${id}`
+  const recordUrl = `/admissions/${id}/entries/create`
 
   return (
     <>
@@ -29,13 +36,27 @@ export const FormEditDirectories = () => {
           mb: '75px'
         }}
       >
+        {location.pathname === recordUrl && (
+          <>
+            <Select
+              labelId="demo-simple-select-label"
+              id="demo-simple-select"
+              value={gender}
+              onChange={handleChange}
+              sx={{ marginLeft: 'auto', height: '20%' }}
+            >
+              <MenuItem value={'Человек'}>Человек</MenuItem>
+              <MenuItem value={'Транспорт'}>Транспорт</MenuItem>
+            </Select>
+          </>
+        )}
         <CustomFormControl color="primary">
           <CustomTypography variant="h6" sx={{ color: 'black' }}>
             {location.pathname === accountUrl && 'Учетная запись'}
             {location.pathname === objectUrl && 'Объект Фонда'}
             {location.pathname === employeeUrl && 'Закрепление сотрудника за объектами Фонда'}
+            {location.pathname === recordUrl && 'Запись'}
           </CustomTypography>
-
           <Box
             component="form"
             sx={{
@@ -53,6 +74,7 @@ export const FormEditDirectories = () => {
             {location.pathname === accountUrl && <FormAccount />}
             {location.pathname === objectUrl && <FormObject />}
             {location.pathname === employeeUrl && <FormEmployee />}
+            {location.pathname === recordUrl && <FormRecord />}
           </Box>
         </CustomFormControl>
       </Container>
