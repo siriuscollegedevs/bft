@@ -57,14 +57,15 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
     .filter(obj => filters.objectNameFilter.includes(obj.name))
     .map(obj => obj.id)
 
-  const filteredData = filters.objectNameFilter.length > 0 ? (
-      admissionsData?.filter(row => {
-        if ('object_ids' in row) {
-          return row.object_ids.some(id => filteredObjectIds.includes(id))
-        }
-        return false
-      })
-  ) : admissionsData;
+  const filteredData =
+    filters.objectNameFilter.length > 0
+      ? admissionsData?.filter(row => {
+          if ('object_ids' in row) {
+            return row.object_ids.some(id => filteredObjectIds.includes(id))
+          }
+          return false
+        })
+      : admissionsData
 
   const getObjectNamesFromIds = (objectIds: string[]): (string | undefined)[] => {
     return objectIds
