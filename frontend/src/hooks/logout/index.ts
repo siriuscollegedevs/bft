@@ -4,6 +4,7 @@ import { clearAuth } from '../../__data__/states/auth'
 import { useLogoutMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { deleteCookie } from '../../utils/cookie-parser'
+import { intervalId } from '../../components/login-form'
 
 export const useLogout = () => {
   const dispatch = useDispatch()
@@ -12,6 +13,7 @@ export const useLogout = () => {
 
   const logout = () => {
     try {
+      clearInterval(intervalId)
       logoutMutation()
       deleteCookie('csrftoken')
       dispatch(clearAccount())
