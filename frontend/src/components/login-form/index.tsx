@@ -8,6 +8,8 @@ import { useDispatch } from 'react-redux'
 import { setAccountId } from '../../__data__/states/account'
 import { getCookie } from '../../utils/cookie-parser'
 
+export let intervalId: NodeJS.Timer
+
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
@@ -26,7 +28,7 @@ export const LoginForm = () => {
       dispatch(setTimeAccessToken(response.access_exp))
       dispatch(setCSRFToken(getCookie('csrftoken')))
 
-      setInterval(refreshToken, response.access_exp * 1000)
+      intervalId = setInterval(refreshToken, response.access_exp / 2)
 
       return response ? navigate('/navigation') : null
     } catch (error) {
