@@ -74,7 +74,7 @@ export const FormEditDirectories = () => {
             {location.pathname === accountUrl && <FormAccount />}
             {location.pathname === objectUrl && <FormObject />}
             {location.pathname === employeeUrl && <FormEmployee />}
-            {location.pathname === recordUrl && <FormRecord />}
+            {location.pathname === recordUrl && <FormRecord gender={gender} />}
           </Box>
         </CustomFormControl>
       </Container>

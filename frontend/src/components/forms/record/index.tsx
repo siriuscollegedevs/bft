@@ -1,19 +1,19 @@
 import { FormControl, Select, MenuItem, SelectChangeEvent } from '@mui/material'
 import { useState } from 'react'
+import { Human } from './human'
+import { Transport } from './transport'
 
-export const FormRecord = () => {
-  const [gender, setGender] = useState('Человек')
+type FormRecordProps = {
+  gender: string
+}
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setGender(event.target.value as string)
+export const FormRecord = ({ gender }: FormRecordProps) => {
+  switch (gender) {
+    case 'Человек':
+      return <Human />
+    case 'Транспорт':
+      return <Transport />
+    default:
+      return <>Error</>
   }
-
-  return (
-    <FormControl fullWidth>
-      <Select labelId="demo-simple-select-label" id="demo-simple-select" value={gender} onChange={handleChange}>
-        <MenuItem value={'Человек'}>Человек</MenuItem>
-        <MenuItem value={'Транспорт'}>Транспорт</MenuItem>
-      </Select>
-    </FormControl>
-  )
 }
