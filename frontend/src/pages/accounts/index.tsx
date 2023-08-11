@@ -7,6 +7,8 @@ import { useSelector } from 'react-redux'
 import { Account } from '../../types/api'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
+import CircularProgress from '@mui/material/CircularProgress'
+import * as React from 'react'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -37,32 +39,38 @@ export const AccountsPage = () => {
       <EntityTitle isSwitch={true} isSearchField={true} />
 
       <SideBarContainer>
-        {isArchivePage ? (
-          accountsArchiveData ? (
-            <SmartTable
-              buttonNames={buttonNames}
-              size={{
-                width: '100%',
-                height: '100%'
-              }}
-              data={accountsArchiveData}
-            />
-          ) : (
-            <></>
-          )
-        ) : accountsData ? (
-          <SmartTable
-            buttonNames={buttonNames}
-            size={{
-              width: '100%',
-              height: '100%'
-            }}
-            data={accountsData}
-          />
+        {accountsError || accountsLoading ? (
+          <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
-          <></>
+          <>
+            {isArchivePage ? (
+              accountsArchiveData ? (
+                <SmartTable
+                  buttonNames={buttonNames}
+                  size={{
+                    width: '100%',
+                    height: '100%'
+                  }}
+                  data={accountsArchiveData}
+                />
+              ) : (
+                <></>
+              )
+            ) : accountsData ? (
+              <SmartTable
+                buttonNames={buttonNames}
+                size={{
+                  width: '100%',
+                  height: '100%'
+                }}
+                data={accountsData}
+              />
+            ) : (
+              <></>
+            )}
+            <Sidebar isSearch={true} isObjects={false} isButton={true} />
+          </>
         )}
-        <Sidebar isSearch={true} isObjects={true} isButton={true} />
       </SideBarContainer>
     </>
   )

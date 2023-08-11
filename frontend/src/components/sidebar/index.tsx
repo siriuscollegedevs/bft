@@ -89,7 +89,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '35px'
+              gap: '35px',
+              width: '100%'
             }}
           >
             {isSearch && (
