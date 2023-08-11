@@ -1,62 +1,46 @@
 import { TextField } from '@mui/material'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import MenuItem from '@mui/material/MenuItem'
 import * as React from 'react'
 import { CustomDefaultButton } from '../../../styles/settings'
-
-type Fields = {
-  surname: string
-  name: string
-  patronymic: string
-  login: string
-  password: string
-}
+import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
+import { useCreateAccountMutation } from '../../../__data__/service/account.api'
+import { Account } from '../../../types/api'
+import { useNavigate } from 'react-router-dom'
 
 type Errors = {
+  role: boolean
+  first_name: boolean
   surname: boolean
-  name: boolean
-  patronymic: boolean
-  login: boolean
+  last_name: boolean
+  username: boolean
   password: boolean
 }
 
 export const FormAccount = () => {
-  const roles = [
-    {
-      value: 'admin',
-      label: 'Администратор'
-    },
-    {
-      value: 'manager',
-      label: 'Руководитель'
-    },
-    {
-      value: 'sb',
-      label: 'СБ'
-    },
-    {
-      value: 'security',
-      label: 'Сотрудник охраны'
-    }
-  ]
+  const navigate = useNavigate()
+  const [accountsMutation, { data: accountData, isLoading: accountLoading, isError: accountError, isSuccess }] =
+    useCreateAccountMutation()
 
-  const [fields, setFields] = useState<Fields>({
+  const [fields, setFields] = useState<Account>({
+    role: '',
+    first_name: '',
     surname: '',
-    name: '',
-    patronymic: '',
-    login: '',
+    last_name: '',
+    username: '',
     password: ''
   })
 
   const [errors, setErrors] = useState<Errors>({
+    role: false,
+    first_name: false,
     surname: false,
-    name: false,
-    patronymic: false,
-    login: false,
+    last_name: false,
+    username: false,
     password: false
   })
 
-  const handleFieldChange = (field: keyof Fields, value: string) => {
+  const handleFieldChange = (field: keyof Account, value: string) => {
     setFields(prevFields => ({
       ...prevFields,
       [field]: value
@@ -65,20 +49,41 @@ export const FormAccount = () => {
 
   const handleSubmit = () => {
     const newErrors: Errors = {
+      role: false,
+      first_name: false,
       surname: false,
-      name: false,
-      patronymic: false,
-      login: false,
+      last_name: false,
+      username: false,
       password: false
     }
 
     Object.entries(fields).forEach(([field, value]) => {
       if (value.trim() === '') {
-        newErrors[field as keyof Fields] = true
+        newErrors[field as keyof Account] = true
       }
     })
 
     setErrors(newErrors)
+
+    const noErrors = Object.values(newErrors).every(error => !error)
+
+    if (fields && noErrors) {
+      accountsMutation(fields)
+    }
+  }
+
+  useEffect(() => {
+    if (isSuccess) {
+      navigate(-1)
+    }
+  }, [isSuccess, navigate])
+
+  if (accountLoading) {
+    return <p>Сохранение...</p>
+  }
+
+  if (accountError) {
+    return <p>Произошла ошибка при сохранении.</p>
   }
 
   return (
@@ -93,7 +98,7 @@ export const FormAccount = () => {
         error={!fields.surname && errors.surname}
         helperText={!fields.surname && errors.surname && 'Это поле обязательно.'}
         value={fields.surname}
-        onChange={e => handleFieldChange('surname', e.target.value)}
+        onChange={e => handleFieldChange('last_name', e.target.value)}
       />
       <TextField
         id="name"
@@ -102,10 +107,10 @@ export const FormAccount = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={!fields.name && errors.name}
-        helperText={!fields.name && errors.name && 'Это поле обязательно.'}
-        value={fields.name}
-        onChange={e => handleFieldChange('name', e.target.value)}
+        error={!fields.first_name && errors.first_name}
+        helperText={!fields.first_name && errors.first_name && 'Это поле обязательно.'}
+        value={fields.first_name}
+        onChange={e => handleFieldChange('first_name', e.target.value)}
       />
       <TextField
         id="patronymic"
@@ -114,10 +119,10 @@ export const FormAccount = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={!fields.patronymic && errors.patronymic}
-        helperText={!fields.patronymic && errors.patronymic && 'Это поле обязательно.'}
-        value={fields.patronymic}
-        onChange={e => handleFieldChange('patronymic', e.target.value)}
+        error={!fields.last_name && errors.last_name}
+        helperText={!fields.last_name && errors.last_name && 'Это поле обязательно.'}
+        value={fields.last_name}
+        onChange={e => handleFieldChange('surname', e.target.value)}
       />
       <TextField
         id="login"
@@ -126,23 +131,25 @@ export const FormAccount = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={!fields.login && errors.login}
-        helperText={!fields.login && errors.login && 'Это поле обязательно.'}
-        value={fields.login}
-        onChange={e => handleFieldChange('login', e.target.value)}
+        error={!fields.username && errors.username}
+        helperText={!fields.username && errors.username && 'Это поле обязательно.'}
+        value={fields.username}
+        onChange={e => handleFieldChange('username', e.target.value)}
       />
       <TextField
-        id="accountType"
+        id="role"
         select
         label="Тип учетной записи"
         defaultValue="admin"
         focused
         required
+        value={fields.role}
         sx={{ m: 1, width: '85%' }}
+        onChange={e => handleFieldChange('role', e.target.value)}
       >
-        {roles.map(option => (
-          <MenuItem key={option.value} value={option.value}>
-            {option.label}
+        {Object.entries(ACCOUNT_ROLES).map(([roleValue, roleLabel]) => (
+          <MenuItem key={roleValue} value={roleValue}>
+            {roleLabel}
           </MenuItem>
         ))}
       </TextField>

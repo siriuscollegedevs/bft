@@ -10,7 +10,8 @@ const initialAccountState: Account = {
   first_name: '',
   surname: '',
   last_name: '',
-  username: ''
+  username: '',
+  password: ''
 }
 
 const initialState: CurrentAccountId & Account & { accountObjects: Objects[] } = {

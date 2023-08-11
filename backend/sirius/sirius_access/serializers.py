@@ -32,11 +32,11 @@ class ObjectHistorySerializer(serializers.Serializer):
 
 
 class AccountSerializer(UUIDMixin, serializers.Serializer):
-    role = serializers.CharField(read_only=True)
+    role = serializers.CharField()
     first_name = serializers.CharField(max_length=NAMES_LEN, allow_blank=True)
     surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
     last_name = serializers.CharField(max_length=NAMES_LEN)
-    username = serializers.CharField(read_only=True)
+    username = serializers.CharField()
     modified_by = serializers.CharField(max_length=DEFAULT_LEN, read_only=True)
     action = serializers.CharField(max_length=ACTION_ACCOUNT_LEN, read_only=True)
     password = serializers.CharField(trim_whitespace=False, max_length=128, write_only=True, required=False)
@@ -65,9 +65,7 @@ class AccountSerializer(UUIDMixin, serializers.Serializer):
         if value not in ACCOUNT_TYPES:
             return serializers.ValidationError
         elif self.request_type == 'post':
-            if value:
-                return value
-            else:
+            if not value:
                 return serializers.ValidationError
         return value
 
