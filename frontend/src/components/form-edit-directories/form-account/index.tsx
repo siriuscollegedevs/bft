@@ -65,7 +65,9 @@ export const FormAccount = () => {
 
     setErrors(newErrors)
 
-    if (fields && !errors) {
+    const noErrors = Object.values(newErrors).every(error => !error)
+
+    if (fields && noErrors) {
       accountsMutation(fields)
     }
   }
@@ -96,7 +98,7 @@ export const FormAccount = () => {
         error={!fields.surname && errors.surname}
         helperText={!fields.surname && errors.surname && 'Это поле обязательно.'}
         value={fields.surname}
-        onChange={e => handleFieldChange('surname', e.target.value)}
+        onChange={e => handleFieldChange('last_name', e.target.value)}
       />
       <TextField
         id="name"
@@ -120,7 +122,7 @@ export const FormAccount = () => {
         error={!fields.last_name && errors.last_name}
         helperText={!fields.last_name && errors.last_name && 'Это поле обязательно.'}
         value={fields.last_name}
-        onChange={e => handleFieldChange('last_name', e.target.value)}
+        onChange={e => handleFieldChange('surname', e.target.value)}
       />
       <TextField
         id="login"
