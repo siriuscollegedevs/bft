@@ -22,7 +22,7 @@ export const AdmissionViewPage = () => {
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            width: '1148px',
+            width: '90%',
             marginBottom: '30px'
           }}
         >
@@ -58,7 +58,7 @@ export const AdmissionViewPage = () => {
           <SmartTable
             buttonNames={[]}
             size={{
-              width: '1148px',
+              width: '90%',
               height: '100%'
             }}
             data={RecordsOfAdmissionData}
