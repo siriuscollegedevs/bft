@@ -126,11 +126,11 @@ export const DynamicHeader = () => {
                 ) : (
                   <CustomTypography>{`${currentAccountData?.first_name}`}</CustomTypography>
                 )}
-                <CustomExitButton color="inherit" variant="contained" onClick={() => logout()}>
-                  Выход
-                </CustomExitButton>
               </>
             )}
+            <CustomExitButton color="inherit" variant="contained" onClick={() => logout()}>
+              Выход
+            </CustomExitButton>
           </CustomToolbar>
         </CustomAppBar>
       </Box>

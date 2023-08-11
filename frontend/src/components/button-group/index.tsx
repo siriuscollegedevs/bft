@@ -7,8 +7,8 @@ import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useSelector, useDispatch } from 'react-redux'
 import { Account } from '../../types/api'
 import { useGetAccountToObjectsQuery } from '../../__data__/service/object-account'
-import { CurrentAccountId, setAccountObjects } from '../../__data__/states/account'
 import { useEffect } from 'react'
+import { CurrentAccountId, setAccountObjects } from '../../__data__/states/account'
 
 export const ButtonGroup = () => {
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
