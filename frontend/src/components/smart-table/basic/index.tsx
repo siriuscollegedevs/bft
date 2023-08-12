@@ -50,7 +50,7 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
                       </TableCell>
                       <TableCell align="right">
                         <Box display="flex" alignItems="center" justifyContent="flex-end">
-                          <ShortcutButtons buttonNames={buttonNames} />
+                          <ShortcutButtons buttonNames={buttonNames} id={row.id}/>
                         </Box>
                       </TableCell>
                     </>
@@ -82,7 +82,7 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
                       </TableCell>
                       <TableCell align="right">
                         <Box display="flex" alignItems="center" justifyContent="flex-end">
-                          <ShortcutButtons buttonNames={buttonNames} />
+                          <ShortcutButtons buttonNames={buttonNames} id={row.id} />
                         </Box>
                       </TableCell>
                     </>
