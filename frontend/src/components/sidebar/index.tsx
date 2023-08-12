@@ -16,6 +16,7 @@ import { CurrentAccountId, setAccountObjects } from '../../__data__/states/accou
 import { useGetAccountToObjectsQuery } from '../../__data__/service/object-account'
 import CircularProgress from '@mui/material/CircularProgress'
 import { setObjectNamesFilter } from '../../__data__/states/filters'
+import { useEffect } from 'react'
 
 type SidebarProps = {
   isSearch: boolean
@@ -40,6 +41,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
   if (currentAccountObjectsData) {
     dispatch(setAccountObjects(currentAccountObjectsData))
   }
+
+  useEffect(() => {
+    dispatch(setObjectNamesFilter([]))
+  }, [])
 
   const handleChange = ({ target: { value } }: SelectChangeEvent<typeof objectName>) => {
     const selectedObjects = typeof value === 'string' ? value.split(',') : value
