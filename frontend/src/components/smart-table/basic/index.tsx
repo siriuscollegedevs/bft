@@ -28,7 +28,7 @@ export const Basic = ({ currentURL, buttonNames, size }: URL & ButtonNames & { s
   )
   const idArray: string[] = currentAccountObjects.map(object => object.id)
   const { data: objectsData } = useGetAllObjectsQuery()
-  const [admissionsMutation, { data: admissionsData }] = useGetAllAdmissionsMutation()
+  const [admissionsMutation, { data: admissionsData}] = useGetAllAdmissionsMutation()
   const [hasData, setHasData] = useState(false)
   const navigate = useNavigate()
   const filters = useSelector((state: { filters: FiltersState }) => state.filters)

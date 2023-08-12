@@ -18,10 +18,10 @@ export const FormEditDirectories = () => {
     setGender(event.target.value as string)
   }
 
-  const objectUrl = `/objects/${id}`
-  const accountUrl = `/accounts/${id}`
-  const employeeUrl = `/employees/${id}`
-  const recordUrl = `/admissions/${id}/entries/create`
+  const objectUrl = '/objects'
+  const accountUrl = '/accounts'
+  const employeeUrl = '/employees'
+  const recordUrl = '/admissions'
 
   return (
     <>
@@ -52,10 +52,9 @@ export const FormEditDirectories = () => {
         )}
         <CustomFormControl color="primary">
           <CustomTypography variant="h6" sx={{ color: 'black' }}>
-            {location.pathname === accountUrl && 'Учетная запись'}
-            {location.pathname === objectUrl && 'Объект Фонда'}
-            {location.pathname === employeeUrl && 'Закрепление сотрудника за объектами Фонда'}
-            {location.pathname === recordUrl && 'Запись'}
+            {location.pathname.startsWith(accountUrl) && 'Учетная запись'}
+            {location.pathname.startsWith(objectUrl) && 'Объект Фонда'}
+            {location.pathname.startsWith(employeeUrl) && 'Закрепление сотрудника за объектами Фонда'}
           </CustomTypography>
           <Box
             component="form"
@@ -71,10 +70,10 @@ export const FormEditDirectories = () => {
               }
             }}
           >
-            {location.pathname === accountUrl && <FormAccount />}
-            {location.pathname === objectUrl && <FormObject />}
-            {location.pathname === employeeUrl && <FormEmployee />}
-            {location.pathname === recordUrl && <FormRecord gender={gender} />}
+            {location.pathname.startsWith(accountUrl) && <FormAccount />}
+            {location.pathname.startsWith(objectUrl) && <FormObject />}
+            {location.pathname.startsWith(employeeUrl) && <FormEmployee />}
+            {location.pathname.startsWith(recordUrl) && <FormRecord gender={gender} />}
           </Box>
         </CustomFormControl>
       </Container>

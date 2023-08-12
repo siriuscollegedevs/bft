@@ -10,6 +10,7 @@ import { ReactComponent as CarIcon } from '../../../../assets/car.svg'
 import { RECORD_FIELDS, RECORD_TYPE, getObjectValueByKey } from '../../../../__data__/consts/record'
 import { Accounts, AccountToObject, AdmissionsHistory, ObjectInArray } from '../../../../types/api'
 import { ACCOUNT_ROLES } from '../../../../__data__/consts/account-roles'
+import { CustomCollapseCell } from '../../../../styles/table'
 
 type CommonData = AdmissionsHistory | Accounts | AccountToObject | ObjectInArray
 
@@ -51,7 +52,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
               {row.last_name} {row.first_name} {row.surname}
             </TableCell>
             <TableCell align="left">{ACCOUNT_ROLES[row?.role]}</TableCell>
-            <TableCell align="right">
+            <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)'}}>
               <Box display="flex" alignItems="center" justifyContent="flex-end">
                 <ShortcutButtons buttonNames={buttonNames} />
               </Box>
@@ -63,7 +64,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
             <TableCell align="left" sx={{ height: '47px', width: '100%' }}>
               {row.last_name} {row.first_name} {row.surname}
             </TableCell>
-            <TableCell align="right">
+            <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)'}}>
               <Box display="flex" alignItems="center" justifyContent="flex-end">
                 <ShortcutButtons buttonNames={buttonNames} />
               </Box>
@@ -94,11 +95,11 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
             )}
             {itsAdmissionsView({ currentURL }) ? (
               <>
-                <TableCell align="right"></TableCell>
+                <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)'}}></TableCell>
               </>
             ) : (
               <>
-                <TableCell align="right">
+                <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)'}}>
                   <Box display="flex" alignItems="center" justifyContent="flex-end">
                     <ShortcutButtons buttonNames={buttonNames} />
                   </Box>
@@ -116,22 +117,20 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                 <TableBody>
                   {(itsAcccount({ currentURL }) || itsAccountsArchive({ currentURL })) && 'role' in row && (
                     <TableRow key={row.id} sx={{ height: '47px' }}>
-                      <TableCell align="left" sx={{ paddingLeft: '70px' }}>
-                        {row.username}
-                      </TableCell>
+                      <CustomCollapseCell align="left">{row.username}</CustomCollapseCell>
                     </TableRow>
                   )}
                   {(itsEmployees({ currentURL }) || itsEmployeesArchive({ currentURL })) && 'objects' in row && (
                     <TableRow sx={{ height: '47px' }}>
-                      <TableCell align="left" sx={{ paddingLeft: '70px' }}>
+                      <CustomCollapseCell align="left" sx={{padding: '6px 0 6px 54px'}}>
                         {Array.isArray(row.objects) && row.objects.map(valueRow => valueRow.name).join(', ')}
-                      </TableCell>
+                      </CustomCollapseCell>
                     </TableRow>
                   )}
                   {itsAdmissions({ currentURL }) && 'type' in row && (
                     <>
                       <TableRow>
-                        <TableCell align="left" padding={'checkbox'}>
+                        <TableCell align="left" padding={'checkbox'} sx={{ height: '47px' }}>
                           {getObjectValueByKey(row.type, RECORD_TYPE)}
                         </TableCell>
                         {row.from_date !== null && row.type === 'for_long_time' ? (
@@ -149,7 +148,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                         ) : (
                           <>
                             <>
-                              <TableCell align="left" sx={{ width: '200px' }}>
+                              <TableCell align="left" sx={{ width: '200px', height: '47px'}}>
                                 {RECORD_FIELDS.to_date + ' ' + dateParser(row.to_date)}
                               </TableCell>
                             </>
