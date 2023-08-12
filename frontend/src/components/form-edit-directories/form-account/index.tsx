@@ -1,12 +1,15 @@
 import { TextField } from '@mui/material'
 import { useEffect, useState } from 'react'
 import MenuItem from '@mui/material/MenuItem'
-import * as React from 'react'
 import { CustomDefaultButton } from '../../../styles/settings'
 import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
-import { useCreateAccountMutation } from '../../../__data__/service/account.api'
+import {
+  useCreateAccountMutation,
+  useGetAccountByIdQuery,
+  useUpdateAccountByIdMutation
+} from '../../../__data__/service/account.api'
 import { Account } from '../../../types/api'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 type Errors = {
   role: boolean
@@ -18,9 +21,13 @@ type Errors = {
 }
 
 export const FormAccount = () => {
+  const { id } = useParams<string>()
   const navigate = useNavigate()
-  const [accountsMutation, { data: accountData, isLoading: accountLoading, isError: accountError, isSuccess }] =
+  const [accountsMutation, { data: accountData, isLoading: accountLoading, isError: accountError, isSuccess: accountSuccess }] =
     useCreateAccountMutation()
+  const { data: accountDataById, refetch: refetchAccountDataById } = useGetAccountByIdQuery(id ?? '')
+  const [updateAccountMutation, { isLoading: updateLoading, isError: updateError, isSuccess: updateSuccess}] = useUpdateAccountByIdMutation();
+  const isEditMode = !!id;
 
   const [fields, setFields] = useState<Account>({
     role: '',
@@ -39,6 +46,12 @@ export const FormAccount = () => {
     username: false,
     password: false
   })
+
+  useEffect(() => {
+    if (isEditMode && accountDataById) {
+      setFields(accountDataById);
+    }
+  }, [isEditMode, accountDataById]);
 
   const handleFieldChange = (field: keyof Account, value: string) => {
     setFields(prevFields => ({
@@ -72,21 +85,26 @@ export const FormAccount = () => {
     const noErrors = Object.values(newErrors).every(error => !error)
 
     if (fields && noErrors) {
+      if (isEditMode) {
+        updateAccountMutation({accountId: id,
+          accountData: fields})
+        refetchAccountDataById();
+      }
       accountsMutation(fields)
     }
   }
 
   useEffect(() => {
-    if (isSuccess) {
+    if (accountSuccess || updateSuccess) {
       navigate(-1)
     }
-  }, [isSuccess, navigate])
+  }, [accountSuccess, updateSuccess, navigate])
 
-  if (accountLoading) {
+  if (accountLoading || updateLoading) {
     return <p>Сохранение...</p>
   }
 
-  if (accountError) {
+  if (accountError || updateError) {
     return <p>Произошла ошибка при сохранении.</p>
   }
 
