@@ -59,9 +59,13 @@ export const FormAccount = () => {
 
     Object.entries(fields).forEach(([field, value]) => {
       if (value.trim() === '') {
-        newErrors[field as keyof Account] = true
+        if (field === 'first_name' || field === 'surname') {
+          newErrors[field as keyof Account] = false;
+        } else {
+          newErrors[field as keyof Account] = true;
+        }
       }
-    })
+    });
 
     setErrors(newErrors)
 
@@ -89,32 +93,8 @@ export const FormAccount = () => {
   return (
     <>
       <TextField
-        id="surname"
+        id="last_name"
         label="Фамилия"
-        focused
-        variant="outlined"
-        sx={{ m: 1, width: '85%' }}
-        required
-        error={!fields.surname && errors.surname}
-        helperText={!fields.surname && errors.surname && 'Это поле обязательно.'}
-        value={fields.surname}
-        onChange={e => handleFieldChange('last_name', e.target.value)}
-      />
-      <TextField
-        id="name"
-        label="Имя"
-        focused
-        variant="outlined"
-        sx={{ m: 1, width: '85%' }}
-        required
-        error={!fields.first_name && errors.first_name}
-        helperText={!fields.first_name && errors.first_name && 'Это поле обязательно.'}
-        value={fields.first_name}
-        onChange={e => handleFieldChange('first_name', e.target.value)}
-      />
-      <TextField
-        id="patronymic"
-        label="Отчество"
         focused
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
@@ -122,6 +102,24 @@ export const FormAccount = () => {
         error={!fields.last_name && errors.last_name}
         helperText={!fields.last_name && errors.last_name && 'Это поле обязательно.'}
         value={fields.last_name}
+        onChange={e => handleFieldChange('last_name', e.target.value)}
+      />
+      <TextField
+        id="first_name"
+        label="Имя"
+        focused
+        variant="outlined"
+        sx={{ m: 1, width: '85%' }}
+        value={fields.first_name}
+        onChange={e => handleFieldChange('first_name', e.target.value)}
+      />
+      <TextField
+        id="surname"
+        label="Отчество"
+        focused
+        variant="outlined"
+        sx={{ m: 1, width: '85%' }}
+        value={fields.surname}
         onChange={e => handleFieldChange('surname', e.target.value)}
       />
       <TextField
@@ -143,6 +141,8 @@ export const FormAccount = () => {
         defaultValue="admin"
         focused
         required
+        error={!fields.role && errors.role}
+        helperText={!fields.role && errors.role && 'Это поле обязательно.'}
         value={fields.role}
         sx={{ m: 1, width: '85%' }}
         onChange={e => handleFieldChange('role', e.target.value)}
