@@ -2,20 +2,37 @@ import { TextField } from '@mui/material'
 import * as React from 'react'
 import { CustomDefaultButton } from '../../../styles/settings'
 import { useEffect, useState } from 'react'
-import { useCreateObjectMutation } from '../../../__data__/service/object.api'
+import {
+  useCreateObjectMutation,
+  useGetObjectByIdQuery,
+  useUpdateObjectByIdMutation
+} from '../../../__data__/service/object.api'
 import { soloObject } from '../../../types/api'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 export const FormObject = () => {
+  const { id } = useParams<string>()
   const navigate = useNavigate()
   const [fieldObject, setFieldObject] = useState<soloObject>({
     name: ''
   })
   const [error, setError] = useState(false)
-  const [
-    objectsMutation,
-    { data: objectData, isLoading: objectLoading, isError: objectError, isSuccess: objectSuccess }
-  ] = useCreateObjectMutation()
+  const [objectsMutation, { isLoading: objectUpdateLoading, isError: objectError, isSuccess: objectSuccess }] =
+    useCreateObjectMutation()
+  const {
+    data: objectsDataById,
+    isLoading: objectLoading,
+    refetch: refetchObjectsDataById
+  } = useGetObjectByIdQuery(id ?? '')
+  const [updateObjectMutation, { isLoading: updateLoading, isError: updateError, isSuccess: updateSuccess }] =
+    useUpdateObjectByIdMutation()
+  const isEditMode = !!id
+
+  useEffect(() => {
+    if (isEditMode && objectsDataById) {
+      setFieldObject(objectsDataById)
+    }
+  }, [isEditMode, objectsDataById])
 
   const handleSubmit = () => {
     if (fieldObject.name.trim() === '') {
@@ -24,22 +41,28 @@ export const FormObject = () => {
       setError(false)
     }
 
-    if (fieldObject.name && !error) {
+    const noErrors = !error
+
+    if (fieldObject.name && noErrors) {
+      if (isEditMode) {
+        updateObjectMutation({ objectId: id, objectData: fieldObject })
+        refetchObjectsDataById()
+      }
       objectsMutation(fieldObject)
     }
   }
 
   useEffect(() => {
-    if (objectSuccess) {
+    if (objectSuccess || updateSuccess) {
       navigate(-1)
     }
-  }, [objectSuccess, navigate])
+  }, [objectSuccess, updateSuccess, navigate])
 
-  if (objectLoading) {
+  if (objectLoading || objectUpdateLoading) {
     return <p>Сохранение...</p>
   }
 
-  if (objectError) {
+  if (objectError || updateError) {
     return <p>Произошла ошибка при сохранении.</p>
   }
 
