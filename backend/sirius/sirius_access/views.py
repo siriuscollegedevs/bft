@@ -192,7 +192,7 @@ class PostAccount(APIView):
             data = serializer.validated_data
             try:
                 if not check_administrator(request):
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
+                    return Response(status=status.HTTP_403_FORBIDDEN)
                 with transaction.atomic():
                     new_user = User.objects.create_user(username=data['username'], password=data['password'])
                     new_user.save()
@@ -240,7 +240,7 @@ class GetPutDeleteAccount(APIView):
                 with transaction.atomic():
                     account = Account.objects.get(id=AccountId)
                     if not check_administrator(request):
-                        return Response(status=status.HTTP_400_BAD_REQUEST)
+                        return Response(status=status.HTTP_403_FORBIDDEN)
                     user = User.objects.get(account=account)
                     if data.get('password', ''):
                         user.set_password(data['password'])
@@ -252,7 +252,7 @@ class GetPutDeleteAccount(APIView):
                         action=action,
                         account=account,
                         modified_by=get_user(request),
-                        **data
+                        **{key : data[key] for key in data if key not in ["password", "role", "username"]}
                     )
                     return Response(status=status.HTTP_200_OK)
             except Exception:
@@ -267,7 +267,7 @@ class GetPutDeleteAccount(APIView):
     def delete(self, request, AccountId):
         try:
             if not check_administrator(request):
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_403_FORBIDDEN)
             with transaction.atomic():
                 account = Account.objects.get(id=AccountId)
                 account.status = 'outdated'
@@ -621,7 +621,7 @@ class DeleteAccountToObjbectView(APIView):
     def delete(self, request, MatchId):
         # TODO вместо проверки на администратора сделать permissions
         if not check_administrator(request):
-            return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE роль аккаунта НЕ администратор
+            return Response(status=status.HTTP_403_FORBIDDEN)  # NOTE роль аккаунта НЕ администратор
         try:
             match = AccountToObject.objects.get(id=MatchId)
         except Exception:
