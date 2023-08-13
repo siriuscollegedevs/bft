@@ -145,6 +145,7 @@ export const FormAccount = () => {
         label="Логин"
         focused
         variant="outlined"
+        disabled={isEditMode}
         sx={{ m: 1, width: '85%' }}
         required
         error={!fields.username && errors.username}
@@ -159,6 +160,7 @@ export const FormAccount = () => {
         defaultValue="admin"
         focused
         required
+        disabled={isEditMode}
         error={!fields.role && errors.role}
         helperText={!fields.role && errors.role && 'Это поле обязательно.'}
         value={fields.role}
