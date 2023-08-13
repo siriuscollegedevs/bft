@@ -16,5 +16,5 @@ def list_to_queryset(model: Model, data: list) -> QuerySet:
 def get_max_code():
     for elem in RequestHistory.objects.order_by('-timestamp'):
         if elem.code.isdigit():
-            return int(elem)
+            return int(elem.code)
     return 0
