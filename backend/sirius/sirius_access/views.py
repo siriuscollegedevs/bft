@@ -252,7 +252,7 @@ class GetPutDeleteAccount(APIView):
                         action=action,
                         account=account,
                         modified_by=get_user(request),
-                        **data
+                        **{key : data[key] for key in data if key not in ["password", "role", "username"]}
                     )
                     return Response(status=status.HTTP_200_OK)
             except Exception:
