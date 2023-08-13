@@ -5,7 +5,7 @@ from rest_framework import status
 from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
-from sirius.general_functions import get_user
+from sirius.general_functions import get_user, get_max_code
 from .config import *
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
@@ -66,7 +66,7 @@ class PostRequest(APIView):
             try:
                 with transaction.atomic():
                     req = Request.objects.create(status='active')
-                    code = code if code else req.id  # NOTE
+                    code = code if code else str(get_max_code() + 1)
                     for obj_id in serializer.validated_data['object_ids']:
                         RequestToObject.objects.create(object=Object.objects.get(id=obj_id), request=req)
                     RequestHistory.objects.create(request=req, code=code,
