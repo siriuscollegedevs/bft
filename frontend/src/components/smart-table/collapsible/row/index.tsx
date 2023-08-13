@@ -54,7 +54,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
             <TableCell align="left">{ACCOUNT_ROLES[row?.role]}</TableCell>
             <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
               <Box display="flex" alignItems="center" justifyContent="flex-end">
-                <ShortcutButtons buttonNames={buttonNames} />
+                <ShortcutButtons buttonNames={buttonNames} id={row.id} />
               </Box>
             </TableCell>
           </>
@@ -66,7 +66,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
             </TableCell>
             <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
               <Box display="flex" alignItems="center" justifyContent="flex-end">
-                <ShortcutButtons buttonNames={buttonNames} />
+                <ShortcutButtons buttonNames={buttonNames} id={row.id} />
               </Box>
             </TableCell>
           </>
@@ -101,7 +101,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
               <>
                 <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
                   <Box display="flex" alignItems="center" justifyContent="flex-end">
-                    <ShortcutButtons buttonNames={buttonNames} />
+                    <ShortcutButtons buttonNames={buttonNames} id={row.id}/>
                   </Box>
                 </TableCell>
               </>
@@ -162,7 +162,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                         {!itsAdmissionsView({ currentURL }) && (
                           <TableCell align="right">
                             <Box display="flex" alignItems="center" justifyContent="flex-end">
-                              <ShortcutButtons buttonNames={['history']} />
+                              <ShortcutButtons buttonNames={['history']} id={row.id}/>
                             </Box>
                           </TableCell>
                         )}
