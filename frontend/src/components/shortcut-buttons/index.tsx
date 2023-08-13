@@ -5,9 +5,12 @@ import { ReactComponent as TrashIcon } from '../../assets/trash.svg'
 import { ReactComponent as CancelIcon } from '../../assets/cancel.svg'
 import { ReactComponent as ToRepayIcon } from '../../assets/toRepay.svg'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { useDeleteAccountByIdMutation } from '../../__data__/service/account.api'
-import { useDeleteObjectByIdMutation } from '../../__data__/service/object.api'
-import { useDeleteAccountToObjectByIdMutation } from '../../__data__/service/object-account'
+import {useDeleteAccountByIdMutation, useGetAllAccountsQuery} from '../../__data__/service/account.api'
+import {useDeleteObjectByIdMutation, useGetAllObjectsQuery} from '../../__data__/service/object.api'
+import {
+  useDeleteAccountToObjectByIdMutation,
+  useGetAllAccountToObjectQuery
+} from '../../__data__/service/object-account'
 import { useState } from 'react'
 import { DeleteDialog } from '../delete-dialog'
 
@@ -60,6 +63,10 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
     useDeleteAccountToObjectByIdMutation()
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
+  const { refetch: refetchAccountData } = useGetAllAccountsQuery()
+  const { refetch: refetchObjectsData } = useGetAllObjectsQuery()
+  const { refetch: refetchEmployeesData } = useGetAllAccountToObjectQuery()
+
   const handleClickEdit = () => {
     navigate(`${location.pathname}/${id}`)
   }
@@ -78,12 +85,16 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
 
   const handleDeleteConfirmed = async () => {
     let deleteMutation
+    let refetchData
     if (location.pathname.includes('/objects')) {
       deleteMutation = deleteObjectMutation
+      refetchData = refetchObjectsData
     } else if (location.pathname.includes('/accounts')) {
       deleteMutation = deleteAccountMutation
+      refetchData = refetchAccountData
     } else if (location.pathname.includes('/employees')) {
       deleteMutation = deleteEmployeesMutation
+      refetchData = refetchEmployeesData
     } else {
       console.error('Unknown object type')
       return
@@ -91,6 +102,7 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
 
     await deleteMutation(id)
     closeDeleteDialog()
+    await refetchData();
   }
 
   if (buttonNames.length === 0 || buttonNames.length > 3) {
