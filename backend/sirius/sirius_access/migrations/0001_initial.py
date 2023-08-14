@@ -77,7 +77,7 @@ class Migration(migrations.Migration):
             ],
             options={
                 'db_table': 'account_to_object',
-                'unique_together': {('object', 'account', 'status')},
+                'unique_together': {('object', 'account')},
             },
         ),
     ]
