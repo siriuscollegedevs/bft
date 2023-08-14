@@ -1,5 +1,3 @@
-import { FormControl, Select, MenuItem, SelectChangeEvent } from '@mui/material'
-import { useState } from 'react'
 import { Human } from './human'
 import { Transport } from './transport'
 
