@@ -556,7 +556,7 @@ class GetArchiveAccountsObjectsView(APIView):
 class GetPutAccountToObjectView(APIView):
 
     @extend_schema(responses={
-        status.HTTP_200_OK: serializers.ObjectSerializer(many=True),
+        status.HTTP_200_OK: serializers.AccountMatches(many=True),
         status.HTTP_401_UNAUTHORIZED: None,
         status.HTTP_400_BAD_REQUEST: None
     })
@@ -572,8 +572,14 @@ class GetPutAccountToObjectView(APIView):
                 if not all_records:
                     return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_MATCHES_ERROR) ## NOTE за данным аккаунтом не найдено закреплений
                 for record in all_records:
-                    res.append({'id': record.object.id, 'name': record.object.get_info().name})
-                return Response(serializers.ObjectSerializer(res, many=True).data)
+                    res.append(
+                        {
+                            "match_id": record.id,
+                            "id": record.object.id,
+                            "name": record.object.get_info().name
+                        }
+                    )
+                return Response(serializers.AccountMatches(res, many=True).data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
 
