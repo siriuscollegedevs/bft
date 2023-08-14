@@ -26,23 +26,20 @@ type FieldsState = {
 
 export const Human = () => {
   const [error, setError] = useState(false)
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
+  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
   const [fields, setFields] = useState<FieldsState>({
     lastName: '',
     firstName: '',
     surname: '',
-    type: 'Разовый',
+    type: RECORD_TYPE.for_once,
     note: ''
   })
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
-  const formattedStartDate = dayjs(startDate).format('DD-MM-YYYY')
-  const formattedEndDate = dayjs(endDate).format('DD-MM-YYYY')
 
-  const handleStartDateChange = (event: any) => {
+  const handleStartDateChange = (event: { target: { value: SetStateAction<string> } }) => {
     setStartDate(event.target.value)
   }
-
-  const handleEndDateChange = (event: any) => {
+  const handleEndDateChange = (event: { target: { value: SetStateAction<string> } }) => {
     setEndDate(event.target.value)
   }
 
@@ -59,7 +56,6 @@ export const Human = () => {
 
   const handleSubmit = () => {
     let hasEmptyField = false
-
     for (const value of Object.values(fields)) {
       if (value.trim() === '') {
         hasEmptyField = true
@@ -68,8 +64,6 @@ export const Human = () => {
 
     if (hasEmptyField) {
       setError(true)
-    } else {
-      console.log(fields)
     }
   }
 
@@ -126,10 +120,16 @@ export const Human = () => {
           label="с"
           type="date"
           focused
-          value={startDate}
+          required={fields.type !== RECORD_TYPE.for_once}
+          value={fields.type === RECORD_TYPE.for_once ? endDate : startDate}
+          disabled={fields.type === RECORD_TYPE.for_once}
+          error={fields.type === RECORD_TYPE.for_long_time && startDate === ''}
           onChange={handleStartDateChange}
           InputLabelProps={{
             shrink: true
+          }}
+          inputProps={{
+            min: new Date().toISOString().split('T')[0]
           }}
           sx={{ width: '48%' }}
         />
@@ -138,10 +138,13 @@ export const Human = () => {
           type="date"
           focused
           required
-          value={endDate}
+          value={endDate === '' ? setEndDate(new Date().toISOString().split('T')[0]) : endDate}
           onChange={handleEndDateChange}
           InputLabelProps={{
             shrink: true
+          }}
+          inputProps={{
+            min: new Date().toISOString().split('T')[0]
           }}
           sx={{ width: '48%' }}
         />
@@ -153,6 +156,8 @@ export const Human = () => {
         sx={{ m: 1, width: '85%' }}
         error={error}
         value={fields.note}
+        multiline
+        rows={3}
         onChange={e => handleFieldChange('note', e.target.value)}
       />
       <CustomDefaultButton variant="contained" color="primary" onClick={handleSubmit}>
