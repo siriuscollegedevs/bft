@@ -513,10 +513,17 @@ class GetPostActualAccountsObjectsView(APIView):
                             object_name = object_ins.get_info().name
                             error = {"error": EXISTING_MATCH_ERROR['error'].format(object_name=object_name)}
                             return Response(status=status.HTTP_400_BAD_REQUEST, data=error) ## NOTE аккаунт уже закреплен за данным объектом
-                        try:
-                            AccountToObject.objects.create(object=object_ins, account=account, status='active')
-                        except Exception:
-                            return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка бд
+                        if AccountToObject.objects.filter(object=object_ins, account=account).exists():
+                            try:
+                                current_match = AccountToObject.objects.filter(object=object_ins, account=account)
+                                current_match.status = 'active'
+                            except Exception:
+                                return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка бд
+                        else:
+                            try:
+                                AccountToObject.objects.create(object=object_ins, account=account, status='active')
+                            except Exception:
+                                return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка бд
                     return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
@@ -553,7 +560,7 @@ class GetArchiveAccountsObjectsView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка в транзакции
 
 
-class GetPutAccountToObjectView(APIView):
+class GetPutDeleteAccountToObjectView(APIView):
 
     @extend_schema(responses={
         status.HTTP_200_OK: serializers.AccountMatches(many=True),
@@ -616,29 +623,26 @@ class GetPutAccountToObjectView(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
 
-
-class DeleteAccountToObjbectView(APIView):
-
     @extend_schema(responses={
         status.HTTP_204_NO_CONTENT: None,
         status.HTTP_401_UNAUTHORIZED: None,
         status.HTTP_400_BAD_REQUEST: None
     })
-    def delete(self, request, MatchId):
+    def delete(self, request, AccountId):
         # TODO вместо проверки на администратора сделать permissions
         if not check_administrator(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE роль аккаунта НЕ администратор
         try:
-            match = AccountToObject.objects.get(id=MatchId)
+            account = Account.objects.get(id=AccountId)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_MATCH_FOUND_ERROR) ## NOTE закрепления с таким id нет
-        if match.status == 'outdated':
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=MATCH_ALREADY_DELETED_ERROR) ## NOTE закрепление уже находится в архиве
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_FOUND_ERROR) ## NOTE аккаунта с таким id не существует или id не верен
         try:
             with transaction.atomic():
-                match.status = 'outdated'
-                match.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+                active_matches = AccountToObject.objects.filter(account=account, status='active')
+                if not active_matches:
+                    return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_MATCHES_ERROR) # NOTE за данным сотрудником не найдено закреплений
+                for match in active_matches:
+                    match.status = 'outdated'
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
 
