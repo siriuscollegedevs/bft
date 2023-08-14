@@ -36,7 +36,7 @@ class AccountSerializer(UUIDMixin, serializers.Serializer):
     first_name = serializers.CharField(max_length=NAMES_LEN, allow_blank=True)
     surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
     last_name = serializers.CharField(max_length=NAMES_LEN)
-    username = serializers.CharField()
+    username = serializers.CharField(max_length=NAMES_LEN)
     modified_by = serializers.CharField(max_length=DEFAULT_LEN, read_only=True)
     action = serializers.CharField(max_length=ACTION_ACCOUNT_LEN, read_only=True)
     password = serializers.CharField(trim_whitespace=False, max_length=128, write_only=True, required=False)
