@@ -58,6 +58,12 @@ export type Objects = {
   name: string
 }
 
+export type ObjectsMatch = {
+  id: string
+  name: string
+  match_id: string
+}
+
 export type soloObject = {
   name: string
 }

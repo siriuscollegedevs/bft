@@ -1,12 +1,12 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQuery } from '../utils'
-import { Account, AccountToObject, AccountToObjectCreate, Objects } from '../../types/api'
+import {Account, AccountToObject, AccountToObjectCreate, Objects, ObjectsMatch} from '../../types/api'
 
 export const apiObjectsAccounts = createApi({
   reducerPath: 'apiObjectsAccounts',
   baseQuery,
   endpoints: builder => ({
-    getAccountToObjects: builder.query<Objects[], string>({
+    getAccountToObjects: builder.query<ObjectsMatch[], string>({
       query: accountId => `/account_to_objects/${accountId}`
     }),
     getAllAccountToObject: builder.query<AccountToObject[], void>({
