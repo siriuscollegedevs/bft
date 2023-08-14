@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQuery } from '../utils'
-import { AccountToObject, Objects } from '../../types/api'
+import { Account, AccountToObject, AccountToObjectCreate, Objects } from '../../types/api'
 
 export const apiObjectsAccounts = createApi({
   reducerPath: 'apiObjectsAccounts',
@@ -15,15 +15,24 @@ export const apiObjectsAccounts = createApi({
     getAllAccountToObjectArchive: builder.query<AccountToObject[], void>({
       query: () => '/account_to_objects/archive'
     }),
-    createAccountToObject: builder.mutation<void, AccountToObject>({
-      query: (objectAccountData: AccountToObject) => ({
+    createAccountToObject: builder.mutation<void, AccountToObjectCreate>({
+      query: (objectAccountData: AccountToObjectCreate) => ({
         url: '/account_to_objects',
         method: 'POST',
         body: {
           first_name: objectAccountData.first_name,
           last_name: objectAccountData.last_name,
           surname: objectAccountData.surname,
-          object_ids: objectAccountData.objects.map(obj => obj.match_id)
+          object_ids: objectAccountData.object_ids
+        }
+      })
+    }),
+    updateAccountToObjectById: builder.mutation<void, { accountId: string; accountToObjectData: string[] }>({
+      query: ({ accountId, accountToObjectData }) => ({
+        url: `/account_to_objects/${accountId}`,
+        method: 'PUT',
+        body: {
+          object_ids: accountToObjectData
         }
       })
     }),
@@ -41,5 +50,6 @@ export const {
   useGetAllAccountToObjectQuery,
   useGetAllAccountToObjectArchiveQuery,
   useDeleteAccountToObjectByIdMutation,
-  useCreateAccountToObjectMutation
+  useCreateAccountToObjectMutation,
+  useUpdateAccountToObjectByIdMutation
 } = apiObjectsAccounts
