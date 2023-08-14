@@ -643,6 +643,7 @@ class GetPutDeleteAccountToObjectView(APIView):
                     return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_MATCHES_ERROR) # NOTE за данным сотрудником не найдено закреплений
                 for match in active_matches:
                     match.status = 'outdated'
+                return Response(status=status.HTTP_204_NO_CONTENT, data=SUCCESS_MATCH_DELETION)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
 
