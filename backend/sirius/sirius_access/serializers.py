@@ -100,3 +100,6 @@ class AccountToObjectSerializer(UUIDMixin, serializers.Serializer):
     last_name = serializers.CharField(max_length=NAMES_LEN)
     username = serializers.CharField(max_length=NAMES_LEN)
     objects = ObjectsInMatchSerializer(many=True)
+
+class AccountMatches(ObjectSerializer, serializers.Serializer):
+    match_id = serializers.UUIDField()
