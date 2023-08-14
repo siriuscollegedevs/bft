@@ -8,7 +8,6 @@ import { useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Account } from '../../types/api';
 import { useSelector } from 'react-redux';
-import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles';
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -44,9 +43,9 @@ export const ObjectsPage = () => {
 
   if (isArchivePage) {
     buttonNames = ['history']
-  } else if (currentAccountRole === Object.keys(ACCOUNT_ROLES)[0]) {
+  } else if (currentAccountRole === 'administrator') {
     buttonNames = ['edit', 'history', 'trash']
-  } else if (currentAccountRole === Object.keys(ACCOUNT_ROLES)[1]) {
+  } else if (currentAccountRole === 'manager') {
     buttonNames = ['history']
   }
   return (
