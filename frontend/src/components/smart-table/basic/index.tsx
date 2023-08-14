@@ -10,14 +10,14 @@ import { Objects, Admissions } from '../../../types/api'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 
-export type CurrentURL = '/objects' | '/admissions'
+export type CurrentURL = '/objects' | '/admissions' | '/objects/archive'
 
 type URL = {
   currentURL: CurrentURL
 }
 
 export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames & { size: Size } & any) => {
-  const objectsURL = currentURL === '/objects'
+  const objectsURL = currentURL === '/objects' || '/objects/archive'
   const currentAccountObjects = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
@@ -50,7 +50,7 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
                       </TableCell>
                       <TableCell align="right">
                         <Box display="flex" alignItems="center" justifyContent="flex-end">
-                          <ShortcutButtons buttonNames={buttonNames} id={row.id}/>
+                          <ShortcutButtons buttonNames={buttonNames} id={row.id} />
                         </Box>
                       </TableCell>
                     </>
@@ -73,10 +73,10 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
                         {'code' in row ? `#${row.code}` : ''}
                       </TableCell>
                       <TableCell
-                          onClick={() => navigate(`/admissions/view/${row.id}`)}
-                          style={{ cursor: 'pointer' }}
-                          align="left"
-                          sx={{ height: '47px', width: '100%' }}
+                        onClick={() => navigate(`/admissions/view/${row.id}`)}
+                        style={{ cursor: 'pointer' }}
+                        align="left"
+                        sx={{ height: '47px', width: '100%' }}
                       >
                         {'object_ids' in row ? getObjectNamesFromIds(row.object_ids).join(', ') : ''}
                       </TableCell>
