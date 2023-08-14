@@ -556,7 +556,7 @@ class GetArchiveAccountsObjectsView(APIView):
 class GetPutAccountToObjectView(APIView):
 
     @extend_schema(responses={
-        status.HTTP_200_OK: serializers.ObjectSerializer(many=True),
+        status.HTTP_200_OK: serializers.AccountMatches(many=True),
         status.HTTP_401_UNAUTHORIZED: None,
         status.HTTP_400_BAD_REQUEST: None
     })
@@ -572,8 +572,14 @@ class GetPutAccountToObjectView(APIView):
                 if not all_records:
                     return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_MATCHES_ERROR) ## NOTE за данным аккаунтом не найдено закреплений
                 for record in all_records:
-                    res.append({'id': record.object.id, 'name': record.object.get_info().name})
-                return Response(serializers.ObjectSerializer(res, many=True).data)
+                    res.append(
+                        {
+                            "match_id": record.id,
+                            "id": record.object.id,
+                            "name": record.object.get_info().name
+                        }
+                    )
+                return Response(serializers.AccountMatches(res, many=True).data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
 
@@ -677,18 +683,13 @@ class AccountToObjectExpandSearchView(APIView):
         object_search = request.data.get('objects')
         if object_search:
             try:
-                with transaction.atomic():
-                    if self.status == 'active':
-                        object_queryset = Object.objects.filter(status='active')
-                    else:
-                        object_queryset = Object.objects.all()
-                    objects = [
-                        object_ins for object_ins in object_queryset if object_ins.get_info().name in object_search
-                    ]
-                    if not objects:
-                        return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_SEARCH_OBJECTS_FOUND_ERROR) # NOTE объекты по запросу не найдены
+                objects = [
+                    Object.objects.get(id=object_id) for object_id in object_search
+                ]
+                if not objects:
+                    return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_SEARCH_OBJECTS_FOUND_ERROR) # NOTE объекты по запросу не найдены
             except Exception:
-                return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) # NOTE ошибка транзакции
+                return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_SEARCH_OBJECTS_FOUND_ERROR) # NOTE объекты по запросу не найдены
         elif not (search_account or object_search):
             try:
                 with transaction.atomic():
@@ -718,17 +719,20 @@ class AccountToObjectExpandSearchView(APIView):
                     for account in res_accounts:
                         account_res = account.get_last_version().to_dict()
                         account_res['objects'] = []
-                        for object_ins in objects:
-                            if AccountToObject.objects.filter(account=account, object=object_ins, status=self.status).exists():
-                                all_matches = AccountToObject.objects.filter(account=account, status=self.status)
-                                if all_matches:
-                                    for record in all_matches:
-                                        account_res['objects'].append({
-                                            'match_id': str(record.id),
-                                            'name': record.object.get_info().name
-                                        })
-                        if account_res['objects']:
-                            res.append(account_res)
+                        if all(
+                            map(
+                                lambda object_ins: AccountToObject.objects.filter(account=account, object=object_ins, status=self.status).exists(),
+                                objects
+                            )
+                        ):
+                            all_matches = AccountToObject.objects.filter(account=account, status=self.status)
+                            if all_matches:
+                                for record in all_matches:
+                                    account_res['objects'].append({
+                                        'match_id': str(record.id),
+                                        'name': record.object.get_info().name
+                                    })
+                                res.append(account_res)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) # NOTE ошибка транзакции
         elif res_accounts:
