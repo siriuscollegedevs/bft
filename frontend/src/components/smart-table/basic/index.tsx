@@ -9,6 +9,8 @@ import { Size } from '..'
 import { Objects, Admissions } from '../../../types/api'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { getComparator, Order, stableSort } from '../sorting'
+import { useMemo, useState } from 'react'
 
 export type CurrentURL = '/objects' | '/admissions' | '/objects/archive'
 
@@ -35,6 +37,12 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
       .map(obj => obj?.name)
   }
 
+  const sortingField = objectsURL ? 'name' : 'code'
+
+  const [order, setOrder] = useState<Order>('asc')
+  const [orderBy, setOrderBy] = useState(sortingField)
+
+  const visibleRows = useMemo(() => stableSort(data, getComparator(order, orderBy)), [order, orderBy])
   return (
     <TableContainer sx={{ width: size.width, height: size.height }}>
       <Table aria-label="simple table">
