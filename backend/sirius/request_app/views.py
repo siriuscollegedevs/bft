@@ -193,8 +193,8 @@ class DeletePutRecord(APIView):
                                      'car_number': ser.CharField(),
                                      'car_brand': ser.CharField(),
                                      'car_model': ser.CharField(),
-                                     'from_date': ser.DateTimeField(),
-                                     'to_date': ser.DateTimeField(),
+                                     'from_date': ser.DateField(),
+                                     'to_date': ser.DateField(),
                                      'note': ser.CharField()
                                  }), description="Any of the fields can be null")
     def put(self, request, RecordId):
