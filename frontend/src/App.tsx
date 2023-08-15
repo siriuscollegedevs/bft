@@ -14,8 +14,6 @@ import { EmployeesPage } from './pages/employees'
 import { AccountsPage } from './pages/accounts'
 import { AdmissionsPage } from './pages/admissions'
 import { AdmissionViewPage } from './pages/admission-view'
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 export const App: React.FC = (): JSX.Element => {
   function Header() {
