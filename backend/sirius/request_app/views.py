@@ -39,9 +39,17 @@ class GetRequests(APIView):
             res = [req.get_info() for req in Request.objects.filter(status=self.status)]
             return Response(serializers.RequestSerializer(res, many=True).data)
         res = []
+        request_ids = set()
         for object_id in objects_ids:
-            res.extend([line.request.get_info()
-                       for line in RequestToObject.objects.filter(object=Object.objects.get(id=object_id))])
+            try:
+                object = Object.objects.get(id=object_id)
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={'error' : 'Invalid object id'})
+            for line in RequestToObject.objects.filter(object=object):
+                if line.request.id in request_ids:
+                    continue
+                request_ids.add(line.request.id)
+                res.append(line.request.get_info())
         return Response(serializers.RequestSerializer(res, many=True).data)
 
 
