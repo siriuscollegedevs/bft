@@ -8,7 +8,8 @@ import { Account } from '../../types/api'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 import CircularProgress from '@mui/material/CircularProgress'
-import { useEffect, useState } from 'react'
+import {useEffect, useMemo, useState} from 'react'
+import {getComparator, Order, stableSort} from '../../components/smart-table/sorting';
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -26,6 +27,11 @@ export const AccountsPage = () => {
 
   const [tableData, setTableData] = useState(isArchivePage ? accountsArchiveData : accountsData);
 
+  const sortingField = 'last_name'
+
+  const [order, setOrder] = useState<Order>('asc')
+  const [orderBy, setOrderBy] = useState(sortingField)
+
   useEffect(() => {
     if (isArchivePage) {
       accountArchiveRefetch()
@@ -35,6 +41,14 @@ export const AccountsPage = () => {
       setTableData(accountsData);
     }
   }, [accountsData, accountsArchiveData, isArchivePage]);
+
+  const visibleRows = useMemo(() => {
+    if (tableData) {
+      return stableSort(tableData, getComparator(order, orderBy));
+    } else {
+      return [];
+    }
+  }, [order, orderBy, tableData]);
 
   let buttonNames: ButtonName[] = []
 
@@ -55,14 +69,14 @@ export const AccountsPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {tableData ? (
+            {visibleRows ? (
                 <SmartTable
                     buttonNames={buttonNames}
                     size={{
                       width: '100%',
                       height: '100%'
                     }}
-                    data={tableData}
+                    data={visibleRows}
                 />
             ) : (
                 <></>

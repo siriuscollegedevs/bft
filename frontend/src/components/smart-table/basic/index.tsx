@@ -18,8 +18,10 @@ type URL = {
   currentURL: CurrentURL
 }
 
-export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames & { size: Size } & any) => {
-  const objectsURL = currentURL === '/objects' || '/objects/archive'
+export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames & { size: Size } & any ) => {
+  const objectsURL = currentURL === '/objects'
+  const objectsArchiveURL = currentURL === '/objects/archive'
+
   const currentAccountObjects = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
@@ -37,12 +39,6 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
       .map(obj => obj?.name)
   }
 
-  const sortingField = objectsURL ? 'name' : 'code'
-
-  const [order, setOrder] = useState<Order>('asc')
-  const [orderBy, setOrderBy] = useState(sortingField)
-
-  const visibleRows = useMemo(() => stableSort(data, getComparator(order, orderBy)), [order, orderBy])
   return (
     <TableContainer sx={{ width: size.width, height: size.height }}>
       <Table aria-label="simple table">
@@ -51,7 +47,7 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
             <>
               {data?.map((row: Objects | Admissions) => (
                 <TableRow key={'name' in row ? row.name : row.code}>
-                  {objectsURL ? (
+                  {objectsURL || objectsArchiveURL ? (
                     <>
                       <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
                         {'name' in row ? row.name : ''}
