@@ -25,8 +25,8 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
     car_number = serializers.CharField(required=False, allow_blank=True)
     car_brand = serializers.CharField(required=False, allow_blank=True)
     car_model = serializers.CharField(required=False, allow_blank=True)
-    from_date = serializers.DateTimeField()
-    to_date = serializers.DateTimeField(required=False)
+    from_date = serializers.DateField()
+    to_date = serializers.DateField()
     note = serializers.CharField(required=False, allow_blank=True)
 
     def __init__(self, *args, **kwargs):

@@ -5,7 +5,7 @@ from rest_framework import status
 from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
-from sirius.general_functions import get_user
+from sirius.general_functions import get_user, get_max_code
 from .config import *
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
@@ -39,9 +39,17 @@ class GetRequests(APIView):
             res = [req.get_info() for req in Request.objects.filter(status=self.status)]
             return Response(serializers.RequestSerializer(res, many=True).data)
         res = []
+        request_ids = set()
         for object_id in objects_ids:
-            res.extend([line.request.get_info()
-                       for line in RequestToObject.objects.filter(object=Object.objects.get(id=object_id))])
+            try:
+                object = Object.objects.get(id=object_id)
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST, data={'error' : 'Invalid object id'})
+            for line in RequestToObject.objects.filter(object=object):
+                if line.request.id in request_ids:
+                    continue
+                request_ids.add(line.request.id)
+                res.append(line.request.get_info())
         return Response(serializers.RequestSerializer(res, many=True).data)
 
 
@@ -66,7 +74,7 @@ class PostRequest(APIView):
             try:
                 with transaction.atomic():
                     req = Request.objects.create(status='active')
-                    code = code if code else req.id  # NOTE
+                    code = code if code else str(get_max_code() + 1)
                     for obj_id in serializer.validated_data['object_ids']:
                         RequestToObject.objects.create(object=Object.objects.get(id=obj_id), request=req)
                     RequestHistory.objects.create(request=req, code=code,
@@ -193,8 +201,8 @@ class DeletePutRecord(APIView):
                                      'car_number': ser.CharField(),
                                      'car_brand': ser.CharField(),
                                      'car_model': ser.CharField(),
-                                     'from_date': ser.DateTimeField(),
-                                     'to_date': ser.DateTimeField(),
+                                     'from_date': ser.DateField(),
+                                     'to_date': ser.DateField(),
                                      'note': ser.CharField()
                                  }), description="Any of the fields can be null")
     def put(self, request, RecordId):
