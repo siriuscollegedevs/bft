@@ -8,7 +8,7 @@ import { Account } from '../../types/api'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 import CircularProgress from '@mui/material/CircularProgress'
-import * as React from 'react'
+import { useEffect, useState } from 'react'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -17,12 +17,24 @@ export const AccountsPage = () => {
   const isArchivePage = location.pathname === '/accounts/archive'
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
-  const { data: accountsData, error: accountsError, isLoading: accountsLoading } = useGetAllAccountsQuery()
+  const { data: accountsData, error: accountsError, isLoading: accountsLoading, refetch: accountRefetch } = useGetAllAccountsQuery()
   const {
     data: accountsArchiveData,
     error: accountsArchiveError,
-    isLoading: accountsArchiveLoading
+    isLoading: accountsArchiveLoading, refetch: accountArchiveRefetch
   } = useGetAllArchiveAccountsQuery()
+
+  const [tableData, setTableData] = useState(isArchivePage ? accountsArchiveData : accountsData);
+
+  useEffect(() => {
+    if (isArchivePage) {
+      accountArchiveRefetch()
+      setTableData(accountsArchiveData);
+    } else {
+      accountRefetch()
+      setTableData(accountsData);
+    }
+  }, [accountsData, accountsArchiveData, isArchivePage]);
 
   let buttonNames: ButtonName[] = []
 
@@ -43,30 +55,17 @@ export const AccountsPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {isArchivePage ? (
-              accountsArchiveData ? (
+            {tableData ? (
                 <SmartTable
-                  buttonNames={buttonNames}
-                  size={{
-                    width: '100%',
-                    height: '100%'
-                  }}
-                  data={accountsArchiveData}
+                    buttonNames={buttonNames}
+                    size={{
+                      width: '100%',
+                      height: '100%'
+                    }}
+                    data={tableData}
                 />
-              ) : (
-                <></>
-              )
-            ) : accountsData ? (
-              <SmartTable
-                buttonNames={buttonNames}
-                size={{
-                  width: '100%',
-                  height: '100%'
-                }}
-                data={accountsData}
-              />
             ) : (
-              <></>
+                <></>
             )}
             <Sidebar isSearch={true} isObjects={false} isButton={true} />
           </>

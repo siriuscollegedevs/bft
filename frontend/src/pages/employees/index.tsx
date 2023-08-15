@@ -12,7 +12,7 @@ import {
 } from '../../__data__/service/object-account'
 import { FiltersState } from '../../__data__/states/filters'
 import CircularProgress from '@mui/material/CircularProgress'
-import * as React from 'react'
+import { useEffect, useState } from 'react'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -21,14 +21,16 @@ export const EmployeesPage = () => {
   const isArchivePage = location.pathname === '/employees/archive'
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
-  const { data: employeesData, error: employeesError, isLoading: employeesLoading } = useGetAllAccountToObjectQuery()
   const {
-    data: employeesArchiveData,
-    error: employeesArchiveError,
-    isLoading: employeesArchiveLoading
-  } = useGetAllAccountToObjectArchiveQuery()
+    data: employeesData,
+    error: employeesError,
+    isLoading: employeesLoading,
+    refetch: employeesRefetch
+  } = useGetAllAccountToObjectQuery()
+  const { data: employeesArchiveData, refetch: employeesArchiveRefetch } = useGetAllAccountToObjectArchiveQuery()
 
   const filters = useSelector((state: { filters: FiltersState }) => state.filters)
+  const [tableData, setTableData] = useState(isArchivePage ? employeesArchiveData : employeesData)
 
   let buttonNames: ButtonName[] = []
 
@@ -50,6 +52,16 @@ export const EmployeesPage = () => {
       : []
   }
 
+  useEffect(() => {
+    if (isArchivePage) {
+      employeesArchiveRefetch()
+      setTableData(employeesArchiveData)
+    } else {
+      employeesRefetch()
+      setTableData(employeesData)
+    }
+  }, [employeesData, employeesArchiveData, isArchivePage])
+
   return (
     <>
       <EntityTitle isSwitch={true} isSearchField={true} />
@@ -59,27 +71,14 @@ export const EmployeesPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {isArchivePage ? (
-              employeesArchiveData ? (
-                <SmartTable
-                  buttonNames={buttonNames}
-                  size={{
-                    width: '100%',
-                    height: '100%'
-                  }}
-                  data={dataFilters(employeesArchiveData)}
-                />
-              ) : (
-                <></>
-              )
-            ) : employeesData ? (
+            {tableData ? (
               <SmartTable
                 buttonNames={buttonNames}
                 size={{
                   width: '100%',
                   height: '100%'
                 }}
-                data={dataFilters(employeesData)}
+                data={dataFilters(tableData)}
               />
             ) : (
               <></>

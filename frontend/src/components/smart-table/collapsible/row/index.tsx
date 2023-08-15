@@ -52,9 +52,9 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
               {row.last_name} {row.first_name} {row.surname}
             </TableCell>
             <TableCell align="left">{ACCOUNT_ROLES[row?.role]}</TableCell>
-            <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)'}}>
+            <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
               <Box display="flex" alignItems="center" justifyContent="flex-end">
-                <ShortcutButtons buttonNames={buttonNames} />
+                <ShortcutButtons buttonNames={buttonNames} id={row.id} />
               </Box>
             </TableCell>
           </>
@@ -64,9 +64,9 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
             <TableCell align="left" sx={{ height: '47px', width: '100%' }}>
               {row.last_name} {row.first_name} {row.surname}
             </TableCell>
-            <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)'}}>
+            <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
               <Box display="flex" alignItems="center" justifyContent="flex-end">
-                <ShortcutButtons buttonNames={buttonNames} />
+                <ShortcutButtons buttonNames={buttonNames} id={row.id} />
               </Box>
             </TableCell>
           </>
@@ -95,13 +95,13 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
             )}
             {itsAdmissionsView({ currentURL }) ? (
               <>
-                <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)'}}></TableCell>
+                <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}></TableCell>
               </>
             ) : (
               <>
-                <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)'}}>
+                <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
                   <Box display="flex" alignItems="center" justifyContent="flex-end">
-                    <ShortcutButtons buttonNames={buttonNames} />
+                    <ShortcutButtons buttonNames={buttonNames} id={row.id}/>
                   </Box>
                 </TableCell>
               </>
@@ -122,7 +122,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                   )}
                   {(itsEmployees({ currentURL }) || itsEmployeesArchive({ currentURL })) && 'objects' in row && (
                     <TableRow sx={{ height: '47px' }}>
-                      <CustomCollapseCell align="left" sx={{padding: '6px 0 6px 54px'}}>
+                      <CustomCollapseCell align="left" sx={{ padding: '6px 0 6px 54px' }}>
                         {Array.isArray(row.objects) && row.objects.map(valueRow => valueRow.name).join(', ')}
                       </CustomCollapseCell>
                     </TableRow>
@@ -148,7 +148,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                         ) : (
                           <>
                             <>
-                              <TableCell align="left" sx={{ width: '200px', height: '47px'}}>
+                              <TableCell align="left" sx={{ width: '200px', height: '47px' }}>
                                 {RECORD_FIELDS.to_date + ' ' + dateParser(row.to_date)}
                               </TableCell>
                             </>
@@ -162,7 +162,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                         {!itsAdmissionsView({ currentURL }) && (
                           <TableCell align="right">
                             <Box display="flex" alignItems="center" justifyContent="flex-end">
-                              <ShortcutButtons buttonNames={['history']} />
+                              <ShortcutButtons buttonNames={['history']} id={row.id}/>
                             </Box>
                           </TableCell>
                         )}

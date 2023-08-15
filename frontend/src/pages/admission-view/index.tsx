@@ -16,7 +16,7 @@ export const AdmissionViewPage = () => {
   return (
     <>
       <EntityTitle isSwitch={false} isSearchField={false} />
-      <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flexDirection: 'column' }}>
+      <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flexDirection: 'column', width: '100%', height: '70vh' }}>
         <Box
           sx={{
             display: 'flex',

@@ -51,7 +51,7 @@ export const FormEditDirectories = () => {
           </>
         )}
         <CustomFormControl color="primary">
-          <CustomTypography variant="h6" sx={{ color: 'black' }}>
+          <CustomTypography variant="h6" sx={{ color: 'black', textAlign: 'center' }}>
             {location.pathname.startsWith(accountUrl) && 'Учетная запись'}
             {location.pathname.startsWith(objectUrl) && 'Объект Фонда'}
             {location.pathname.startsWith(employeeUrl) && 'Закрепление сотрудника за объектами Фонда'}

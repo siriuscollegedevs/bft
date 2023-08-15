@@ -192,7 +192,7 @@ class PostAccount(APIView):
             data = serializer.validated_data
             try:
                 if not check_administrator(request):
-                    return Response(status=status.HTTP_400_BAD_REQUEST)
+                    return Response(status=status.HTTP_403_FORBIDDEN)
                 with transaction.atomic():
                     new_user = User.objects.create_user(username=data['username'], password=data['password'])
                     new_user.save()
@@ -240,7 +240,7 @@ class GetPutDeleteAccount(APIView):
                 with transaction.atomic():
                     account = Account.objects.get(id=AccountId)
                     if not check_administrator(request):
-                        return Response(status=status.HTTP_400_BAD_REQUEST)
+                        return Response(status=status.HTTP_403_FORBIDDEN)
                     user = User.objects.get(account=account)
                     if data.get('password', ''):
                         user.set_password(data['password'])
@@ -252,7 +252,7 @@ class GetPutDeleteAccount(APIView):
                         action=action,
                         account=account,
                         modified_by=get_user(request),
-                        **data
+                        **{key : data[key] for key in data if key not in ["password", "role", "username"]}
                     )
                     return Response(status=status.HTTP_200_OK)
             except Exception:
@@ -267,7 +267,7 @@ class GetPutDeleteAccount(APIView):
     def delete(self, request, AccountId):
         try:
             if not check_administrator(request):
-                return Response(status=status.HTTP_400_BAD_REQUEST)
+                return Response(status=status.HTTP_403_FORBIDDEN)
             with transaction.atomic():
                 account = Account.objects.get(id=AccountId)
                 account.status = 'outdated'
@@ -513,10 +513,17 @@ class GetPostActualAccountsObjectsView(APIView):
                             object_name = object_ins.get_info().name
                             error = {"error": EXISTING_MATCH_ERROR['error'].format(object_name=object_name)}
                             return Response(status=status.HTTP_400_BAD_REQUEST, data=error) ## NOTE аккаунт уже закреплен за данным объектом
-                        try:
-                            AccountToObject.objects.create(object=object_ins, account=account, status='active')
-                        except Exception:
-                            return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка бд
+                        if AccountToObject.objects.filter(object=object_ins, account=account).exists():
+                            try:
+                                current_match = AccountToObject.objects.filter(object=object_ins, account=account)
+                                current_match.status = 'active'
+                            except Exception:
+                                return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка бд
+                        else:
+                            try:
+                                AccountToObject.objects.create(object=object_ins, account=account, status='active')
+                            except Exception:
+                                return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка бд
                     return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
@@ -553,10 +560,10 @@ class GetArchiveAccountsObjectsView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка в транзакции
 
 
-class GetPutAccountToObjectView(APIView):
+class GetPutDeleteAccountToObjectView(APIView):
 
     @extend_schema(responses={
-        status.HTTP_200_OK: serializers.ObjectSerializer(many=True),
+        status.HTTP_200_OK: serializers.AccountMatches(many=True),
         status.HTTP_401_UNAUTHORIZED: None,
         status.HTTP_400_BAD_REQUEST: None
     })
@@ -572,8 +579,14 @@ class GetPutAccountToObjectView(APIView):
                 if not all_records:
                     return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_MATCHES_ERROR) ## NOTE за данным аккаунтом не найдено закреплений
                 for record in all_records:
-                    res.append({'id': record.object.id, 'name': record.object.get_info().name})
-                return Response(serializers.ObjectSerializer(res, many=True).data)
+                    res.append(
+                        {
+                            "match_id": record.id,
+                            "id": record.object.id,
+                            "name": record.object.get_info().name
+                        }
+                    )
+                return Response(serializers.AccountMatches(res, many=True).data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
 
@@ -610,29 +623,28 @@ class GetPutAccountToObjectView(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
 
-
-class DeleteAccountToObjbectView(APIView):
-
     @extend_schema(responses={
         status.HTTP_204_NO_CONTENT: None,
         status.HTTP_401_UNAUTHORIZED: None,
         status.HTTP_400_BAD_REQUEST: None
     })
-    def delete(self, request, MatchId):
+    def delete(self, request, AccountId):
         # TODO вместо проверки на администратора сделать permissions
         if not check_administrator(request):
-            return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE роль аккаунта НЕ администратор
+            return Response(status=status.HTTP_403_FORBIDDEN)  # NOTE роль аккаунта НЕ администратор
         try:
-            match = AccountToObject.objects.get(id=MatchId)
+            account = Account.objects.get(id=AccountId)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_MATCH_FOUND_ERROR) ## NOTE закрепления с таким id нет
-        if match.status == 'outdated':
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=MATCH_ALREADY_DELETED_ERROR) ## NOTE закрепление уже находится в архиве
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_FOUND_ERROR) ## NOTE аккаунта с таким id не существует или id не верен
         try:
             with transaction.atomic():
-                match.status = 'outdated'
-                match.save()
-            return Response(status=status.HTTP_204_NO_CONTENT)
+                active_matches = AccountToObject.objects.filter(account=account, status='active')
+                if not active_matches:
+                    return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_MATCHES_ERROR) # NOTE за данным сотрудником не найдено закреплений
+                for match in active_matches:
+                    match.status = 'outdated'
+                    match.save()
+                return Response(status=status.HTTP_204_NO_CONTENT, data=SUCCESS_MATCH_DELETION)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
 
@@ -677,18 +689,13 @@ class AccountToObjectExpandSearchView(APIView):
         object_search = request.data.get('objects')
         if object_search:
             try:
-                with transaction.atomic():
-                    if self.status == 'active':
-                        object_queryset = Object.objects.filter(status='active')
-                    else:
-                        object_queryset = Object.objects.all()
-                    objects = [
-                        object_ins for object_ins in object_queryset if object_ins.get_info().name in object_search
-                    ]
-                    if not objects:
-                        return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_SEARCH_OBJECTS_FOUND_ERROR) # NOTE объекты по запросу не найдены
+                objects = [
+                    Object.objects.get(id=object_id) for object_id in object_search
+                ]
+                if not objects:
+                    return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_SEARCH_OBJECTS_FOUND_ERROR) # NOTE объекты по запросу не найдены
             except Exception:
-                return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) # NOTE ошибка транзакции
+                return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_SEARCH_OBJECTS_FOUND_ERROR) # NOTE объекты по запросу не найдены
         elif not (search_account or object_search):
             try:
                 with transaction.atomic():
@@ -718,17 +725,20 @@ class AccountToObjectExpandSearchView(APIView):
                     for account in res_accounts:
                         account_res = account.get_last_version().to_dict()
                         account_res['objects'] = []
-                        for object_ins in objects:
-                            if AccountToObject.objects.filter(account=account, object=object_ins, status=self.status).exists():
-                                all_matches = AccountToObject.objects.filter(account=account, status=self.status)
-                                if all_matches:
-                                    for record in all_matches:
-                                        account_res['objects'].append({
-                                            'match_id': str(record.id),
-                                            'name': record.object.get_info().name
-                                        })
-                        if account_res['objects']:
-                            res.append(account_res)
+                        if all(
+                            map(
+                                lambda object_ins: AccountToObject.objects.filter(account=account, object=object_ins, status=self.status).exists(),
+                                objects
+                            )
+                        ):
+                            all_matches = AccountToObject.objects.filter(account=account, status=self.status)
+                            if all_matches:
+                                for record in all_matches:
+                                    account_res['objects'].append({
+                                        'match_id': str(record.id),
+                                        'name': record.object.get_info().name
+                                    })
+                                res.append(account_res)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) # NOTE ошибка транзакции
         elif res_accounts:

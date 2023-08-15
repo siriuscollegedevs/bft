@@ -58,6 +58,12 @@ export type Objects = {
   name: string
 }
 
+export type ObjectsMatch = {
+  id: string
+  name: string
+  match_id: string
+}
+
 export type soloObject = {
   name: string
 }
@@ -152,4 +158,11 @@ export type AccountToObject = {
   last_name: string
   username: string
   objects: ObjectInArray[]
+}
+
+export type AccountToObjectCreate = {
+  first_name?: string
+  surname?: string
+  last_name: string
+  object_ids: string[]
 }
