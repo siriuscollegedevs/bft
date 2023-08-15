@@ -8,8 +8,8 @@ import { Account } from '../../types/api'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 import CircularProgress from '@mui/material/CircularProgress'
-import {useEffect, useMemo, useState} from 'react'
-import {getComparator, Order, stableSort} from '../../components/smart-table/sorting';
+import { useEffect, useMemo, useState } from 'react'
+import { getComparator, stableSort } from '../../components/smart-table/sorting'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -18,37 +18,40 @@ export const AccountsPage = () => {
   const isArchivePage = location.pathname === '/accounts/archive'
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
-  const { data: accountsData, error: accountsError, isLoading: accountsLoading, refetch: accountRefetch } = useGetAllAccountsQuery()
+  const {
+    data: accountsData,
+    error: accountsError,
+    isLoading: accountsLoading,
+    refetch: accountRefetch
+  } = useGetAllAccountsQuery()
   const {
     data: accountsArchiveData,
     error: accountsArchiveError,
-    isLoading: accountsArchiveLoading, refetch: accountArchiveRefetch
+    isLoading: accountsArchiveLoading,
+    refetch: accountArchiveRefetch
   } = useGetAllArchiveAccountsQuery()
 
-  const [tableData, setTableData] = useState(isArchivePage ? accountsArchiveData : accountsData);
+  const [tableData, setTableData] = useState(isArchivePage ? accountsArchiveData : accountsData)
 
-  const sortingField = 'last_name'
-
-  const [order, setOrder] = useState<Order>('asc')
-  const [orderBy, setOrderBy] = useState(sortingField)
+  const accountComparator = getComparator('asc', 'last_name');
 
   useEffect(() => {
     if (isArchivePage) {
       accountArchiveRefetch()
-      setTableData(accountsArchiveData);
+      setTableData(accountsArchiveData)
     } else {
       accountRefetch()
-      setTableData(accountsData);
+      setTableData(accountsData)
     }
-  }, [accountsData, accountsArchiveData, isArchivePage]);
+  }, [accountsData, accountsArchiveData, isArchivePage])
 
-  const visibleRows = useMemo(() => {
+  const sortedRows = useMemo(() => {
     if (tableData) {
-      return stableSort(tableData, getComparator(order, orderBy));
+      return stableSort(tableData, accountComparator);
     } else {
       return [];
     }
-  }, [order, orderBy, tableData]);
+  }, [accountComparator, tableData]);
 
   let buttonNames: ButtonName[] = []
 
@@ -69,17 +72,17 @@ export const AccountsPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {visibleRows ? (
-                <SmartTable
-                    buttonNames={buttonNames}
-                    size={{
-                      width: '100%',
-                      height: '100%'
-                    }}
-                    data={visibleRows}
-                />
+            {sortedRows ? (
+              <SmartTable
+                buttonNames={buttonNames}
+                size={{
+                  width: '100%',
+                  height: '100%'
+                }}
+                data={sortedRows}
+              />
             ) : (
-                <></>
+              <></>
             )}
             <Sidebar isSearch={true} isObjects={false} isButton={true} />
           </>

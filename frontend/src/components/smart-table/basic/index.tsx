@@ -9,8 +9,6 @@ import { Size } from '..'
 import { Objects, Admissions } from '../../../types/api'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { getComparator, Order, stableSort } from '../sorting'
-import { useMemo, useState } from 'react'
 
 export type CurrentURL = '/objects' | '/admissions' | '/objects/archive'
 
@@ -18,10 +16,9 @@ type URL = {
   currentURL: CurrentURL
 }
 
-export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames & { size: Size } & any ) => {
+export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames & { size: Size } & any) => {
   const objectsURL = currentURL === '/objects'
   const objectsArchiveURL = currentURL === '/objects/archive'
-
   const currentAccountObjects = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )

@@ -86,7 +86,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
             </TableCell>
             {row.first_name !== null ? (
               <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
-                {row.first_name + ' ' + row.last_name}
+                {row.last_name + ' ' + row.first_name}
               </TableCell>
             ) : (
               <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
@@ -101,7 +101,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
               <>
                 <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
                   <Box display="flex" alignItems="center" justifyContent="flex-end">
-                    <ShortcutButtons buttonNames={buttonNames} id={row.id}/>
+                    <ShortcutButtons buttonNames={buttonNames} id={row.id} />
                   </Box>
                 </TableCell>
               </>
@@ -162,7 +162,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                         {!itsAdmissionsView({ currentURL }) && (
                           <TableCell align="right">
                             <Box display="flex" alignItems="center" justifyContent="flex-end">
-                              <ShortcutButtons buttonNames={['history']} id={row.id}/>
+                              <ShortcutButtons buttonNames={['history']} id={row.id} />
                             </Box>
                           </TableCell>
                         )}

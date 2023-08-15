@@ -53,7 +53,7 @@ class AccountToObject(UUIDMixin, models.Model):
 
     class Meta:
         db_table = 'account_to_object'
-        unique_together = (('object', 'account', 'status'),)
+        unique_together = (('object', 'account'),)
 
 
 def is_positive(number: int):
