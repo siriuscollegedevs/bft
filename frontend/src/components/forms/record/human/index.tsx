@@ -3,6 +3,8 @@ import { CustomDefaultButton } from '../../../../styles/settings'
 import { SetStateAction, useState } from 'react'
 import { RECORD_FIELDS, RECORD_TYPE } from '../../../../__data__/consts/record'
 import { Box } from '@mui/system'
+import { useCreateHumanRecordMutation } from '../../../../__data__/service/record.api'
+import { useParams } from 'react-router-dom'
 
 type FieldsState = {
   lastName: string
@@ -21,6 +23,9 @@ export const Human = () => {
   const [hasValidation, setHasValidation] = useState(false)
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
+  const { recordId } = useParams()
+  console.log(recordId)
+  const [createHumanRecordMutation] = useCreateHumanRecordMutation()
   const [fields, setFields] = useState<FieldsState>({
     lastName: '',
     firstName: '',
@@ -66,6 +71,20 @@ export const Human = () => {
       }
     }
     setHasValidation(true)
+    // if (Object.values(error).some(value => value === true) && recordId) {
+    //   createHumanRecordMutation({
+    //     recordId: recordId,
+    //     recordData: {
+    //       first_name: fields.firstName,
+    //       surname: fields.surname,
+    //       last_name: fields.lastName,
+    //       type: fields.type,
+    //       from_date: startDate,
+    //       to_date: endDate,
+    //       note: fields.type
+    //     }
+    //   })
+    // }
   }
 
   return (

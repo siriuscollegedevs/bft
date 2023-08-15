@@ -41,7 +41,7 @@ export const apiRecord = createApi({
     }),
     createHumanRecord: builder.mutation<void, { recordId: string; recordData: Human }>({
       query: ({ recordId, recordData }) => ({
-        url: `/record/human/${recordId}`,
+        url: `/request/record/human/${recordId}`,
         method: 'POST',
         body: {
           type: recordData.type,
