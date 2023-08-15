@@ -37,8 +37,8 @@ export const apiObjectsAccounts = createApi({
       })
     }),
     deleteAccountToObjectById: builder.mutation<void, string>({
-      query: matchId => ({
-        url: `/object/accounts/${matchId}`,
+      query: accountId => ({
+        url: `/account_to_objects/${accountId}`,
         method: 'DELETE'
       })
     })
