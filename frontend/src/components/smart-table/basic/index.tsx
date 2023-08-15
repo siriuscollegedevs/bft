@@ -44,7 +44,7 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
             <>
               {data?.map((row: Objects | Admissions) => (
                 <TableRow key={'name' in row ? row.name : row.code}>
-                  {objectsURL || objectsArchiveURL? (
+                  {objectsURL || objectsArchiveURL ? (
                     <>
                       <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
                         {'name' in row ? row.name : ''}

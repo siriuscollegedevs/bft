@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQuery } from '../utils'
-import {Account, AccountToObject, AccountToObjectCreate, Objects, ObjectsMatch} from '../../types/api'
+import { AccountToObject, AccountToObjectCreate, ObjectsMatch } from '../../types/api'
 
 export const apiObjectsAccounts = createApi({
   reducerPath: 'apiObjectsAccounts',
