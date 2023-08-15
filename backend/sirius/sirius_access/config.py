@@ -23,6 +23,7 @@ ACCOUNT_TYPES = ('administrator', 'manager', 'specialist', 'security_officer')
 # RESPONSE MESSAGES
 OBJECTID_ERROR_MSG =  {'error' : 'Invalid ObjectId'}
 ACCOUNTID_ERROR_MSG =  {'error' : 'Invalid AccountId'}
+SUCCESS_MATCH_DELETION = {'detail': 'Закрепления успешно удалены'}
 
 # ERROR MESSAGES
 INVALID_DATA_GIVEN_ERROR = {"error": "Предоставлены неверные данные"}
