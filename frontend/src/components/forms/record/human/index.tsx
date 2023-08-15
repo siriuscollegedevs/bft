@@ -1,19 +1,7 @@
-import {
-  TextField,
-  FormControl,
-  InputLabel,
-  Select,
-  OutlinedInput,
-  MenuItem,
-  Checkbox,
-  ListItemText,
-  FormHelperText,
-  SelectChangeEvent
-} from '@mui/material'
+import { TextField, FormControl, InputLabel, Select, OutlinedInput, MenuItem, SelectChangeEvent } from '@mui/material'
 import { CustomDefaultButton } from '../../../../styles/settings'
 import { SetStateAction, useState } from 'react'
 import { RECORD_FIELDS, RECORD_TYPE } from '../../../../__data__/consts/record'
-import dayjs, { Dayjs } from 'dayjs'
 import { Box } from '@mui/system'
 
 type FieldsState = {
@@ -25,7 +13,12 @@ type FieldsState = {
 }
 
 export const Human = () => {
-  const [error, setError] = useState(false)
+  const [error, setError] = useState<{ lastName: boolean; firstName: boolean; surname: boolean }>({
+    lastName: false,
+    firstName: false,
+    surname: false
+  })
+  const [hasValidation, setHasValidation] = useState(false)
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
   const [fields, setFields] = useState<FieldsState>({
@@ -39,6 +32,7 @@ export const Human = () => {
   const handleStartDateChange = (event: { target: { value: SetStateAction<string> } }) => {
     setStartDate(event.target.value)
   }
+
   const handleEndDateChange = (event: { target: { value: SetStateAction<string> } }) => {
     setEndDate(event.target.value)
   }
@@ -56,15 +50,22 @@ export const Human = () => {
 
   const handleSubmit = () => {
     let hasEmptyField = false
-    for (const value of Object.values(fields)) {
-      if (value.trim() === '') {
-        hasEmptyField = true
+
+    for (const [key, value] of Object.entries(fields)) {
+      if (key !== 'note' && value.trim() === '') {
+        hasEmptyField = !hasEmptyField
+        setError(prevError => ({
+          ...prevError,
+          [key]: true
+        }))
+      } else {
+        setError(prevError => ({
+          ...prevError,
+          [key]: false
+        }))
       }
     }
-
-    if (hasEmptyField) {
-      setError(true)
-    }
+    setHasValidation(true)
   }
 
   return (
@@ -75,7 +76,7 @@ export const Human = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={error}
+        error={hasValidation && error.lastName}
         helperText={!fields.lastName && 'Это поле обязательно.'}
         value={fields.lastName}
         onChange={e => handleFieldChange('lastName', e.target.value)}
@@ -86,7 +87,7 @@ export const Human = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={error}
+        error={hasValidation && error.firstName}
         helperText={!fields.firstName && 'Это поле обязательно.'}
         value={fields.firstName}
         onChange={e => handleFieldChange('firstName', e.target.value)}
@@ -97,7 +98,7 @@ export const Human = () => {
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
         required
-        error={error}
+        error={hasValidation && error.surname}
         helperText={!fields.surname && 'Это поле обязательно.'}
         value={fields.surname}
         onChange={e => handleFieldChange('surname', e.target.value)}
@@ -154,7 +155,6 @@ export const Human = () => {
         focused
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
-        error={error}
         value={fields.note}
         multiline
         rows={3}
