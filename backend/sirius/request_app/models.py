@@ -105,7 +105,7 @@ class Record(UUIDMixin, models.Model):
 
 
 class RecordHistory(UUIDMixin, models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=timezone.now)
     action = models.CharField(max_length=ACTION_RECORD_LEN, choices=STATUS_CHOICES_RECORD)
     car_number = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     car_brand = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
