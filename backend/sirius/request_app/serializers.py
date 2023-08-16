@@ -10,7 +10,7 @@ class UUIDMixin(serializers.Serializer):
 
 class RequestSerializer(UUIDMixin, serializers.Serializer):
     timestamp = serializers.DateTimeField(required=False)
-    code = serializers.CharField(max_length=50, allow_blank=True, allow_null=True, required=False)
+    code = serializers.CharField(read_only=True)
     object_ids = serializers.ListField(child=serializers.UUIDField(), allow_empty=False)
 
 
@@ -20,8 +20,8 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
     modified_by = serializers.CharField(read_only=True)
     type = serializers.CharField()
     first_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
-    surname_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
-    last_name = serializers.CharField(max_length=NAMES_LEN)
+    surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
+    last_name = serializers.CharField(max_length=NAMES_LEN, required=False)
     car_number = serializers.CharField(required=False, allow_blank=True)
     car_brand = serializers.CharField(required=False, allow_blank=True)
     car_model = serializers.CharField(required=False, allow_blank=True)
@@ -46,19 +46,18 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
         raise serializers.ValidationError
 
     def validate(self, data):
-        required_fields = ['type', 'from_date']
         if not self.record_type:
             return data
         elif self.record_type == 'human':
-            if all(map(lambda x: data.get(x, ''), ['first_name', 'last_name'] + required_fields)):
+            if all(map(lambda x: data.get(x, ''), ['first_name', 'last_name'])):
                 return data
             else:
-                raise serializers.ValidationError("first_name or last_name is empty value or no required fields")
+                raise serializers.ValidationError("first_name or last_name is empty value")
         elif self.record_type == 'car':
-            if all(map(lambda x: data.get(x, ''), ['car_number'] + required_fields)):
+            if data.get('car_number', ''):
                 return data
             else:
-                raise serializers.ValidationError("car_number is empty value or no required fields")
+                raise serializers.ValidationError("car_number is empty value")
 
 
 class ChangeStatusSerializer(serializers.Serializer):
