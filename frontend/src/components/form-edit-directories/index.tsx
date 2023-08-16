@@ -3,14 +3,12 @@ import { Container } from '@mui/material'
 import { CustomFormControl } from '../../styles/settings'
 import { CustomTypography } from '../../styles/header'
 import Box from '@mui/material/Box'
-import * as React from 'react'
 import { FormObject } from './form-object'
 import { FormEmployee } from './form-employee'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 
 export const FormEditDirectories = () => {
   const location = useLocation()
-  const { id } = useParams()
 
   const objectUrl = '/objects'
   const accountUrl = '/accounts'

@@ -9,6 +9,7 @@ import { Size } from '..'
 import { Objects, Admissions } from '../../../types/api'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { dateParser } from '../../../utils/date-parser'
 
 export type CurrentURL = '/objects' | '/admissions' | '/objects/archive'
 
@@ -23,11 +24,6 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
   const navigate = useNavigate()
-
-  const dateParser = (row: Admissions) => {
-    const date = new Date(row.timestamp)
-    return <>{`${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`}</>
-  }
 
   const getObjectNamesFromIds = (objectIds: string[]): (string | undefined)[] => {
     return objectIds
@@ -63,7 +59,7 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
                         align="left"
                         sx={{ height: '47px', width: '15%' }}
                       >
-                        {'timestamp' in row ? dateParser(row) : ''}
+                        {'timestamp' in row ? dateParser(row.timestamp) : ''}
                       </TableCell>
                       <TableCell
                         onClick={() => navigate(`/admissions/view/${row.id}`)}

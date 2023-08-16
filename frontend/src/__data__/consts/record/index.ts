@@ -10,7 +10,7 @@ export const RECORD_FIELDS = {
   note: 'примечание'
 }
 
-export const RECORD_TYPE = {
+export const RECORD_TYPE: { [key: string]: string } = {
   for_long_time: 'Временный',
   for_once: 'Разовый'
 }

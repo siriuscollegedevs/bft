@@ -5,13 +5,14 @@ import { SideBarContainer } from '../../styles/sidebar'
 import { useGetAllArchiveObjectsQuery, useGetAllObjectsQuery } from '../../__data__/service/object.api'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useLocation } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Account } from '../../types/api'
 import { useSelector } from 'react-redux'
+import { getComparator, stableSort } from '../../utils/sorting'
 import { SearchState } from '../../__data__/states/search'
 import { Box } from '@mui/system'
-
-type ButtonName = 'edit' | 'history' | 'trash'
+import { getButtonNames } from '../../components/shortcut-buttons/button-names'
+import { ButtonName } from '../../components/shortcut-buttons'
 
 export const ObjectsPage = () => {
   const location = useLocation()
@@ -30,7 +31,10 @@ export const ObjectsPage = () => {
     isLoading: objectsArchiveLoading,
     refetch: refetchObjectsArchiveData
   } = useGetAllArchiveObjectsQuery()
+  const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole)
   const [tableData, setTableData] = useState(isArchivePage ? objectsArchiveData : objectsData)
+
+  const objectComparator = getComparator('asc', 'name')
 
   useEffect(() => {
     if (isArchivePage) {
@@ -42,18 +46,16 @@ export const ObjectsPage = () => {
     }
   }, [objectsData, objectsArchiveData, isArchivePage])
 
-  let buttonNames: ButtonName[] = []
+  const sortedRows = useMemo(() => {
+    if (tableData) {
+      return stableSort(tableData, objectComparator)
+    } else {
+      return []
+    }
+  }, [objectComparator, tableData])
 
-  if (isArchivePage) {
-    buttonNames = ['history']
-  } else if (currentAccountRole === 'administrator') {
-    buttonNames = ['edit', 'history', 'trash']
-  } else if (currentAccountRole === 'manager') {
-    buttonNames = ['history']
-  }
-
-  const filteredTableData = tableData?.filter(item =>
-    item.name.toLowerCase().startsWith(search.searchFilter.toLowerCase())
+  const filteredTableData = sortedRows?.filter(item =>
+    item.name.toLowerCase().includes(search.searchFilter.toLowerCase())
   )
 
   return (

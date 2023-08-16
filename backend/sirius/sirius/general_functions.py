@@ -1,6 +1,6 @@
 from sirius_access.models import Account
 from request_app.models import RequestHistory
-from django.db.models import Model, QuerySet
+from django.db.models import Model, QuerySet, Max
 
 
 def get_user(request) -> Account:
@@ -14,7 +14,7 @@ def list_to_queryset(model: Model, data: list) -> QuerySet:
     return model.objects.filter(id__in=pks)
 
 def get_max_code():
-    for elem in RequestHistory.objects.order_by('-timestamp'):
-        if elem.code.isdigit():
-            return int(elem.code)
-    return 0
+    code_data = RequestHistory.objects.aggregate(Max('code'))
+    if not code_data['code__max']: 
+        return 0
+    return code_data['code__max']

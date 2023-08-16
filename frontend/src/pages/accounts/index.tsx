@@ -8,11 +8,12 @@ import { Account } from '../../types/api'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 import CircularProgress from '@mui/material/CircularProgress'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { getComparator, stableSort } from '../../utils/sorting'
 import { SearchState } from '../../__data__/states/search'
 import { Box } from '@mui/system'
-
-type ButtonName = 'edit' | 'history' | 'trash'
+import { getButtonNames } from '../../components/shortcut-buttons/button-names'
+import { ButtonName } from '../../components/shortcut-buttons'
 
 export const AccountsPage = () => {
   const location = useLocation()
@@ -31,6 +32,9 @@ export const AccountsPage = () => {
   const { data: accountsArchiveData, refetch: accountArchiveRefetch } = useGetAllArchiveAccountsQuery()
 
   const [tableData, setTableData] = useState(isArchivePage ? accountsArchiveData : accountsData)
+  const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole)
+
+  const accountComparator = getComparator('asc', 'last_name')
 
   useEffect(() => {
     if (isArchivePage) {
@@ -42,22 +46,20 @@ export const AccountsPage = () => {
     }
   }, [accountsData, accountsArchiveData, isArchivePage])
 
-  let buttonNames: ButtonName[] = []
+  const sortedRows = useMemo(() => {
+    if (tableData) {
+      return stableSort(tableData, accountComparator)
+    } else {
+      return []
+    }
+  }, [accountComparator, tableData])
 
-  if (isArchivePage) {
-    buttonNames = ['history']
-  } else if (currentAccountRole === Object.keys(ACCOUNT_ROLES)[0]) {
-    buttonNames = ['edit', 'history', 'trash']
-  } else if (currentAccountRole === Object.keys(ACCOUNT_ROLES)[1]) {
-    buttonNames = ['history']
-  }
-
-  const filteredTableData = tableData?.filter(item => {
+  const filteredTableData = sortedRows?.filter(item => {
     return splitSearchQuery.every(
       queryPart =>
-        item.first_name.toLowerCase().includes(queryPart.toLowerCase()) ||
-        item.surname.toLowerCase().includes(queryPart.toLowerCase()) ||
-        item.last_name.toLowerCase().includes(queryPart.toLowerCase()) ||
+        item.first_name.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+        item.surname.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+        item.last_name.toLowerCase().startsWith(queryPart.toLowerCase()) ||
         item.username.toLowerCase().includes(queryPart.toLowerCase()) ||
         ACCOUNT_ROLES[item.role].toLowerCase().includes(queryPart.toLowerCase())
     )

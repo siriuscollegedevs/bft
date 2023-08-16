@@ -6,6 +6,12 @@ import { SmartTable } from '../../components/smart-table'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetRecordOfAdmissionsQuery, useUpdateAdmissionStatusMutation } from '../../__data__/service/admission.api'
 import { CanceledDialog } from '../../components/canceled-dialog'
+import { useMemo } from 'react'
+import { getComparator, stableSort } from '../../utils/sorting'
+import { useSelector } from 'react-redux'
+import { SearchState } from '../../__data__/states/search'
+import { dateParser } from '../../utils/date-parser'
+import { RECORD_TYPE } from '../../__data__/consts/record'
 
 export const AdmissionViewPage = () => {
   const { id } = useParams<string>()
@@ -13,10 +19,57 @@ export const AdmissionViewPage = () => {
   const [updateStatus] = useUpdateAdmissionStatusMutation()
   const { data: RecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(id ?? '')
 
+  const search = useSelector((state: { search: SearchState }) => state.search)
+  const splitSearchQuery = search.searchFilter.split(' ')
+
+  const nameComparator = getComparator('asc', 'last_name')
+  const carComparator = getComparator('asc', 'car_brand')
+
+  const sortedData = useMemo(() => {
+    if (RecordsOfAdmissionData) {
+      const people = RecordsOfAdmissionData.filter(item => item.last_name !== null)
+      const cars = RecordsOfAdmissionData.filter(item => item.last_name === null)
+
+      const sortedPeople = stableSort(people, (a, b) => nameComparator(a, b))
+      const sortedCars = stableSort(cars, (a, b) => carComparator(a, b))
+
+      return [...sortedPeople, ...sortedCars]
+    } else {
+      return []
+    }
+  }, [RecordsOfAdmissionData, nameComparator, carComparator])
+
+  const filteredTableData = sortedData?.filter(item => {
+    if (item !== null) {
+      return splitSearchQuery.every(
+        queryPart =>
+          dateParser(item.timestamp).includes(queryPart) ||
+          RECORD_TYPE[item.type].toLowerCase().startsWith(queryPart.toLowerCase()) ||
+          item.car_number?.toLowerCase().includes(queryPart.toLowerCase()) ||
+          item.car_brand?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+          item.car_model?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+          item.first_name?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+          item.surname?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+          item.last_name?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+          item.from_date?.includes(queryPart) ||
+          item.to_date?.includes(queryPart)
+      )
+    }
+  })
+
   return (
     <>
       <EntityTitle isSwitch={false} isSearchField={false} />
-      <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flexDirection: 'column', width: '100%', height: '70vh' }}>
+      <Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          width: '100%',
+          height: '70vh'
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
@@ -54,15 +107,21 @@ export const AdmissionViewPage = () => {
             </Button>
           </Box>
         </Box>
-        {RecordsOfAdmissionData ? (
-          <SmartTable
-            buttonNames={[]}
-            size={{
-              width: '90%',
-              height: '100%'
-            }}
-            data={RecordsOfAdmissionData}
-          />
+        {filteredTableData ? (
+          filteredTableData.length > 0 ? (
+            <SmartTable
+              buttonNames={[]}
+              size={{
+                width: '90%',
+                height: '100%'
+              }}
+              data={filteredTableData}
+            />
+          ) : (
+            <Box sx={{ width: '90%', height: '100%' }}>
+              <p>Ничего не найдено, проверьте введенные данные.</p>
+            </Box>
+          )
         ) : (
           <></>
         )}
