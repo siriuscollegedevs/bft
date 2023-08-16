@@ -9,6 +9,8 @@ import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useState } from 'react'
+import { SearchState } from '../../__data__/states/search';
+import { Box } from '@mui/system';
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -16,6 +18,9 @@ export const AccountsPage = () => {
   const location = useLocation()
   const isArchivePage = location.pathname === '/accounts/archive'
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
+
+  const search = useSelector((state: { search: SearchState }) => state.search)
+const splitSearchQuery = search.searchFilter.split(' ');
 
   const { data: accountsData, error: accountsError, isLoading: accountsLoading, refetch: accountRefetch } = useGetAllAccountsQuery()
   const {
@@ -46,6 +51,19 @@ export const AccountsPage = () => {
     buttonNames = ['history']
   }
 
+  const filteredTableData = tableData?.filter((item) => {
+    return (
+        splitSearchQuery.every((queryPart) =>
+            item.first_name.toLowerCase().includes(queryPart.toLowerCase()) ||
+            item.surname.toLowerCase().includes(queryPart.toLowerCase()) ||
+            item.last_name.toLowerCase().includes(queryPart.toLowerCase()) ||
+            item.username.toLowerCase().includes(queryPart.toLowerCase()) ||
+            ACCOUNT_ROLES[item.role].toLowerCase().includes(queryPart.toLowerCase())
+        )
+    );
+});
+
+
   return (
     <>
       <EntityTitle isSwitch={true} isSearchField={true} />
@@ -55,18 +73,37 @@ export const AccountsPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {tableData ? (
-                <SmartTable
-                    buttonNames={buttonNames}
-                    size={{
-                      width: '100%',
-                      height: '100%'
-                    }}
-                    data={tableData}
-                />
+
+            {filteredTableData ? (
+                filteredTableData.length > 0 ? (
+                    <SmartTable
+                        buttonNames={buttonNames}
+                        size={{
+                          width: '100%',
+                          height: '100%',
+                        }}
+                        data={filteredTableData}
+                    />
+                ) : (
+                    <Box sx={{ width: '100%'}}>
+                      <p>Ничего не найдено, проверьте введенные данные.</p>
+                    </Box>
+                )
             ) : (
                 <></>
             )}
+            {/*{tableData ? (*/}
+            {/*    <SmartTable*/}
+            {/*        buttonNames={buttonNames}*/}
+            {/*        size={{*/}
+            {/*          width: '100%',*/}
+            {/*          height: '100%'*/}
+            {/*        }}*/}
+            {/*        data={tableData}*/}
+            {/*    />*/}
+            {/*) : (*/}
+            {/*    <></>*/}
+            {/*)}*/}
             <Sidebar isSearch={true} isObjects={false} isButton={true} />
           </>
         )}

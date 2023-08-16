@@ -6,14 +6,17 @@ import { useGetAllArchiveObjectsQuery, useGetAllObjectsQuery } from '../../__dat
 import CircularProgress from '@mui/material/CircularProgress'
 import { useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import { Account } from '../../types/api';
-import { useSelector } from 'react-redux';
+import { Account } from '../../types/api'
+import { useSelector } from 'react-redux'
+import { SearchState } from '../../__data__/states/search'
+import { Box } from '@mui/system'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
 export const ObjectsPage = () => {
   const location = useLocation()
   const isArchivePage = location.pathname === '/objects/archive'
+  const search = useSelector((state: { search: SearchState }) => state.search)
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
   const {
     data: objectsData,
@@ -48,6 +51,11 @@ export const ObjectsPage = () => {
   } else if (currentAccountRole === 'manager') {
     buttonNames = ['history']
   }
+
+  const filteredTableData = tableData?.filter((item) =>
+    item.name.toLowerCase().startsWith(search.searchFilter.toLowerCase())
+  );
+
   return (
       <>
           <EntityTitle isSwitch={true} isSearchField={true} />
@@ -57,18 +65,24 @@ export const ObjectsPage = () => {
                   <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
               ) : (
                   <>
-                      {tableData ? (
-                          <SmartTable
-                              buttonNames={buttonNames}
-                              size={{
+                    {filteredTableData ? (
+                        filteredTableData.length > 0 ? (
+                            <SmartTable
+                                buttonNames={buttonNames}
+                                size={{
                                   width: '100%',
-                                  height: '100%'
-                              }}
-                              data={tableData}
-                          />
-                      ) : (
-                          <></>
-                      )}
+                                  height: '100%',
+                                }}
+                                data={filteredTableData}
+                            />
+                        ) : (
+                            <Box sx={{ width: '100%'}}>
+                              <p>Ничего не найдено, проверьте введенные данные.</p>
+                            </Box>
+                        )
+                    ) : (
+                        <></>
+                    )}
                       <Sidebar isSearch={true} isObjects={false} isButton={true} />
                   </>
               )}
