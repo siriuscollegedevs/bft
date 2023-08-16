@@ -23,8 +23,9 @@ export const Human = () => {
   const [hasValidation, setHasValidation] = useState(false)
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
-  const { recordId } = useParams()
-  console.log(recordId)
+
+  const { id } = useParams()
+  console.log(id)
   const [createHumanRecordMutation] = useCreateHumanRecordMutation()
   const [fields, setFields] = useState<FieldsState>({
     lastName: '',
@@ -71,20 +72,21 @@ export const Human = () => {
       }
     }
     setHasValidation(true)
-    // if (Object.values(error).some(value => value === true) && recordId) {
-    //   createHumanRecordMutation({
-    //     recordId: recordId,
-    //     recordData: {
-    //       first_name: fields.firstName,
-    //       surname: fields.surname,
-    //       last_name: fields.lastName,
-    //       type: fields.type,
-    //       from_date: startDate,
-    //       to_date: endDate,
-    //       note: fields.type
-    //     }
-    //   })
-    // }
+
+    if (!Object.values(error).some(value => value === true) && id && fields.type) {
+      createHumanRecordMutation({
+        recordId: id,
+        recordData: {
+          first_name: fields.firstName,
+          surname: fields.surname,
+          last_name: fields.lastName,
+          type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
+          from_date: startDate,
+          to_date: endDate,
+          note: fields.note
+        }
+      })
+    }
   }
 
   return (
