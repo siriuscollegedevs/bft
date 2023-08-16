@@ -9,7 +9,6 @@ import { setAccountId } from '../../__data__/states/account'
 import { getCookie } from '../../utils/cookie-parser'
 
 export let intervalId: NodeJS.Timer
-
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
