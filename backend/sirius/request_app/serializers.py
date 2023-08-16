@@ -10,7 +10,7 @@ class UUIDMixin(serializers.Serializer):
 
 class RequestSerializer(UUIDMixin, serializers.Serializer):
     timestamp = serializers.DateTimeField(required=False)
-    code = serializers.CharField(max_length=50, allow_blank=True, allow_null=True, required=False)
+    code = serializers.CharField(read_only=True)
     object_ids = serializers.ListField(child=serializers.UUIDField(), allow_empty=False)
 
 

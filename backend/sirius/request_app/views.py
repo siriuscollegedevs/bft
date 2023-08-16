@@ -67,18 +67,16 @@ class PostRequest(APIView):
         status.HTTP_200_OK: inline_serializer(name='post_request_res', fields={'id': ser.UUIDField()}),
         status.HTTP_400_BAD_REQUEST: None,
         status.HTTP_401_UNAUTHORIZED: None
-    }, request=inline_serializer(name='post_request_req', fields={'code': ser.CharField(), 'object_ids': ser.ListField(child=ser.UUIDField())}))
+    }, request=inline_serializer(name='post_request_req', fields={'code': ser.IntegerField(), 'object_ids': ser.ListField(child=ser.UUIDField())}))
     def post(self, request):
         serializer = serializers.RequestSerializer(data=request.data)
         if serializer.is_valid():
-            code = serializer.validated_data['code']
             try:
                 with transaction.atomic():
                     req = Request.objects.create(status='active')
-                    code = code if code else str(get_max_code() + 1)
                     for obj_id in serializer.validated_data['object_ids']:
                         RequestToObject.objects.create(object=Object.objects.get(id=obj_id), request=req)
-                    RequestHistory.objects.create(request=req, code=code,
+                    RequestHistory.objects.create(request=req, code=get_max_code() + 1,
                                                   action='created', modified_by=get_user(request))
                     return Response(serializers.RequestSerializer({'id': req.id}).data)
             except Exception:
