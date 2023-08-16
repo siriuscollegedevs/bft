@@ -2,7 +2,7 @@ from django.db import models
 from sirius.config import *
 from .config import *
 from sirius_access.models import Account, Object, UUIDMixin
-
+from django.utils import timezone
 
 class Request(UUIDMixin, models.Model):
     status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
@@ -130,7 +130,7 @@ class RecordHistory(UUIDMixin, models.Model):
 
 
 class RequestHistory(models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=timezone.now) #auto_now_add=True
     request = models.ForeignKey(Request, on_delete=models.PROTECT)
     code = models.IntegerField(unique=True, editable=False)
     action = models.CharField(max_length=ACTION_RECORD_LEN, choices=STATUS_CHOICES_RECORD)

@@ -1,6 +1,7 @@
 from django.db import migrations, models
 import django.db.models.deletion
 import uuid
+from django.utils import timezone
 
 
 class Migration(migrations.Migration):
@@ -48,8 +49,8 @@ class Migration(migrations.Migration):
             name='RequestHistory',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('timestamp', models.DateTimeField(auto_now_add=True)),
-                ('code', models.CharField(max_length=50)),
+                ('timestamp', models.DateTimeField(default=timezone.now)),
+                ('code', models.IntegerField(unique=True, editable=False)),
                 ('action', models.CharField(choices=[('deleted', 'Удалена'), ('canceled', 'Аннулирована'), ('outdated', 'Истек срок действия'), ('modified', 'Изменена'), ('created', 'Создана'), ('closed', 'Погашена')], max_length=10)),
                 ('modified_by', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sirius_access.account')),
                 ('request', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='request_app.request')),
