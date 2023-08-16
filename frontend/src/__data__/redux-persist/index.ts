@@ -3,7 +3,7 @@ import storage from 'redux-persist/lib/storage'
 import { accountReducer } from '../states/account'
 import { authReducer } from '../states/auth'
 import { filterReducer } from '../states/filters'
-import { searchReducer } from '../states/search';
+import { searchReducer } from '../states/search'
 
 export const accountPersistConfig = {
   key: 'currentAccount',

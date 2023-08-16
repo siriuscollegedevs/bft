@@ -9,8 +9,8 @@ import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useState } from 'react'
-import { SearchState } from '../../__data__/states/search';
-import { Box } from '@mui/system';
+import { SearchState } from '../../__data__/states/search'
+import { Box } from '@mui/system'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -20,26 +20,27 @@ export const AccountsPage = () => {
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
   const search = useSelector((state: { search: SearchState }) => state.search)
-const splitSearchQuery = search.searchFilter.split(' ');
+  const splitSearchQuery = search.searchFilter.split(' ')
 
-  const { data: accountsData, error: accountsError, isLoading: accountsLoading, refetch: accountRefetch } = useGetAllAccountsQuery()
   const {
-    data: accountsArchiveData,
-    error: accountsArchiveError,
-    isLoading: accountsArchiveLoading, refetch: accountArchiveRefetch
-  } = useGetAllArchiveAccountsQuery()
+    data: accountsData,
+    error: accountsError,
+    isLoading: accountsLoading,
+    refetch: accountRefetch
+  } = useGetAllAccountsQuery()
+  const { data: accountsArchiveData, refetch: accountArchiveRefetch } = useGetAllArchiveAccountsQuery()
 
-  const [tableData, setTableData] = useState(isArchivePage ? accountsArchiveData : accountsData);
+  const [tableData, setTableData] = useState(isArchivePage ? accountsArchiveData : accountsData)
 
   useEffect(() => {
     if (isArchivePage) {
       accountArchiveRefetch()
-      setTableData(accountsArchiveData);
+      setTableData(accountsArchiveData)
     } else {
       accountRefetch()
-      setTableData(accountsData);
+      setTableData(accountsData)
     }
-  }, [accountsData, accountsArchiveData, isArchivePage]);
+  }, [accountsData, accountsArchiveData, isArchivePage])
 
   let buttonNames: ButtonName[] = []
 
@@ -51,18 +52,16 @@ const splitSearchQuery = search.searchFilter.split(' ');
     buttonNames = ['history']
   }
 
-  const filteredTableData = tableData?.filter((item) => {
-    return (
-        splitSearchQuery.every((queryPart) =>
-            item.first_name.toLowerCase().includes(queryPart.toLowerCase()) ||
-            item.surname.toLowerCase().includes(queryPart.toLowerCase()) ||
-            item.last_name.toLowerCase().includes(queryPart.toLowerCase()) ||
-            item.username.toLowerCase().includes(queryPart.toLowerCase()) ||
-            ACCOUNT_ROLES[item.role].toLowerCase().includes(queryPart.toLowerCase())
-        )
-    );
-});
-
+  const filteredTableData = tableData?.filter(item => {
+    return splitSearchQuery.every(
+      queryPart =>
+        item.first_name.toLowerCase().includes(queryPart.toLowerCase()) ||
+        item.surname.toLowerCase().includes(queryPart.toLowerCase()) ||
+        item.last_name.toLowerCase().includes(queryPart.toLowerCase()) ||
+        item.username.toLowerCase().includes(queryPart.toLowerCase()) ||
+        ACCOUNT_ROLES[item.role].toLowerCase().includes(queryPart.toLowerCase())
+    )
+  })
 
   return (
     <>
@@ -73,37 +72,24 @@ const splitSearchQuery = search.searchFilter.split(' ');
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-
             {filteredTableData ? (
-                filteredTableData.length > 0 ? (
-                    <SmartTable
-                        buttonNames={buttonNames}
-                        size={{
-                          width: '100%',
-                          height: '100%',
-                        }}
-                        data={filteredTableData}
-                    />
-                ) : (
-                    <Box sx={{ width: '100%'}}>
-                      <p>Ничего не найдено, проверьте введенные данные.</p>
-                    </Box>
-                )
+              filteredTableData.length > 0 ? (
+                <SmartTable
+                  buttonNames={buttonNames}
+                  size={{
+                    width: '100%',
+                    height: '100%'
+                  }}
+                  data={filteredTableData}
+                />
+              ) : (
+                <Box sx={{ width: '100%' }}>
+                  <p>Ничего не найдено, проверьте введенные данные.</p>
+                </Box>
+              )
             ) : (
-                <></>
+              <></>
             )}
-            {/*{tableData ? (*/}
-            {/*    <SmartTable*/}
-            {/*        buttonNames={buttonNames}*/}
-            {/*        size={{*/}
-            {/*          width: '100%',*/}
-            {/*          height: '100%'*/}
-            {/*        }}*/}
-            {/*        data={tableData}*/}
-            {/*    />*/}
-            {/*) : (*/}
-            {/*    <></>*/}
-            {/*)}*/}
             <Sidebar isSearch={true} isObjects={false} isButton={true} />
           </>
         )}

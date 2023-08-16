@@ -1,7 +1,7 @@
 import { CurrentAccountId } from '../../__data__/states/account'
 import { AuthState } from '../../__data__/states/auth'
 import { FiltersState } from '../../__data__/states/filters'
-import { SearchState } from '../../__data__/states/search';
+import { SearchState } from '../../__data__/states/search'
 
 export type Accounts = {
   id: string

@@ -52,41 +52,41 @@ export const ObjectsPage = () => {
     buttonNames = ['history']
   }
 
-  const filteredTableData = tableData?.filter((item) =>
+  const filteredTableData = tableData?.filter(item =>
     item.name.toLowerCase().startsWith(search.searchFilter.toLowerCase())
-  );
+  )
 
   return (
-      <>
-          <EntityTitle isSwitch={true} isSearchField={true} />
+    <>
+      <EntityTitle isSwitch={true} isSearchField={true} />
 
-          <SideBarContainer>
-              {objectsError || objectsLoading || objectsArchiveLoading || objectsArchiveError ? (
-                  <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
+      <SideBarContainer>
+        {objectsError || objectsLoading || objectsArchiveLoading || objectsArchiveError ? (
+          <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
+        ) : (
+          <>
+            {filteredTableData ? (
+              filteredTableData.length > 0 ? (
+                <SmartTable
+                  buttonNames={buttonNames}
+                  size={{
+                    width: '100%',
+                    height: '100%'
+                  }}
+                  data={filteredTableData}
+                />
               ) : (
-                  <>
-                    {filteredTableData ? (
-                        filteredTableData.length > 0 ? (
-                            <SmartTable
-                                buttonNames={buttonNames}
-                                size={{
-                                  width: '100%',
-                                  height: '100%',
-                                }}
-                                data={filteredTableData}
-                            />
-                        ) : (
-                            <Box sx={{ width: '100%'}}>
-                              <p>Ничего не найдено, проверьте введенные данные.</p>
-                            </Box>
-                        )
-                    ) : (
-                        <></>
-                    )}
-                      <Sidebar isSearch={true} isObjects={false} isButton={true} />
-                  </>
-              )}
-          </SideBarContainer>
-      </>
+                <Box sx={{ width: '100%' }}>
+                  <p>Ничего не найдено, проверьте введенные данные.</p>
+                </Box>
+              )
+            ) : (
+              <></>
+            )}
+            <Sidebar isSearch={true} isObjects={false} isButton={true} />
+          </>
+        )}
+      </SideBarContainer>
+    </>
   )
 }
