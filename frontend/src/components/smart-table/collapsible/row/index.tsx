@@ -8,9 +8,10 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { ReactComponent as HumanIcon } from '../../../../assets/human.svg'
 import { ReactComponent as CarIcon } from '../../../../assets/car.svg'
 import { RECORD_FIELDS, RECORD_TYPE, getObjectValueByKey } from '../../../../__data__/consts/record'
-import { Accounts, AccountToObject, AdmissionsHistory, ObjectInArray } from '../../../../types/api'
+import {Account, Accounts, AccountToObject, AdmissionsHistory, ObjectInArray} from '../../../../types/api'
 import { ACCOUNT_ROLES } from '../../../../__data__/consts/account-roles'
 import { CustomCollapseCell } from '../../../../styles/table'
+import { useSelector } from 'react-redux';
 
 type CommonData = AdmissionsHistory | Accounts | AccountToObject | ObjectInArray
 
@@ -35,8 +36,13 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
 
   const dateParser = (str: string) => {
     const date = new Date(str)
-    return `${date.getDate()}.${date.getMonth() + 1}.${date.getFullYear()}`
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`
   }
+
+  const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
   return (
     <>
@@ -74,7 +80,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
         {itsAdmissions({ currentURL }) && 'type' in row && (
           <>
             <TableCell align="left" padding={'checkbox'}>
-              {row.first_name !== null ? (
+              {row.last_name !== null ? (
                 <>
                   <HumanIcon style={{ height: '42px', width: '42px' }} />
                 </>
@@ -84,14 +90,22 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                 </>
               )}
             </TableCell>
-            {row.first_name !== null ? (
-              <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
-                {row.last_name + ' ' + row.first_name}
-              </TableCell>
+            {currentAccountRole === 'security_officer' ? (
+                row.last_name !== null ? (
+                    <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
+                      {row.last_name + ' ' + row.first_name}
+                    </TableCell>
+                ) : (
+                    <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
+                      {row.car_brand + ' ' + row.car_model + ' ' + row.car_number}
+                    </TableCell>
+                )
             ) : (
-              <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
-                {row.car_brand + ' ' + row.car_model + ' ' + row.car_number}
-              </TableCell>
+                <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
+                  {row.last_name !== null
+                      ? row.last_name + ' ' + row.first_name + ' ' + row.surname
+                      : row.car_brand + ' ' + row.car_model + ' ' + row.car_number}
+                </TableCell>
             )}
             {itsAdmissionsView({ currentURL }) ? (
               <>
