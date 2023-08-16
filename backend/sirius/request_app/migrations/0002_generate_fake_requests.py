@@ -6,15 +6,15 @@ from datetime import datetime
 
 
 REQUESTS = [
-    {'code': '123'}, {'code': '467'}, {'code': '398'}, {'code': '183'},
-    {'code': '491'}, {'code': '491'}, {'code': '742'}, {'code': '901'},
-    {'code': '482'}, {'code': '100'}, {'code': '396'}, {'code': '763'},
-    {'code': '908'}, {'code': '233'}, {'code': '322'}, {'code': '122'},
-    {'code': '111'}, {'code': '222'}, {'code': '444'}, {'code': '555'},
-    {'code': '300'}, {'code': '200'}, {'code': '400'}, {'code': '500'},
-    {'code': '600'}, {'code': '700'}, {'code': '800'}, {'code': '900'},
-    {'code': '902'}, {'code': '801'}, {'code': '701'}, {'code': '601'},
-    {'code': '501'}, {'code': '401'}, {'code': '301'}, {'code': '201'},
+    {'code': 123}, {'code': 467}, {'code': 398}, {'code': 183},
+    {'code': 491}, {'code': 491}, {'code': 742}, {'code': 901},
+    {'code': 482}, {'code': 100}, {'code': 396}, {'code': 763},
+    {'code': 908}, {'code': 233}, {'code': 322}, {'code': 122},
+    {'code': 111}, {'code': 222}, {'code': 444}, {'code': 555},
+    {'code': 300}, {'code': 200}, {'code': 400}, {'code': 500},
+    {'code': 600}, {'code': 700}, {'code': 800}, {'code': 900},
+    {'code': 902}, {'code': 801}, {'code': 701}, {'code': 601},
+    {'code': 501}, {'code': 401}, {'code': 301}, {'code': 201},
 ]
 
 CAR_RECORDS = [
