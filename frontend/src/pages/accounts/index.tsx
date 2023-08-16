@@ -9,7 +9,7 @@ import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useMemo, useState } from 'react'
-import { getComparator, stableSort } from '../../components/smart-table/sorting'
+import { sortData } from '../../components/smart-table/sorting'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -33,8 +33,6 @@ export const AccountsPage = () => {
 
   const [tableData, setTableData] = useState(isArchivePage ? accountsArchiveData : accountsData)
 
-  const accountComparator = getComparator('asc', 'last_name');
-
   useEffect(() => {
     if (isArchivePage) {
       accountArchiveRefetch()
@@ -47,11 +45,11 @@ export const AccountsPage = () => {
 
   const sortedRows = useMemo(() => {
     if (tableData) {
-      return stableSort(tableData, accountComparator);
+      return sortData(tableData, 'last_name')
     } else {
       return [];
     }
-  }, [accountComparator, tableData]);
+  }, [tableData]);
 
   let buttonNames: ButtonName[] = []
 

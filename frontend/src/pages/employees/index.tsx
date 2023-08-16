@@ -13,7 +13,7 @@ import {
 import { FiltersState } from '../../__data__/states/filters'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useMemo, useState } from 'react'
-import { getComparator, stableSort } from '../../components/smart-table/sorting'
+import { sortData } from '../../components/smart-table/sorting'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -32,8 +32,6 @@ export const EmployeesPage = () => {
 
   const filters = useSelector((state: { filters: FiltersState }) => state.filters)
   const [tableData, setTableData] = useState(isArchivePage ? employeesArchiveData : employeesData)
-
-  const employeesComparator = getComparator('asc', 'last_name');
 
   let buttonNames: ButtonName[] = []
 
@@ -67,11 +65,11 @@ export const EmployeesPage = () => {
 
   const sortedRows = useMemo(() => {
     if (tableData) {
-      return stableSort(tableData, employeesComparator)
+      return sortData(tableData, 'last_name')
     } else {
       return []
     }
-  }, [employeesComparator, tableData])
+  }, [tableData])
 
   return (
     <>

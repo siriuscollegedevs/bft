@@ -7,7 +7,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useGetRecordOfAdmissionsQuery, useUpdateAdmissionStatusMutation } from '../../__data__/service/admission.api'
 import { CanceledDialog } from '../../components/canceled-dialog'
 import { useMemo } from 'react'
-import { getComparator, stableSort } from '../../components/smart-table/sorting'
+import { sortData } from '../../components/smart-table/sorting'
 
 export const AdmissionViewPage = () => {
   const { id } = useParams<string>()
@@ -15,22 +15,19 @@ export const AdmissionViewPage = () => {
   const [updateStatus] = useUpdateAdmissionStatusMutation()
   const { data: RecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(id ?? '')
 
-  const nameComparator = getComparator('asc', 'last_name')
-  const carComparator = getComparator('asc', 'car_brand')
-
   const sortedData = useMemo(() => {
     if (RecordsOfAdmissionData) {
       const people = RecordsOfAdmissionData.filter(item => item.last_name !== null)
       const cars = RecordsOfAdmissionData.filter(item => item.last_name === null)
 
-      const sortedPeople = stableSort(people, (a, b) => nameComparator(a, b))
-      const sortedCars = stableSort(cars, (a, b) => carComparator(a, b))
+      const sortedPeople = sortData(people, 'last_name')
+      const sortedCars = sortData(cars, 'car_brand')
 
       return [...sortedPeople, ...sortedCars]
     } else {
       return []
     }
-  }, [RecordsOfAdmissionData, nameComparator, carComparator])
+  }, [RecordsOfAdmissionData])
 
   return (
     <>

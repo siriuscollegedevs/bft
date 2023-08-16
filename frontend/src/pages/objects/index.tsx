@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { Account } from '../../types/api'
 import { useSelector } from 'react-redux'
-import { getComparator, stableSort } from '../../components/smart-table/sorting'
+import { sortData } from '../../components/smart-table/sorting'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -30,8 +30,6 @@ export const ObjectsPage = () => {
   } = useGetAllArchiveObjectsQuery()
   const [tableData, setTableData] = useState(isArchivePage ? objectsArchiveData : objectsData)
 
-  const objectComparator = getComparator('asc', 'name');
-
   useEffect(() => {
     if (isArchivePage) {
       refetchObjectsArchiveData()
@@ -44,11 +42,11 @@ export const ObjectsPage = () => {
 
   const sortedRows = useMemo(() => {
     if (tableData) {
-      return stableSort(tableData, objectComparator)
+      return sortData(tableData, 'name')
     } else {
       return []
     }
-  }, [objectComparator, tableData])
+  }, [tableData])
 
   let buttonNames: ButtonName[] = []
 
