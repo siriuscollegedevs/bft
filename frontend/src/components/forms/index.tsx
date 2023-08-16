@@ -36,7 +36,7 @@ export const FormEditDirectories = () => {
           mb: '75px'
         }}
       >
-        {location.pathname === recordUrl && (
+        {location.pathname.startsWith(recordUrl) && (
           <>
             <Select
               labelId="demo-simple-select-label"
