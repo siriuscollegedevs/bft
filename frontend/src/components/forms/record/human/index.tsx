@@ -1,10 +1,19 @@
-import { TextField, FormControl, InputLabel, Select, OutlinedInput, MenuItem, SelectChangeEvent } from '@mui/material'
+import {
+  TextField,
+  FormControl,
+  InputLabel,
+  Select,
+  OutlinedInput,
+  MenuItem,
+  SelectChangeEvent,
+  CircularProgress
+} from '@mui/material'
 import { CustomDefaultButton } from '../../../../styles/settings'
 import { SetStateAction, useState } from 'react'
 import { RECORD_FIELDS, RECORD_TYPE } from '../../../../__data__/consts/record'
 import { Box } from '@mui/system'
 import { useCreateHumanRecordMutation } from '../../../../__data__/service/record.api'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 
 type FieldsState = {
   lastName: string
@@ -23,10 +32,11 @@ export const Human = () => {
   const [hasValidation, setHasValidation] = useState(false)
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
-
+  const [showLoader, setShowLoader] = useState(false)
   const { id } = useParams()
-  console.log(id)
-  const [createHumanRecordMutation] = useCreateHumanRecordMutation()
+  const navigate = useNavigate()
+  const [createHumanRecordMutation, { isLoading: createHumanRecordLoading, isError: createHumanRecordError }] =
+    useCreateHumanRecordMutation()
   const [fields, setFields] = useState<FieldsState>({
     lastName: '',
     firstName: '',
@@ -55,6 +65,7 @@ export const Human = () => {
   }
 
   const handleSubmit = () => {
+    setShowLoader(true)
     let hasEmptyField = false
 
     for (const [key, value] of Object.entries(fields)) {
@@ -72,20 +83,28 @@ export const Human = () => {
       }
     }
     setHasValidation(true)
-
-    if (!Object.values(error).some(value => value === true) && id && fields.type) {
-      createHumanRecordMutation({
-        recordId: id,
-        recordData: {
-          first_name: fields.firstName,
-          surname: fields.surname,
-          last_name: fields.lastName,
-          type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
-          from_date: startDate,
-          to_date: endDate,
-          note: fields.note
-        }
-      })
+    try {
+      if (!Object.values(error).some(value => value === true) && id && fields.type) {
+        createHumanRecordMutation({
+          recordId: id,
+          recordData: {
+            first_name: fields.firstName,
+            surname: fields.surname,
+            last_name: fields.lastName,
+            type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
+            from_date: startDate,
+            to_date: endDate,
+            note: fields.note
+          }
+        })
+      }
+      if (!createHumanRecordError) {
+        navigate(`/admissions/view/${id}`)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setShowLoader(false)
     }
   }
 
@@ -181,8 +200,13 @@ export const Human = () => {
         rows={3}
         onChange={e => handleFieldChange('note', e.target.value)}
       />
-      <CustomDefaultButton variant="contained" color="primary" onClick={handleSubmit}>
-        Сохранить
+      <CustomDefaultButton
+        variant="contained"
+        color="primary"
+        onClick={handleSubmit}
+        disabled={createHumanRecordLoading || showLoader}
+      >
+        {createHumanRecordLoading || showLoader ? <CircularProgress size={20} color="inherit" /> : 'Сохранить'}
       </CustomDefaultButton>
     </>
   )
