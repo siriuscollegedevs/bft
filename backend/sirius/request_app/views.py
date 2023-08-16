@@ -9,6 +9,7 @@ from sirius.general_functions import get_user, get_max_code
 from .config import *
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
+from sirius_access.config import OBJECTID_ERROR_MSG
 
 
 def get_request(RequestId):
@@ -44,7 +45,7 @@ class GetRequests(APIView):
             try:
                 object = Object.objects.get(id=object_id)
             except Exception:
-                return Response(status=status.HTTP_400_BAD_REQUEST, data={'error' : 'Invalid object id'})
+                return Response(status=status.HTTP_400_BAD_REQUEST, data=OBJECTID_ERROR_MSG)
             for line in RequestToObject.objects.filter(object=object):
                 if line.request.id in request_ids:
                     continue
