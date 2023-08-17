@@ -79,8 +79,8 @@ class Migration(migrations.Migration):
                         request_object_count += 1
                 exisiting_cars = []
                 existing_humen = []
-                for car_info, human_info in list(zip(CAR_RECORDS, HUMAN_RECORDS)):
-                    # CAR RECORD CREATION
+                for car_info, human_info in zip(CAR_RECORDS, HUMAN_RECORDS):
+                # CAR RECORD CREATION
                     car_record = Record.objects.create(status='active', request=request)
                     RecordHistory.objects.create(
                         action='created',
@@ -97,6 +97,7 @@ class Migration(migrations.Migration):
                             **car_history
                             )
                     exisiting_cars.append(car_record.get_last_version().car_number)
+
                     # HUMAN RECORD CREATION
                     human_record = Record.objects.create(status='active', request=request)
                     RecordHistory.objects.create(
@@ -113,7 +114,14 @@ class Migration(migrations.Migration):
                             record=human_record,
                             **human_history
                             )
-                    existing_humen.append((human_history['first_name'], human_history['last_name'], human_history['surname']))
+                    created_human_record = human_record.get_info()
+                    existing_humen.append(
+                        (
+                            created_human_record['first_name'],
+                            created_human_record['last_name'],
+                            created_human_record['surname']
+                        )
+                    )
 
 
     dependencies = [
