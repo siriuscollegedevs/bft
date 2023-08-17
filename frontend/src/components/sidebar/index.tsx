@@ -11,7 +11,7 @@ import Checkbox from '@mui/material/Checkbox'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useSelector, useDispatch } from 'react-redux'
-import { Account } from '../../types/api'
+import { Account, Objects } from '../../types/api'
 import { CurrentAccountId, setAccountObjects } from '../../__data__/states/account'
 import { useGetAccountToObjectsQuery } from '../../__data__/service/object-account'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -30,6 +30,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
+  const currentAccountObject = useSelector(
+    (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
+  )
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
   const {
@@ -105,7 +108,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
             )}
             {isObjects && (
               <>
-                {currentAccountRole === ACCOUNT_ROLES.security ? (
+                {currentAccountRole === ACCOUNT_ROLES.security_officer.en ? (
                   <SidebarButton
                     variant="outlined"
                     color="primary"
@@ -117,7 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
                       }
                     }}
                   >
-                    Наименование объекта
+                    {currentAccountObject[0].name}
                   </SidebarButton>
                 ) : (
                   <FormControl
@@ -160,7 +163,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
               </>
             )}
           </Box>
-          {isButton && currentAccountRole !== ACCOUNT_ROLES.security ? (
+          {isButton && currentAccountRole !== ACCOUNT_ROLES.security_officer.en ? (
             <SidebarButton variant="contained" color="primary" onClick={handleCreate}>
               {location.pathname.startsWith('/admissions') ? 'Создать заявку' : 'Создать запись'}
             </SidebarButton>

@@ -37,9 +37,9 @@ export const EmployeesPage = () => {
 
   if (isArchivePage) {
     buttonNames = ['history']
-  } else if (currentAccountRole === Object.keys(ACCOUNT_ROLES)[0]) {
+  } else if (currentAccountRole === ACCOUNT_ROLES.administrator.en) {
     buttonNames = ['edit', 'history', 'trash']
-  } else if (currentAccountRole === Object.keys(ACCOUNT_ROLES)[1]) {
+  } else if (currentAccountRole === ACCOUNT_ROLES.manager.en) {
     buttonNames = ['history']
   }
 

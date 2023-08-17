@@ -5,8 +5,8 @@ import { ReactComponent as TrashIcon } from '../../assets/trash.svg'
 import { ReactComponent as CancelIcon } from '../../assets/cancel.svg'
 import { ReactComponent as ToRepayIcon } from '../../assets/toRepay.svg'
 import { useLocation, useNavigate } from 'react-router-dom'
-import {useDeleteAccountByIdMutation, useGetAllAccountsQuery} from '../../__data__/service/account.api'
-import {useDeleteObjectByIdMutation, useGetAllObjectsQuery} from '../../__data__/service/object.api'
+import { useDeleteAccountByIdMutation, useGetAllAccountsQuery } from '../../__data__/service/account.api'
+import { useDeleteObjectByIdMutation, useGetAllObjectsQuery } from '../../__data__/service/object.api'
 import {
   useDeleteAccountToObjectByIdMutation,
   useGetAllAccountToObjectQuery
@@ -76,7 +76,7 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
   }
 
   const closeDeleteDialog = () => {
-      setDeleteDialogOpen(false)
+    setDeleteDialogOpen(false)
   }
 
   const handleDelete = () => {
@@ -102,7 +102,7 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
 
     await deleteMutation(id)
     closeDeleteDialog()
-    await refetchData();
+    await refetchData()
   }
 
   if (buttonNames.length === 0 || buttonNames.length > 3) {
