@@ -11,6 +11,7 @@ from .config import *
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
 from sirius.config import DB_ERROR
+from sirius_access.config import OBJECTID_ERROR_MSG
 
 
 def get_request(RequestId):
@@ -49,9 +50,17 @@ class GetRequests(APIView):
             res = [req.get_info() for req in Request.objects.filter(status=self.status)]
             return Response(serializers.RequestSerializer(res, many=True).data)
         res = []
+        request_ids = set()
         for object_id in objects_ids:
-            res.extend([line.request.get_info()
-                       for line in RequestToObject.objects.filter(object=Object.objects.get(id=object_id))])
+            try:
+                object = Object.objects.get(id=object_id)
+            except Exception:
+                return Response(status=status.HTTP_400_BAD_REQUEST, data=OBJECTID_ERROR_MSG)
+            for line in RequestToObject.objects.filter(object=object):
+                if line.request.id in request_ids:
+                    continue
+                request_ids.add(line.request.id)
+                res.append(line.request.get_info())
         return Response(serializers.RequestSerializer(res, many=True).data)
 
 
@@ -64,6 +73,7 @@ class GetArchiveRequests(GetRequests):
 
 
 class PostRequest(APIView):
+
     @extend_schema(
         responses={
             status.HTTP_200_OK: inline_serializer(
@@ -84,11 +94,9 @@ class PostRequest(APIView):
     def post(self, request):
         serializer = serializers.RequestSerializer(data=request.data)
         if serializer.is_valid():
-            code = serializer.validated_data['code']
             try:
                 with transaction.atomic():
                     req = Request.objects.create(status='active')
-                    code = code if code else req.id  # NOTE
                     for obj_id in serializer.validated_data['object_ids']:
                         RequestToObject.objects.create(
                             object=Object.objects.get(id=obj_id),
@@ -185,7 +193,7 @@ class PostRecord(APIView):
                 return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
             try:
                 with transaction.atomic():
-                    record = Record.objects.create(status='active', request=request)
+                    record = Record.objects.create(status='active', request=req)
                     RecordHistory.objects.create(action='created', modified_by=get_user(
                         request), record=record, **serializer.validated_data)
                     return Response(status=status.HTTP_201_CREATED)

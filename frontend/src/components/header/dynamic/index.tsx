@@ -13,11 +13,12 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useGetAccountByIdQuery } from '../../../__data__/service/account.api'
 import { useDispatch, useSelector } from 'react-redux'
-import { CurrentAccountId, setAccountData } from '../../../states/account'
 import React, { useEffect } from 'react'
 import { Typography } from '@mui/material'
 import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
 import { useLogout } from '../../../hooks/logout'
+import { Account } from '../../../types/api'
+import { CurrentAccountId, setAccountData } from '../../../__data__/states/account'
 
 export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')
@@ -27,6 +28,7 @@ export const DynamicHeader = () => {
   const logout = useLogout()
 
   const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
+  const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
   const {
     data: currentAccountData,
@@ -57,6 +59,27 @@ export const DynamicHeader = () => {
     navigate(`/${buttonName}`)
   }
 
+  const handleLogoClick = () => {
+    switch (currentAccountRole) {
+      case Object.keys(ACCOUNT_ROLES)[0]: {
+        navigate('/directories')
+        break
+      }
+      case Object.keys(ACCOUNT_ROLES)[1]: {
+        navigate('/navigation')
+        break
+      }
+      case Object.keys(ACCOUNT_ROLES)[2]: {
+        navigate('/navigation')
+        break
+      }
+      case Object.keys(ACCOUNT_ROLES)[3]: {
+        navigate('/admissions')
+        break
+      }
+    }
+  }
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -66,7 +89,7 @@ export const DynamicHeader = () => {
             {currentAccountError && <Typography>Error</Typography>}
             {currentAccountData && (
               <>
-                <HeaderLogo color="inherit" disableRipple onClick={() => navigate('/navigation')}>
+                <HeaderLogo color="inherit" disableRipple onClick={handleLogoClick}>
                   <LogoIcon />
                 </HeaderLogo>
                 <CustomTypography>{`Доступ.${
@@ -103,11 +126,11 @@ export const DynamicHeader = () => {
                 ) : (
                   <CustomTypography>{`${currentAccountData?.first_name}`}</CustomTypography>
                 )}
-                <CustomExitButton color="inherit" variant="contained" onClick={() => logout()}>
-                  Выход
-                </CustomExitButton>
               </>
             )}
+            <CustomExitButton color="inherit" variant="contained" onClick={() => logout()}>
+              Выход
+            </CustomExitButton>
           </CustomToolbar>
         </CustomAppBar>
       </Box>

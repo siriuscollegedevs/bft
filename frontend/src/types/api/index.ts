@@ -1,4 +1,6 @@
-import { AuthState } from '../../states/auth'
+import { CurrentAccountId } from '../../__data__/states/account'
+import { AuthState } from '../../__data__/states/auth'
+import { FiltersState } from '../../__data__/states/filters'
 
 export type Accounts = {
   id: string
@@ -15,6 +17,7 @@ export type Account = {
   surname: string
   last_name: string
   username: string
+  password: string
 }
 
 export type ExpandSearchAdmissionsBody = {
@@ -53,6 +56,12 @@ export type Login = {
 export type Objects = {
   id: string
   name: string
+}
+
+export type ObjectsMatch = {
+  id: string
+  name: string
+  match_id: string
 }
 
 export type soloObject = {
@@ -131,5 +140,29 @@ export type SearchOfAdmissions = {
 }
 
 export type RootState = {
+  currentAccount: CurrentAccountId & Account & { accountObjects: Objects[] }
   auth: AuthState
+  filters: FiltersState
+}
+
+export type ObjectInArray = {
+  match_id: string
+  name: string
+}
+
+export type AccountToObject = {
+  id: string
+  role: string
+  first_name?: string
+  surname?: string
+  last_name: string
+  username: string
+  objects: ObjectInArray[]
+}
+
+export type AccountToObjectCreate = {
+  first_name?: string
+  surname?: string
+  last_name: string
+  object_ids: string[]
 }

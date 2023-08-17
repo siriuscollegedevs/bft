@@ -21,7 +21,8 @@ export const apiAccount = createApi({
           first_name: accountData.first_name,
           surname: accountData.surname,
           last_name: accountData.last_name,
-          username: accountData.username
+          username: accountData.username,
+          password: accountData.password
         }
       })
     }),
@@ -37,7 +38,8 @@ export const apiAccount = createApi({
           first_name: accountData.first_name,
           surname: accountData.surname,
           last_name: accountData.last_name,
-          username: accountData.username
+          username: accountData.username,
+          password: accountData.password
         }
       })
     }),

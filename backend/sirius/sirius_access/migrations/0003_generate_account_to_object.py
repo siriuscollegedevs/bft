@@ -8,7 +8,9 @@ class Migration(migrations.Migration):
         for account in Account.objects.filter(status='active'):
             for object in Object.objects.filter(status='active'):
                 if account.role != 'administrator':
-                    AccountToObject.objects.create(account=account, object=object, status='outdated')
+                    if not AccountToObject.objects.filter(account=account, status='outdated').exists():
+                        AccountToObject.objects.create(account=account, object=object, status='outdated')
+                        continue
                 if account.role == 'security_officer':
                     if AccountToObject.objects.filter(
                         account__role='security_officer',

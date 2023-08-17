@@ -4,7 +4,7 @@ from .config import *
 from sirius_access.models import Account, Object, UUIDMixin
 from datetime import date
 from django.core.exceptions import ValidationError
-
+from django.utils import timezone
 
 class Request(UUIDMixin, models.Model):
     status = models.CharField(max_length=STATUS_LEN, choices=STATUS_CHOICES)
@@ -107,7 +107,7 @@ class Record(UUIDMixin, models.Model):
 
 
 class RecordHistory(UUIDMixin, models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=timezone.now)
     action = models.CharField(max_length=ACTION_RECORD_LEN, choices=STATUS_CHOICES_RECORD)
     car_number = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     car_brand = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
@@ -118,8 +118,8 @@ class RecordHistory(UUIDMixin, models.Model):
     first_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     last_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     surname = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
-    from_date = models.DateTimeField()
-    to_date = models.DateTimeField()
+    from_date = models.DateField()
+    to_date = models.DateField()
     note = models.TextField(null=True, blank=True)
 
     def clean_from_date(self):
@@ -147,9 +147,9 @@ class RecordHistory(UUIDMixin, models.Model):
 
 
 class RequestHistory(models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=timezone.now) #auto_now_add=True
     request = models.ForeignKey(Request, on_delete=models.PROTECT)
-    code = models.CharField(max_length=DEFAULT_LEN)
+    code = models.IntegerField(unique=True, editable=False)
     action = models.CharField(max_length=ACTION_RECORD_LEN, choices=STATUS_CHOICES_RECORD)
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT)
 

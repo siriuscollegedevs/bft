@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { RootState } from '../../../types/api'
 
 export type AuthState = {
   access: string
@@ -33,4 +34,4 @@ const authSlice = createSlice({
 
 export const { setAccessToken, setTimeAccessToken, setCSRFToken, clearAuth } = authSlice.actions
 export const authReducer = authSlice.reducer
-export const selectToken = (state: AuthState) => state.access
+export const selectAuth = (state: RootState) => state.auth

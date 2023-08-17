@@ -7,8 +7,8 @@ import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useSelector, useDispatch } from 'react-redux'
 import { Account } from '../../types/api'
 import { useGetAccountToObjectsQuery } from '../../__data__/service/object-account'
-import { CurrentAccountId, setAccountObjects } from '../../states/account'
-import { useGetAccountByIdQuery } from '../../__data__/service/account.api'
+import { useEffect } from 'react'
+import { CurrentAccountId, setAccountObjects } from '../../__data__/states/account'
 
 export const ButtonGroup = () => {
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
@@ -25,15 +25,17 @@ export const ButtonGroup = () => {
     dispatch(setAccountObjects(currentAccountObjectsData))
   }
 
-  switch (currentAccountRole) {
-    case Object.keys(ACCOUNT_ROLES)[0]: {
-      navigate('/directories')
-      break
+  useEffect(() => {
+    switch (currentAccountRole) {
+      case Object.keys(ACCOUNT_ROLES)[0]: {
+        navigate('/directories')
+        break
+      }
+      case Object.keys(ACCOUNT_ROLES)[3]: {
+        navigate('/admissions')
+      }
     }
-    case Object.keys(ACCOUNT_ROLES)[3]: {
-      navigate('/admissions')
-    }
-  }
+  }, [currentAccountRole])
 
   return (
     <Container
