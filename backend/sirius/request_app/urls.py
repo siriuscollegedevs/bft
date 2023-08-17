@@ -12,5 +12,7 @@ urlpatterns = [
     path('record/<uuid:RecordId>', views.DeletePutRecord.as_view()),
     path('record/change_status/<uuid:RecordId>', views.ChangeStatusRecord.as_view()),
     path('record/history/<uuid:RecordId>', views.RecordHistoryView.as_view()),
-    path('records/archive/<uuid:RequestId>', views.RecordArchive.as_view())
+    path('records/archive/<uuid:RequestId>', views.RecordArchive.as_view()),
+    path('expand_search', views.ActualRequestExpandSearch.as_view()),
+    path('expand_search/archive', views.ArchiveRequestExpandSearch.as_view()),
 ]
