@@ -5,9 +5,10 @@ import { SideBarContainer } from '../../styles/sidebar'
 import { useGetAllArchiveObjectsQuery, useGetAllObjectsQuery } from '../../__data__/service/object.api'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useLocation } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { Account } from '../../types/api';
-import { useSelector } from 'react-redux';
+import { useEffect, useMemo, useState } from 'react'
+import { Account } from '../../types/api'
+import { useSelector } from 'react-redux'
+import { sortData } from '../../components/smart-table/sorting'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -39,6 +40,14 @@ export const ObjectsPage = () => {
     }
   }, [objectsData, objectsArchiveData, isArchivePage])
 
+  const sortedRows = useMemo(() => {
+    if (tableData) {
+      return sortData(tableData, 'name')
+    } else {
+      return []
+    }
+  }, [tableData])
+
   let buttonNames: ButtonName[] = []
 
   if (isArchivePage) {
@@ -49,30 +58,30 @@ export const ObjectsPage = () => {
     buttonNames = ['history']
   }
   return (
-      <>
-          <EntityTitle isSwitch={true} isSearchField={true} />
+    <>
+      <EntityTitle isSwitch={true} isSearchField={true} />
 
-          <SideBarContainer>
-              {objectsError || objectsLoading || objectsArchiveLoading || objectsArchiveError ? (
-                  <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
-              ) : (
-                  <>
-                      {tableData ? (
-                          <SmartTable
-                              buttonNames={buttonNames}
-                              size={{
-                                  width: '100%',
-                                  height: '100%'
-                              }}
-                              data={tableData}
-                          />
-                      ) : (
-                          <></>
-                      )}
-                      <Sidebar isSearch={true} isObjects={false} isButton={true} />
-                  </>
-              )}
-          </SideBarContainer>
-      </>
+      <SideBarContainer>
+        {objectsError || objectsLoading || objectsArchiveLoading || objectsArchiveError ? (
+          <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
+        ) : (
+          <>
+            {sortedRows ? (
+              <SmartTable
+                buttonNames={buttonNames}
+                size={{
+                  width: '100%',
+                  height: '100%'
+                }}
+                data={sortedRows}
+              />
+            ) : (
+              <></>
+            )}
+            <Sidebar isSearch={false} isObjects={false} isButton={true} />
+          </>
+        )}
+      </SideBarContainer>
+    </>
   )
 }

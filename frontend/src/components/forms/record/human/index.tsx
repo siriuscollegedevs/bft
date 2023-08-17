@@ -84,7 +84,7 @@ export const Human = () => {
     }
     setHasValidation(true)
     try {
-      if (!Object.values(error).some(value => value === true) && id && fields.type) {
+      if (!Object.values(error).some(value => value) && id && fields.type) {
         createHumanRecordMutation({
           recordId: id,
           recordData: {

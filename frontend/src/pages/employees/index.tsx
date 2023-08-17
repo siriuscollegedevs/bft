@@ -12,7 +12,8 @@ import {
 } from '../../__data__/service/object-account'
 import { FiltersState } from '../../__data__/states/filters'
 import CircularProgress from '@mui/material/CircularProgress'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { sortData } from '../../components/smart-table/sorting'
 
 type ButtonName = 'edit' | 'history' | 'trash'
 
@@ -62,6 +63,14 @@ export const EmployeesPage = () => {
     }
   }, [employeesData, employeesArchiveData, isArchivePage])
 
+  const sortedRows = useMemo(() => {
+    if (tableData) {
+      return sortData(tableData, 'last_name')
+    } else {
+      return []
+    }
+  }, [tableData])
+
   return (
     <>
       <EntityTitle isSwitch={true} isSearchField={true} />
@@ -71,14 +80,14 @@ export const EmployeesPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {tableData ? (
+            {sortedRows ? (
               <SmartTable
                 buttonNames={buttonNames}
                 size={{
                   width: '100%',
                   height: '100%'
                 }}
-                data={dataFilters(tableData)}
+                data={dataFilters(sortedRows)}
               />
             ) : (
               <></>

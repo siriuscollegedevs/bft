@@ -6,6 +6,8 @@ import { SmartTable } from '../../components/smart-table'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetRecordOfAdmissionsQuery, useUpdateAdmissionStatusMutation } from '../../__data__/service/admission.api'
 import { CanceledDialog } from '../../components/canceled-dialog'
+import { useMemo } from 'react'
+import { sortData } from '../../components/smart-table/sorting'
 
 export const AdmissionViewPage = () => {
   const { id } = useParams<string>()
@@ -13,10 +15,33 @@ export const AdmissionViewPage = () => {
   const [updateStatus] = useUpdateAdmissionStatusMutation()
   const { data: RecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(id ?? '')
 
+  const sortedData = useMemo(() => {
+    if (RecordsOfAdmissionData) {
+      const people = RecordsOfAdmissionData.filter(item => item.last_name !== null)
+      const cars = RecordsOfAdmissionData.filter(item => item.last_name === null)
+
+      const sortedPeople = sortData(people, 'last_name')
+      const sortedCars = sortData(cars, 'car_brand')
+
+      return [...sortedPeople, ...sortedCars]
+    } else {
+      return []
+    }
+  }, [RecordsOfAdmissionData])
+
   return (
     <>
       <EntityTitle isSwitch={false} isSearchField={false} />
-      <Box sx={{ alignItems: 'center', display: 'flex', justifyContent: 'center', flexDirection: 'column', width: '100%', height: '70vh' }}>
+      <Box
+        sx={{
+          alignItems: 'center',
+          display: 'flex',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          width: '100%',
+          height: '70vh'
+        }}
+      >
         <Box
           sx={{
             display: 'flex',
@@ -61,7 +86,7 @@ export const AdmissionViewPage = () => {
               width: '90%',
               height: '100%'
             }}
-            data={RecordsOfAdmissionData}
+            data={sortedData}
           />
         ) : (
           <></>

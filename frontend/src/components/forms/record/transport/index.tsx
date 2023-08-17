@@ -86,7 +86,7 @@ export const Transport = () => {
     }
     setHasValidation(true)
     try {
-      if (!Object.values(error).some(value => value === true) && id && fields.type) {
+      if (!Object.values(error).some(value => value) && id && fields.type) {
         createTransportRecordMutation({
           recordId: id,
           recordData: {

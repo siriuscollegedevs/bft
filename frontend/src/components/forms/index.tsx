@@ -1,17 +1,16 @@
 import { FormAccount } from './account'
-import { Container, FormControl, Select, MenuItem, SelectChangeEvent } from '@mui/material'
+import { Container, Select, MenuItem, SelectChangeEvent } from '@mui/material'
 import { CustomFormControl } from '../../styles/settings'
 import { CustomTypography } from '../../styles/header'
 import Box from '@mui/material/Box'
 import { useState } from 'react'
 import { FormObject } from './object'
 import { FormEmployee } from './employee'
-import { useLocation, useParams } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { FormRecord } from './record'
 
 export const FormEditDirectories = () => {
   const location = useLocation()
-  const { id } = useParams()
   const [gender, setGender] = useState('Человек')
 
   const handleChange = (event: SelectChangeEvent) => {

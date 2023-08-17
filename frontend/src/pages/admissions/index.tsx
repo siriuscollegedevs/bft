@@ -6,8 +6,9 @@ import { useGetAllAdmissionsMutation } from '../../__data__/service/admission.ap
 import CircularProgress from '@mui/material/CircularProgress'
 import { useSelector } from 'react-redux'
 import { Admissions, Objects } from '../../types/api'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { FiltersState } from '../../__data__/states/filters'
+import { compareDates } from '../../components/smart-table/sorting'
 
 export const AdmissionsPage = () => {
   const [admissionsMutation, { data: admissionsData, isLoading: admissionsLoading, isError }] =
@@ -44,6 +45,14 @@ export const AdmissionsPage = () => {
     }
   }, [idArray, hasData])
 
+  const sortedRows = useMemo(() => {
+    if (data) {
+      return data.sort(compareDates)
+    } else {
+      return []
+    }
+  }, [data])
+
   return (
     <>
       <EntityTitle isSearchField={true} isSwitch={true} />
@@ -53,14 +62,14 @@ export const AdmissionsPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {admissionsData && (
+            {sortedRows && (
               <SmartTable
                 buttonNames={['edit', 'history', 'trash']}
                 size={{
                   width: '100%',
                   height: '100%'
                 }}
-                data={filteredData(data)}
+                data={filteredData(sortedRows)}
               />
             )}
             <Sidebar isSearch={true} isObjects={true} isButton={true} />
