@@ -6,15 +6,15 @@ export const compareDates = (a: any, b: any) => {
 
 export const sortData = (data: any[], sortBy: string): any[] => {
   return [...data].sort((a, b) => {
-    const fieldA = a[sortBy].toLowerCase();
-    const fieldB = b[sortBy].toLowerCase();
+    const fieldA = a[sortBy].toLowerCase()
+    const fieldB = b[sortBy].toLowerCase()
 
     if (fieldA < fieldB) {
-      return -1;
+      return -1
     }
     if (fieldA > fieldB) {
-      return 1;
+      return 1
     }
-    return 0;
-  });
-};
+    return 0
+  })
+}
