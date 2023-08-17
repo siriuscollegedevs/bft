@@ -126,7 +126,7 @@ export const Transport = () => {
         sx={{ m: 1, width: '85%' }}
         required
         error={hasValidation && error.car_number}
-        helperText={!fields.car_number && 'Это поле обязательно.'}
+        helperText={!fields.car_number ? 'Это поле обязательно.' : ' '}
         value={fields.car_number}
         onChange={e => handleFieldChange('car_number', e.target.value)}
       />
@@ -137,7 +137,7 @@ export const Transport = () => {
         sx={{ m: 1, width: '85%' }}
         required
         error={hasValidation && error.car_brand}
-        helperText={!fields.car_brand && 'Это поле обязательно.'}
+        helperText={!fields.car_brand ? 'Это поле обязательно.' : ' '}
         value={fields.car_brand}
         onChange={e => handleFieldChange('car_brand', e.target.value)}
       />
@@ -148,7 +148,7 @@ export const Transport = () => {
         sx={{ m: 1, width: '85%' }}
         required
         error={hasValidation && error.car_model}
-        helperText={!fields.car_model && 'Это поле обязательно.'}
+        helperText={!fields.car_model ? 'Это поле обязательно.' : ' '}
         value={fields.car_model}
         onChange={e => handleFieldChange('car_model', e.target.value)}
       />

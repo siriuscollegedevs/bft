@@ -124,7 +124,7 @@ export const Human = () => {
         sx={{ m: 1, width: '85%' }}
         required
         error={hasValidation && error.lastName}
-        helperText={!fields.lastName && 'Это поле обязательно.'}
+        helperText={!fields.lastName ? 'Это поле обязательно.' : ' '}
         value={fields.lastName}
         onChange={e => handleFieldChange('lastName', e.target.value)}
       />
@@ -135,7 +135,7 @@ export const Human = () => {
         sx={{ m: 1, width: '85%' }}
         required
         error={hasValidation && error.firstName}
-        helperText={!fields.firstName && 'Это поле обязательно.'}
+        helperText={!fields.firstName ? 'Это поле обязательно.' : ' '}
         value={fields.firstName}
         onChange={e => handleFieldChange('firstName', e.target.value)}
       />
@@ -146,7 +146,7 @@ export const Human = () => {
         sx={{ m: 1, width: '85%' }}
         required
         error={hasValidation && error.surname}
-        helperText={!fields.surname && 'Это поле обязательно.'}
+        helperText={!fields.surname ? 'Это поле обязательно.' : ' '}
         value={fields.surname}
         onChange={e => handleFieldChange('surname', e.target.value)}
       />
