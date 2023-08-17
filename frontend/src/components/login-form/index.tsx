@@ -30,13 +30,6 @@ export const LoginForm = () => {
       setShowLoader(true)
       const response = await loginMutation({ username: login, password: password }).unwrap()
       dispatch(setAccountId({ id: response.account_id }))
-      dispatch(
-        setLoginData({
-          access: response.access,
-          accessTokenUpdateInterval: response.access_exp,
-          csrf: getCookie('csrftoken')
-        })
-      )
 
       const intervalId = setInterval(async () => {
         const newToken = await refresh()
@@ -44,8 +37,16 @@ export const LoginForm = () => {
           dispatch(setAccessToken(newToken))
         }
       }, response.access_exp / 2)
-      dispatch(setIntervalId(intervalId))
-      dispatch(setUpdateProcess(true))
+
+      dispatch(
+        setLoginData({
+          access: response.access,
+          accessTokenUpdateInterval: response.access_exp,
+          csrf: getCookie('csrftoken'),
+          updateProcess: true,
+          intervalId: intervalId
+        })
+      )
 
       return response ? navigate('/navigation') : null
     } catch (error) {
