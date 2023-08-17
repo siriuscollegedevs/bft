@@ -5,12 +5,14 @@ export type AuthState = {
   access: string
   accessTokenUpdateInterval: number
   csrf: string
+  updateProcess: boolean
 }
 
 const initialState: AuthState = {
   access: '',
   accessTokenUpdateInterval: 0,
-  csrf: ''
+  csrf: '',
+  updateProcess: false
 }
 
 const authSlice = createSlice({
@@ -26,12 +28,15 @@ const authSlice = createSlice({
     setCSRFToken: (state, action: PayloadAction<string>) => {
       return { ...state, csrf: action.payload }
     },
+    setUpdateProcess: (state, action: PayloadAction<boolean>) => {
+      return { ...state, updateProcess: action.payload }
+    },
     clearAuth: () => {
       return { ...initialState }
     }
   }
 })
 
-export const { setAccessToken, setTimeAccessToken, setCSRFToken, clearAuth } = authSlice.actions
+export const { setAccessToken, setTimeAccessToken, setCSRFToken, setUpdateProcess, clearAuth } = authSlice.actions
 export const authReducer = authSlice.reducer
 export const selectAuth = (state: RootState) => state.auth
