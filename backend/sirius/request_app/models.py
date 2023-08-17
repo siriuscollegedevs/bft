@@ -2,6 +2,8 @@ from django.db import models
 from sirius.config import *
 from .config import *
 from sirius_access.models import Account, Object, UUIDMixin
+from datetime import date
+from django.core.exceptions import ValidationError
 
 
 class Request(UUIDMixin, models.Model):
@@ -67,7 +69,7 @@ class Record(UUIDMixin, models.Model):
             'type' : record's type <str>
             'first_name' : <str>
             'last_name' : <str>
-            'object' : object name <str>
+            'surname' : <str>
             'car_number' : <str>
             'car_brand' : <str>
             'car_model': <str>
@@ -116,9 +118,24 @@ class RecordHistory(UUIDMixin, models.Model):
     first_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     last_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     surname = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
-    from_date = models.DateTimeField(null=True, blank=True)
+    from_date = models.DateTimeField()
     to_date = models.DateTimeField()
     note = models.TextField(null=True, blank=True)
+
+    def clean_from_date(self):
+        from_date = self.cleaned_data.get('from_date')
+        if from_date < date.today():
+            raise ValidationError('Дата начала действия заявки не может быть меньше текущей даты.')
+    
+    def clean_to_date(self):
+        to_date = self.cleaned_data.get('to_date')
+        if to_date < date.today():
+            raise ValidationError('Дата конца действия заявки не может быть меньше текущей даты.')
+    
+    def clean(self):
+        super().clean()
+        if self.to_date < self.from_date:
+            raise ValidationError('Дата начала действия заявки не может быть меньше даты окончания её действия.')
 
     def get_info(self):
         info = self.__dict__
