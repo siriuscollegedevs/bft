@@ -64,13 +64,12 @@ export const Human = () => {
     }))
   }
 
-  const handleSubmit = () => {
-    setShowLoader(true)
+  const fieldsCheck = () => {
     let hasEmptyField = false
 
     for (const [key, value] of Object.entries(fields)) {
-      if (key !== 'note' && value.trim() === '') {
-        hasEmptyField = !hasEmptyField
+      if (key !== 'note' && key !== 'type' && value.trim() === '') {
+        hasEmptyField = true
         setError(prevError => ({
           ...prevError,
           [key]: true
@@ -82,9 +81,17 @@ export const Human = () => {
         }))
       }
     }
+    return hasEmptyField
+  }
+
+  const handleSubmit = async () => {
+    setShowLoader(true)
+    const hasEmptyField = await fieldsCheck()
+
     setHasValidation(true)
+
     try {
-      if (!Object.values(error).some(value => value) && id && fields.type) {
+      if (!hasEmptyField && id && fields.type) {
         createHumanRecordMutation({
           recordId: id,
           recordData: {
@@ -97,9 +104,9 @@ export const Human = () => {
             note: fields.note
           }
         })
-      }
-      if (!createHumanRecordError) {
-        navigate(`/admissions/view/${id}`)
+        if (!createHumanRecordError) {
+          navigate(`/admissions/view/${id}`)
+        }
       }
     } catch (error) {
       console.log(error)
