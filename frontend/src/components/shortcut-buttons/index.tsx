@@ -67,9 +67,15 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
   const { refetch: refetchObjectsData } = useGetAllObjectsQuery()
   const { refetch: refetchEmployeesData } = useGetAllAccountToObjectQuery()
 
-  const handleClickEdit = () => {
-    navigate(`${location.pathname}/${id}`)
-  }
+  const handleButtonClick = (title: ButtonName) => {
+    if (title === 'edit') {
+      navigate(`${location.pathname}/${id}`)
+    } else if (title === 'trash') {
+      handleDelete();
+    } else if (title === 'history') {
+      navigate(`${location.pathname}/history/${id}`)
+    }
+  };
 
   const openDeleteDialog = () => {
     setDeleteDialogOpen(true)
@@ -125,7 +131,7 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
                 height: '35px',
                 width: '35px'
               }}
-              onClick={title === 'edit' ? handleClickEdit : title === 'trash' ? handleDelete : undefined}
+              onClick={() => handleButtonClick(title)}
             >
               {iconMapping[title].node}
             </IconButton>
