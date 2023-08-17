@@ -461,10 +461,7 @@ class GetPostActualAccountsObjectsView(APIView):
                         all_matches = AccountToObject.objects.filter(account=account, status='active')
                         if all_matches:
                             for record in all_matches:
-                                account_dict['objects'].append({
-                                    'match_id': str(record.id),
-                                    'name': record.object.get_info().name
-                                })
+                                account_dict['objects'].append(record.object.get_info().name)
                             res.append(account_dict)
                     return Response(serializers.AccountToObjectSerializer(res, many=True).data)
                 return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_MATCHES_FOUND_ERROR) # NOTE активные закрепления не найдены
@@ -549,10 +546,7 @@ class GetArchiveAccountsObjectsView(APIView):
                         all_matches = AccountToObject.objects.filter(account=account, status='outdated')
                         if all_matches:
                             for record in all_matches:
-                                account_dict['objects'].append({
-                                    'match_id': str(record.id),
-                                    'name': record.object.get_info().name
-                                })
+                                account_dict['objects'].append(record.object.get_info().name)
                             res.append(account_dict)
                     return Response(serializers.AccountToObjectSerializer(res, many=True).data)
                 return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_MATCHES_FOUND_ERROR) # NOTE архивные закрепления не найдены
@@ -563,7 +557,7 @@ class GetArchiveAccountsObjectsView(APIView):
 class GetPutDeleteAccountToObjectView(APIView):
 
     @extend_schema(responses={
-        status.HTTP_200_OK: serializers.AccountMatches(many=True),
+        status.HTTP_200_OK: serializers.ObjectSerializer(many=True),
         status.HTTP_401_UNAUTHORIZED: None,
         status.HTTP_400_BAD_REQUEST: None
     })
@@ -581,12 +575,11 @@ class GetPutDeleteAccountToObjectView(APIView):
                 for record in all_records:
                     res.append(
                         {
-                            "match_id": record.id,
                             "id": record.object.id,
                             "name": record.object.get_info().name
                         }
                     )
-                return Response(serializers.AccountMatches(res, many=True).data)
+                return Response(serializers.ObjectSerializer(res, many=True).data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
 
@@ -710,10 +703,7 @@ class AccountToObjectExpandSearchView(APIView):
                             all_matches = AccountToObject.objects.filter(account=account, status=self.status)
                             if all_matches:
                                 for record in all_matches:
-                                    account_dict['objects'].append({
-                                        'match_id': str(record.id),
-                                        'name': record.object.get_info().name
-                                    })
+                                    account_dict['objects'].append(record.object.get_info().name)
                                 res.append(account_dict)
                     else:
                         return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_MATCHES_FOUND_ERROR) # NOTE закрепления не найжены
@@ -734,10 +724,7 @@ class AccountToObjectExpandSearchView(APIView):
                             all_matches = AccountToObject.objects.filter(account=account, status=self.status)
                             if all_matches:
                                 for record in all_matches:
-                                    account_res['objects'].append({
-                                        'match_id': str(record.id),
-                                        'name': record.object.get_info().name
-                                    })
+                                    account_res['objects'].append(record.object.get_info().name)
                                 res.append(account_res)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) # NOTE ошибка транзакции
@@ -750,10 +737,7 @@ class AccountToObjectExpandSearchView(APIView):
                         all_matches = AccountToObject.objects.filter(account=account, status=self.status)
                         if all_matches:
                             for record in all_matches:
-                                account_res['objects'].append({
-                                    'match_id': str(record.id),
-                                    'name': record.object.get_info().name
-                                })
+                                account_res['objects'].append(record.object.get_info().name)
                         res.append(account_res)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) # NOTE ошибка транзакции
@@ -777,10 +761,7 @@ class AccountToObjectExpandSearchView(APIView):
                         account_res = account.get_last_version().to_dict()
                         account_res['objects'] = []
                         for record in AccountToObject.objects.filter(account=account, status=self.status):
-                            account_res['objects'].append({
-                                'match_id': str(record.id),
-                                'name': record.object.get_info().name
-                            })
+                            account_res['objects'].append(record.object.get_info().name)
                         res.append(account_res)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) # NOTE ошибка транзакции
