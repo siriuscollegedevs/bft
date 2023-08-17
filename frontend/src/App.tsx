@@ -6,7 +6,7 @@ import { Main } from './pages/main'
 import { ObjectsPage } from './pages/objects'
 import { Settings } from './pages/settings'
 import { MainDirectories } from './components/main-directories'
-import { FormEditDirectories } from './components/form-edit-directories'
+import { FormEditDirectories } from './components/forms'
 import { DynamicHeader } from './components/header/dynamic'
 import { StaticHeader } from './components/header/static'
 import { BackButton } from './components/button-back'
@@ -54,6 +54,7 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/employees/archive" element={<EmployeesPage />} />
             <Route path="/accounts" element={<AccountsPage />} />
             <Route path="/accounts/archive" element={<AccountsPage />} />
+            <Route path="/admissions/:id/entries/create" element={<FormEditDirectories />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
