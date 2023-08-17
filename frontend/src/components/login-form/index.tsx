@@ -3,13 +3,18 @@ import { useState } from 'react'
 import { useLoginMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { LoginButton, PasswordTextField, SignInContainer, SignInTextField, TitleTypography } from '../../styles/login'
-import { setAccessToken, setCSRFToken, setTimeAccessToken, setUpdateProcess } from '../../__data__/states/auth'
+import {
+  setAccessToken,
+  setCSRFToken,
+  setIntervalId,
+  setTimeAccessToken,
+  setUpdateProcess
+} from '../../__data__/states/auth'
 import { useDispatch } from 'react-redux'
 import { setAccountId } from '../../__data__/states/account'
 import { getCookie } from '../../utils/cookie-parser'
 import { useRefreshToken } from '../../hooks/refresh-token'
 
-export let intervalId: string | number | NodeJS.Timeout
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
@@ -28,12 +33,13 @@ export const LoginForm = () => {
       dispatch(setTimeAccessToken(response.access_exp))
       dispatch(setCSRFToken(getCookie('csrftoken')))
 
-      intervalId = setInterval(async () => {
+      const intervalId = setInterval(async () => {
         const newToken = await refresh()
         if (newToken) {
           dispatch(setAccessToken(newToken))
         }
       }, response.access_exp / 2)
+      dispatch(setIntervalId(intervalId))
       dispatch(setUpdateProcess(true))
 
       return response ? navigate('/navigation') : null

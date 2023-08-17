@@ -12,7 +12,7 @@ export const accountPersistConfig = {
 export const authPersistConfig = {
   key: 'auth',
   storage,
-  blacklist: ['updateProcess']
+  blacklist: ['updateProcess', 'intervalId']
 }
 
 export const filterPersistConfig = {
