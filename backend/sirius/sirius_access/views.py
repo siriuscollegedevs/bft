@@ -745,17 +745,17 @@ class AccountToObjectExpandSearchView(APIView):
             try:
                 with transaction.atomic():
                     res_accounts = set()
-                    for iter, object_ins in enumerate(objects):
+                    for index, object_ins in enumerate(objects):
                             accounts = set()
                             db_records = AccountToObject.objects.filter(object=object_ins, status=self.status)
                             if not db_records:
                                 return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_MATCHES_FOUND_ERROR) # NOTE закрепления по переданным объектам не найдены
                             for db_record in db_records:
-                                if iter == 0:
+                                if index == 0:
                                     res_accounts.add(db_record.account)
                                 else:
                                     accounts.add(db_record.account)
-                            if iter != 0:
+                            if index != 0:
                                 res_accounts.intersection_update(accounts)
                     for account in res_accounts:
                         account_res = account.get_last_version().to_dict()
