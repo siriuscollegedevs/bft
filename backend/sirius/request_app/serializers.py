@@ -20,13 +20,13 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
     modified_by = serializers.CharField(read_only=True)
     type = serializers.CharField()
     first_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
-    surname_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
+    surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
     last_name = serializers.CharField(max_length=NAMES_LEN)
     car_number = serializers.CharField(required=False, allow_blank=True)
     car_brand = serializers.CharField(required=False, allow_blank=True)
     car_model = serializers.CharField(required=False, allow_blank=True)
-    from_date = serializers.DateTimeField()
-    to_date = serializers.DateTimeField(required=False)
+    from_date = serializers.DateField()
+    to_date = serializers.DateField()
     note = serializers.CharField(required=False, allow_blank=True)
 
     def __init__(self, *args, **kwargs):
@@ -75,5 +75,21 @@ class ChangeStatusSerializer(serializers.Serializer):
             if data.get('reason', ''):
                 return data
             else:
-                raise serializers.ValidationError("status 'cancelad' with no reason")
+                raise serializers.ValidationError("status 'canceled' with no reason")
         return data
+
+
+class RequestSearchSerializer(serializers.Serializer):
+    request_id = serializers.UUIDField()
+    id = serializers.UUIDField()
+    type = serializers.CharField()
+    objects = serializers.ListField(child=serializers.CharField())
+    first_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
+    last_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
+    surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
+    car_number = serializers.CharField(required=False, allow_blank=True)
+    car_brand = serializers.CharField(required=False, allow_blank=True)
+    car_model = serializers.CharField(required=False, allow_blank=True)
+    from_date = serializers.DateField()
+    to_date = serializers.DateField()
+    note = serializers.CharField(required=False, allow_blank=True)
