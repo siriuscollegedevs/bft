@@ -7,6 +7,7 @@ import {
   setAccessToken,
   setCSRFToken,
   setIntervalId,
+  setLoginData,
   setTimeAccessToken,
   setUpdateProcess
 } from '../../__data__/states/auth'
@@ -28,10 +29,14 @@ export const LoginForm = () => {
     try {
       setShowLoader(true)
       const response = await loginMutation({ username: login, password: password }).unwrap()
-      dispatch(setAccessToken(response.access))
       dispatch(setAccountId({ id: response.account_id }))
-      dispatch(setTimeAccessToken(response.access_exp))
-      dispatch(setCSRFToken(getCookie('csrftoken')))
+      dispatch(
+        setLoginData({
+          access: response.access,
+          accessTokenUpdateInterval: response.access_exp,
+          csrf: getCookie('csrftoken')
+        })
+      )
 
       const intervalId = setInterval(async () => {
         const newToken = await refresh()

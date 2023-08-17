@@ -21,6 +21,9 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
+    setLoginData: (state, action: PayloadAction<Partial<AuthState>>) => {
+      return { ...state, ...action.payload }
+    },
     setAccessToken: (state, action: PayloadAction<string>) => {
       return { ...state, access: action.payload }
     },
@@ -42,7 +45,14 @@ const authSlice = createSlice({
   }
 })
 
-export const { setAccessToken, setTimeAccessToken, setCSRFToken, setUpdateProcess, setIntervalId, clearAuth } =
-  authSlice.actions
+export const {
+  setLoginData,
+  setAccessToken,
+  setTimeAccessToken,
+  setCSRFToken,
+  setUpdateProcess,
+  setIntervalId,
+  clearAuth
+} = authSlice.actions
 export const authReducer = authSlice.reducer
 export const selectAuth = (state: RootState) => state.auth
