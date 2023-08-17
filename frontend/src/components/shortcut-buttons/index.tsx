@@ -1,10 +1,18 @@
 import { ButtonGroup, IconButton, Tooltip } from '@mui/material'
-
 import { ReactComponent as EditIcon } from '../../assets/edit.svg'
 import { ReactComponent as HistoryIcon } from '../../assets/history.svg'
 import { ReactComponent as TrashIcon } from '../../assets/trash.svg'
 import { ReactComponent as CancelIcon } from '../../assets/cancel.svg'
 import { ReactComponent as ToRepayIcon } from '../../assets/toRepay.svg'
+import { useLocation, useNavigate } from 'react-router-dom'
+import {useDeleteAccountByIdMutation, useGetAllAccountsQuery} from '../../__data__/service/account.api'
+import {useDeleteObjectByIdMutation, useGetAllObjectsQuery} from '../../__data__/service/object.api'
+import {
+  useDeleteAccountToObjectByIdMutation,
+  useGetAllAccountToObjectQuery
+} from '../../__data__/service/object-account'
+import { useState } from 'react'
+import { DeleteDialog } from '../delete-dialog'
 
 type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
 
@@ -44,31 +52,93 @@ const iconMapping: IconMapping = {
   }
 }
 
-export const ShortcutButtons = ({ buttonNames }: ButtonNames) => {
+export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string }) => {
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const [deleteAccountMutation, { isError: deleteError, isSuccess: deleteSuccess }] = useDeleteAccountByIdMutation()
+  const [deleteObjectMutation, { isError: deleteObjectError, isSuccess: deleteObjectSuccess }] =
+    useDeleteObjectByIdMutation()
+  const [deleteEmployeesMutation, { isError: deleteEmployeesError, isSuccess: deleteEmployeesSuccess }] =
+    useDeleteAccountToObjectByIdMutation()
+  const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false)
+
+  const { refetch: refetchAccountData } = useGetAllAccountsQuery()
+  const { refetch: refetchObjectsData } = useGetAllObjectsQuery()
+  const { refetch: refetchEmployeesData } = useGetAllAccountToObjectQuery()
+
+  const handleClickEdit = () => {
+    navigate(`${location.pathname}/${id}`)
+  }
+
+  const openDeleteDialog = () => {
+    setDeleteDialogOpen(true)
+  }
+
+  const closeDeleteDialog = () => {
+      setDeleteDialogOpen(false)
+  }
+
+  const handleDelete = () => {
+    openDeleteDialog()
+  }
+
+  const handleDeleteConfirmed = async () => {
+    let deleteMutation
+    let refetchData
+    if (location.pathname.includes('/objects')) {
+      deleteMutation = deleteObjectMutation
+      refetchData = refetchObjectsData
+    } else if (location.pathname.includes('/accounts')) {
+      deleteMutation = deleteAccountMutation
+      refetchData = refetchAccountData
+    } else if (location.pathname.includes('/employees')) {
+      deleteMutation = deleteEmployeesMutation
+      refetchData = refetchEmployeesData
+    } else {
+      console.error('Unknown object type')
+      return
+    }
+
+    await deleteMutation(id)
+    closeDeleteDialog()
+    await refetchData();
+  }
+
   if (buttonNames.length === 0 || buttonNames.length > 3) {
     return <h6>Error</h6>
   }
 
   return (
-    <ButtonGroup>
-      {buttonNames.map(title => (
-        <Tooltip title={iconMapping[title].nameRu} placement="top" key={title}>
-          <IconButton
-            disableRipple={true}
-            sx={{
-              padding: 0,
-              marginLeft: '5px',
-              ':first-child': {
-                marginLeft: '0px'
-              },
-              height: '35px',
-              width: '35px'
-            }}
-          >
-            {iconMapping[title].node}
-          </IconButton>
-        </Tooltip>
-      ))}
-    </ButtonGroup>
+    <>
+      <ButtonGroup>
+        {buttonNames.map(title => (
+          <Tooltip title={iconMapping[title].nameRu} placement="top" key={title}>
+            <IconButton
+              disableRipple={true}
+              sx={{
+                padding: 0,
+                marginLeft: '5px',
+                ':first-child': {
+                  marginLeft: '0px'
+                },
+                height: '35px',
+                width: '35px'
+              }}
+              onClick={title === 'edit' ? handleClickEdit : title === 'trash' ? handleDelete : undefined}
+            >
+              {iconMapping[title].node}
+            </IconButton>
+          </Tooltip>
+        ))}
+      </ButtonGroup>
+      <DeleteDialog
+        open={isDeleteDialogOpen}
+        onClose={() => {
+          closeDeleteDialog()
+        }}
+        onConfirm={handleDeleteConfirmed}
+      />
+    </>
   )
 }

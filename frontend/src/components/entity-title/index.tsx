@@ -7,6 +7,7 @@ import { SearchField } from '../search-field'
 import { useNavigate, useLocation } from 'react-router-dom'
 
 type IsSwitchProps = {
+  isSearchField: boolean
   isSwitch: boolean
 }
 
@@ -20,7 +21,7 @@ const urlTitle: UrlTitle = [
   ['/admissions', 'Заявки']
 ]
 
-export const EntityTitle: React.FC<IsSwitchProps> = ({ isSwitch }) => {
+export const EntityTitle: React.FC<IsSwitchProps> = ({ isSearchField, isSwitch }) => {
   const [checked, setChecked] = React.useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -34,6 +35,12 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSwitch }) => {
 
   const getTitleFromUrl = (url: string): string => {
     const hasHistory = url.includes('/history')
+
+    if (url.includes('/admissions/view/')) {
+      const parts = url.split('/')
+      const admissionId = parts[parts.length - 1]
+      return '#' + admissionId
+    }
 
     for (const [subUrl, title] of urlTitle) {
       if (url.includes(subUrl)) {
@@ -69,7 +76,7 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSwitch }) => {
             justifyContent: 'space-between',
             width: '97%',
             height: '140px',
-            borderBottom: '1px solid #CBCBCB'
+            borderBottom: currentUrl.startsWith('/admissions/view/') ? 'none' : '1px solid #CBCBCB'
           }}
         >
           <Box sx={{ width: '20%' }} />
@@ -81,12 +88,23 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSwitch }) => {
               width: '20%'
             }}
           >
-            <SearchField />
-            <FormControlLabel
-              sx={{ display: isSwitch ? 'inline-flex' : 'none' }}
-              control={<Switch checked={checked} onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />}
-              label="архив записей"
-            />
+            {isSearchField ? (
+              <>
+                <SearchField />
+              </>
+            ) : (
+              <></>
+            )}
+            {isSwitch ? (
+              <FormControlLabel
+                control={
+                  <Switch checked={checked} onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />
+                }
+                label="архив записей"
+              />
+            ) : (
+              <></>
+            )}
           </Box>
         </Box>
       </Container>

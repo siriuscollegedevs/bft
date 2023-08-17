@@ -5,56 +5,96 @@ import TableContainer from '@mui/material/TableContainer'
 import TableRow from '@mui/material/TableRow'
 import { ButtonNames, ShortcutButtons } from '../../shortcut-buttons'
 import { Box } from '@mui/material'
+import { Size } from '..'
+import { Objects, Admissions } from '../../../types/api'
+import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
-function createData(name: string, number: number) {
-  return { name, number }
-}
-
-const rows = [createData('abc', 152311313129), createData('abcd', 252311313129), createData('abcde', 452311313129)]
-
-export type CurrentURL = '/objects' | '/admissions'
+export type CurrentURL = '/objects' | '/admissions' | '/objects/archive'
 
 type URL = {
   currentURL: CurrentURL
 }
 
-export const Basic = ({ currentURL, buttonNames }: URL & ButtonNames) => {
+export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames & { size: Size } & any) => {
   const objectsURL = currentURL === '/objects'
+  const objectsArchiveURL = currentURL === '/objects/archive'
+  const currentAccountObjects = useSelector(
+    (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
+  )
+  const navigate = useNavigate()
+
+  const dateParser = (row: Admissions) => {
+    const date = new Date(row.timestamp)
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return <>{`${day}.${month}.${year}`}</>
+  }
+
+  const getObjectNamesFromIds = (objectIds: string[]): (string | undefined)[] => {
+    return objectIds
+      .map(id => currentAccountObjects.find(obj => obj.id === id))
+      .filter(obj => obj)
+      .map(obj => obj?.name)
+  }
 
   return (
-    <TableContainer sx={{ width: '1008px', height: '490px' }}>
-      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+    <TableContainer sx={{ width: size.width, height: size.height }}>
+      <Table aria-label="simple table">
         <TableBody>
-          {rows.map(row => (
-            <TableRow key={row.name}>
-              {objectsURL ? (
-                <>
-                  <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Box display="flex" alignItems="center" justifyContent="flex-end">
-                      <ShortcutButtons buttonNames={buttonNames} />
-                    </Box>
-                  </TableCell>
-                </>
-              ) : (
-                <>
-                  <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="left" padding={'checkbox'}>
-                    {'#' + row.number}
-                  </TableCell>
-                  <TableCell align="right">
-                    <Box display="flex" alignItems="center" justifyContent="flex-end">
-                      <ShortcutButtons buttonNames={buttonNames} />
-                    </Box>
-                  </TableCell>
-                </>
-              )}
-            </TableRow>
-          ))}
+          {data && (
+            <>
+              {data?.map((row: Objects | Admissions) => (
+                <TableRow key={'name' in row ? row.name : row.code}>
+                  {objectsURL || objectsArchiveURL ? (
+                    <>
+                      <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
+                        {'name' in row ? row.name : ''}
+                      </TableCell>
+                      <TableCell align="right">
+                        <Box display="flex" alignItems="center" justifyContent="flex-end">
+                          <ShortcutButtons buttonNames={buttonNames} id={row.id} />
+                        </Box>
+                      </TableCell>
+                    </>
+                  ) : (
+                    <>
+                      <TableCell
+                        onClick={() => navigate(`/admissions/view/${row.id}`)}
+                        style={{ cursor: 'pointer' }}
+                        align="left"
+                        sx={{ height: '47px', width: '15%' }}
+                      >
+                        {'timestamp' in row ? dateParser(row) : ''}
+                      </TableCell>
+                      <TableCell
+                        onClick={() => navigate(`/admissions/view/${row.id}`)}
+                        style={{ cursor: 'pointer' }}
+                        align="left"
+                        sx={{ height: '47px', width: '15%' }}
+                      >
+                        {'code' in row ? `#${row.code}` : ''}
+                      </TableCell>
+                      <TableCell
+                        onClick={() => navigate(`/admissions/view/${row.id}`)}
+                        style={{ cursor: 'pointer' }}
+                        align="left"
+                        sx={{ height: '47px', width: '100%' }}
+                      >
+                        {'object_ids' in row ? getObjectNamesFromIds(row.object_ids).join(', ') : ''}
+                      </TableCell>
+                      <TableCell align="right">
+                        <Box display="flex" alignItems="center" justifyContent="flex-end">
+                          <ShortcutButtons buttonNames={buttonNames} id={row.id} />
+                        </Box>
+                      </TableCell>
+                    </>
+                  )}
+                </TableRow>
+              ))}
+            </>
+          )}
         </TableBody>
       </Table>
     </TableContainer>
