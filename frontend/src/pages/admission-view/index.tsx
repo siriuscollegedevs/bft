@@ -7,11 +7,12 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useGetRecordOfAdmissionsQuery, useUpdateAdmissionStatusMutation } from '../../__data__/service/admission.api'
 import { CanceledDialog } from '../../components/canceled-dialog'
 import { useMemo } from 'react'
-import { getComparator, stableSort } from '../../utils/sorting'
+import { sortData } from '../../utils/sorting'
 import { useSelector } from 'react-redux'
 import { SearchState } from '../../__data__/states/search'
 import { dateParser } from '../../utils/date-parser'
 import { RECORD_TYPE } from '../../__data__/consts/record'
+import { AdmissionsHistory } from '../../types/api'
 
 export const AdmissionViewPage = () => {
   const { id } = useParams<string>()
@@ -22,29 +23,26 @@ export const AdmissionViewPage = () => {
   const search = useSelector((state: { search: SearchState }) => state.search)
   const splitSearchQuery = search.searchFilter.split(' ')
 
-  const nameComparator = getComparator('asc', 'last_name')
-  const carComparator = getComparator('asc', 'car_brand')
-
-  const sortedData = useMemo(() => {
+  const sortedData: AdmissionsHistory[] = useMemo(() => {
     if (RecordsOfAdmissionData) {
       const people = RecordsOfAdmissionData.filter(item => item.last_name !== null)
       const cars = RecordsOfAdmissionData.filter(item => item.last_name === null)
 
-      const sortedPeople = stableSort(people, (a, b) => nameComparator(a, b))
-      const sortedCars = stableSort(cars, (a, b) => carComparator(a, b))
+      const sortedPeople = sortData(people, 'last_name')
+      const sortedCars = sortData(cars, 'car_brand')
 
       return [...sortedPeople, ...sortedCars]
     } else {
       return []
     }
-  }, [RecordsOfAdmissionData, nameComparator, carComparator])
+  }, [RecordsOfAdmissionData])
 
-  const filteredTableData = sortedData?.filter(item => {
+  const filteredTableData: AdmissionsHistory[] = sortedData?.filter(item => {
     if (item !== null) {
       return splitSearchQuery.every(
         queryPart =>
           dateParser(item.timestamp).includes(queryPart) ||
-          RECORD_TYPE[item.type].toLowerCase().startsWith(queryPart.toLowerCase()) ||
+          (RECORD_TYPE as Record<string, string>)[item.type].toLowerCase().startsWith(queryPart.toLowerCase()) ||
           item.car_number?.toLowerCase().includes(queryPart.toLowerCase()) ||
           item.car_brand?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
           item.car_model?.toLowerCase().startsWith(queryPart.toLowerCase()) ||

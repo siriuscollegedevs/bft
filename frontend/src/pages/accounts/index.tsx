@@ -9,7 +9,7 @@ import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useMemo, useState } from 'react'
-import { getComparator, stableSort } from '../../utils/sorting'
+import { sortData } from '../../utils/sorting'
 import { SearchState } from '../../__data__/states/search'
 import { Box } from '@mui/system'
 import { getButtonNames } from '../../components/shortcut-buttons/button-names'
@@ -34,8 +34,6 @@ export const AccountsPage = () => {
   const [tableData, setTableData] = useState(isArchivePage ? accountsArchiveData : accountsData)
   const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole)
 
-  const accountComparator = getComparator('asc', 'last_name')
-
   useEffect(() => {
     if (isArchivePage) {
       accountArchiveRefetch()
@@ -48,11 +46,11 @@ export const AccountsPage = () => {
 
   const sortedRows = useMemo(() => {
     if (tableData) {
-      return stableSort(tableData, accountComparator)
+      return sortData(tableData, 'last_name')
     } else {
       return []
     }
-  }, [accountComparator, tableData])
+  }, [tableData])
 
   const filteredTableData = sortedRows?.filter(item => {
     return splitSearchQuery.every(
@@ -61,7 +59,7 @@ export const AccountsPage = () => {
         item.surname.toLowerCase().startsWith(queryPart.toLowerCase()) ||
         item.last_name.toLowerCase().startsWith(queryPart.toLowerCase()) ||
         item.username.toLowerCase().includes(queryPart.toLowerCase()) ||
-        ACCOUNT_ROLES[item.role].toLowerCase().includes(queryPart.toLowerCase())
+        ACCOUNT_ROLES[item.role].toLowerCase().startsWith(queryPart.toLowerCase())
     )
   })
 

@@ -12,7 +12,7 @@ import {
 import { FiltersState } from '../../__data__/states/filters'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useMemo, useState } from 'react'
-import { getComparator, stableSort } from '../../utils/sorting'
+import { sortData } from '../../utils/sorting'
 import { getButtonNames } from '../../components/shortcut-buttons/button-names'
 import { ButtonName } from '../../components/shortcut-buttons'
 import { SearchState } from '../../__data__/states/search'
@@ -34,9 +34,9 @@ export const EmployeesPage = () => {
   const filters = useSelector((state: { filters: FiltersState }) => state.filters)
   const search = useSelector((state: { search: SearchState }) => state.search)
   const splitSearchQuery = search.searchFilter.split(' ')
+
   const [tableData, setTableData] = useState(isArchivePage ? employeesArchiveData : employeesData)
   const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole)
-  const employeesComparator = getComparator('asc', 'last_name')
 
   const dataFilters = (data: AccountToObject[]) => {
     return data
@@ -60,11 +60,11 @@ export const EmployeesPage = () => {
 
   const sortedRows = useMemo(() => {
     if (tableData) {
-      return stableSort(tableData, employeesComparator)
+      return sortData(tableData, 'last_name')
     } else {
       return []
     }
-  }, [employeesComparator, tableData])
+  }, [tableData])
 
   const filteredTableData = sortedRows?.filter(item => {
     return splitSearchQuery.every(

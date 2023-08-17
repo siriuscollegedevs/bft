@@ -8,7 +8,7 @@ import { useLocation } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { Account } from '../../types/api'
 import { useSelector } from 'react-redux'
-import { getComparator, stableSort } from '../../utils/sorting'
+import { sortData } from '../../utils/sorting'
 import { SearchState } from '../../__data__/states/search'
 import { Box } from '@mui/system'
 import { getButtonNames } from '../../components/shortcut-buttons/button-names'
@@ -31,10 +31,9 @@ export const ObjectsPage = () => {
     isLoading: objectsArchiveLoading,
     refetch: refetchObjectsArchiveData
   } = useGetAllArchiveObjectsQuery()
+
   const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole)
   const [tableData, setTableData] = useState(isArchivePage ? objectsArchiveData : objectsData)
-
-  const objectComparator = getComparator('asc', 'name')
 
   useEffect(() => {
     if (isArchivePage) {
@@ -48,11 +47,11 @@ export const ObjectsPage = () => {
 
   const sortedRows = useMemo(() => {
     if (tableData) {
-      return stableSort(tableData, objectComparator)
+      return sortData(tableData, 'name')
     } else {
       return []
     }
-  }, [objectComparator, tableData])
+  }, [tableData])
 
   const filteredTableData = sortedRows?.filter(item =>
     item.name.toLowerCase().includes(search.searchFilter.toLowerCase())
@@ -85,7 +84,7 @@ export const ObjectsPage = () => {
             ) : (
               <></>
             )}
-            <Sidebar isSearch={true} isObjects={false} isButton={true} />
+            <Sidebar isSearch={false} isObjects={false} isButton={true} />
           </>
         )}
       </SideBarContainer>
