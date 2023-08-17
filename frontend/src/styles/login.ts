@@ -26,7 +26,7 @@ export const SignInTextField = styled(TextField)`
 
 export const PasswordTextField = styled(TextField)`
   width: 485px;
-  margin-bottom: 67px;
+  margin-bottom: 29px;
 `
 
 export const LoginButton = styled(Button)`
