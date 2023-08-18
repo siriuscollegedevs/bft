@@ -23,11 +23,14 @@ type Errors = {
 export const FormAccount = () => {
   const { id } = useParams<string>()
   const navigate = useNavigate()
-  const [accountsMutation, { data: accountData, isLoading: accountLoading, isError: accountError, isSuccess: accountSuccess }] =
-    useCreateAccountMutation()
+  const [
+    accountsMutation,
+    { data: accountData, isLoading: accountLoading, isError: accountError, isSuccess: accountSuccess }
+  ] = useCreateAccountMutation()
   const { data: accountDataById, refetch: refetchAccountDataById } = useGetAccountByIdQuery(id ?? '')
-  const [updateAccountMutation, { isLoading: updateLoading, isError: updateError, isSuccess: updateSuccess}] = useUpdateAccountByIdMutation();
-  const isEditMode = !!id;
+  const [updateAccountMutation, { isLoading: updateLoading, isError: updateError, isSuccess: updateSuccess }] =
+    useUpdateAccountByIdMutation()
+  const isEditMode = !!id
 
   const [fields, setFields] = useState<Account>({
     role: '',
@@ -49,9 +52,9 @@ export const FormAccount = () => {
 
   useEffect(() => {
     if (isEditMode && accountDataById) {
-      setFields(accountDataById);
+      setFields(accountDataById)
     }
-  }, [isEditMode, accountDataById]);
+  }, [isEditMode, accountDataById])
 
   const handleFieldChange = (field: keyof Account, value: string) => {
     setFields(prevFields => ({
@@ -73,12 +76,12 @@ export const FormAccount = () => {
     Object.entries(fields).forEach(([field, value]) => {
       if (value.trim() === '') {
         if (field === 'first_name' || field === 'surname') {
-          newErrors[field as keyof Account] = false;
+          newErrors[field as keyof Account] = false
         } else {
-          newErrors[field as keyof Account] = true;
+          newErrors[field as keyof Account] = true
         }
       }
-    });
+    })
 
     setErrors(newErrors)
 
@@ -86,9 +89,8 @@ export const FormAccount = () => {
 
     if (fields && noErrors) {
       if (isEditMode) {
-        updateAccountMutation({accountId: id,
-          accountData: fields})
-        refetchAccountDataById();
+        updateAccountMutation({ accountId: id, accountData: fields })
+        refetchAccountDataById()
       }
       accountsMutation(fields)
     }
