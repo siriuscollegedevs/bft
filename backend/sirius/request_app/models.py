@@ -2,6 +2,8 @@ from django.db import models
 from sirius.config import *
 from .config import *
 from sirius_access.models import Account, Object, UUIDMixin
+from datetime import date
+from django.core.exceptions import ValidationError
 from django.utils import timezone
 
 class Request(UUIDMixin, models.Model):
@@ -67,7 +69,7 @@ class Record(UUIDMixin, models.Model):
             'type' : record's type <str>
             'first_name' : <str>
             'last_name' : <str>
-            'object' : object name <str>
+            'surname' : <str>
             'car_number' : <str>
             'car_brand' : <str>
             'car_model': <str>
@@ -120,6 +122,21 @@ class RecordHistory(UUIDMixin, models.Model):
     to_date = models.DateField()
     note = models.TextField(null=True, blank=True)
 
+    def clean_from_date(self):
+        from_date = self.cleaned_data.get('from_date')
+        if from_date < date.today():
+            raise ValidationError('Дата начала действия заявки не может быть меньше текущей даты.')
+    
+    def clean_to_date(self):
+        to_date = self.cleaned_data.get('to_date')
+        if to_date < date.today():
+            raise ValidationError('Дата конца действия заявки не может быть меньше текущей даты.')
+    
+    def clean(self):
+        super().clean()
+        if self.to_date < self.from_date:
+            raise ValidationError('Дата начала действия заявки не может быть меньше даты окончания её действия.')
+
     def get_info(self):
         info = self.__dict__
         info['modified_by'] = self.modified_by.user.username
@@ -132,7 +149,7 @@ class RecordHistory(UUIDMixin, models.Model):
 class RequestHistory(models.Model):
     timestamp = models.DateTimeField(default=timezone.now) #auto_now_add=True
     request = models.ForeignKey(Request, on_delete=models.PROTECT)
-    code = models.IntegerField(unique=True, editable=False)
+    code = models.IntegerField(editable=False)
     action = models.CharField(max_length=ACTION_RECORD_LEN, choices=STATUS_CHOICES_RECORD)
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT)
 
