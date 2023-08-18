@@ -7,9 +7,6 @@ import { formatValue, getActionTranslation, getKeyTranslation } from '../../__da
 import { AccountHistory, AdmissionsHistory, ObjectHistory } from '../../types/api'
 import { CommonHistoryData } from '../smart-table/history-table'
 
-//TODO если данные отличаются выделять цветом
-//TODO разобраться с индексом минус 1
-
 type ModalProps = {
   open: boolean
   handleClose: () => void
@@ -18,6 +15,17 @@ type ModalProps = {
 }
 
 export const BasicModal = ({ open, handleClose, selectedRow, prewRow }: ModalProps) => {
+  const differences: { [key: string]: boolean } = {}
+  if (selectedRow && prewRow) {
+    const keys = Object.keys(selectedRow) as (keyof CommonHistoryData)[]
+
+    keys.forEach(key => {
+      const selectedValue = selectedRow[key]
+      const prewValue = prewRow[key]
+      differences[key] = selectedValue !== prewValue
+    })
+  }
+
   const desiredFields: { [key: string]: string[] } = {
     '/accounts/': ['last_name', 'first_name', 'surname', 'username', 'role'],
     '/objects/': ['name'],
@@ -41,7 +49,6 @@ export const BasicModal = ({ open, handleClose, selectedRow, prewRow }: ModalPro
   }
 
   const fieldsToDisplay = matchingPaths.length > 0 ? desiredFields[matchingPaths[0]] : []
-  const isDifferent = false
 
   return (
     <Modal
@@ -72,15 +79,17 @@ export const BasicModal = ({ open, handleClose, selectedRow, prewRow }: ModalPro
                       (prewRow as AccountHistory)[key as keyof AccountHistory] ||
                       (prewRow as ObjectHistory)[key as keyof ObjectHistory] ||
                       (prewRow as AdmissionsHistory)[key as keyof AdmissionsHistory]
+
+                    const shouldHighlight = differences[key]
                     return (
                       <React.Fragment key={key}>
                         {prewRow.action === 'canceled' && key === 'note' && (
-                          <StyledListEntries isDifferent={isDifferent}>
+                          <StyledListEntries isDifferent={shouldHighlight}>
                             {getKeyTranslation(key)}: {formatValue(prewValue, key)}
                           </StyledListEntries>
                         )}
-                        {prewRow.action === 'modified' && (
-                          <StyledListEntries isDifferent={isDifferent}>
+                        {(prewRow.action === 'modified' || prewRow.action === 'created') && (
+                          <StyledListEntries isDifferent={shouldHighlight}>
                             {getKeyTranslation(key)}: {formatValue(prewValue, key)}
                           </StyledListEntries>
                         )}
@@ -102,15 +111,17 @@ export const BasicModal = ({ open, handleClose, selectedRow, prewRow }: ModalPro
                       (selectedRow as AccountHistory)[key as keyof AccountHistory] ||
                       (selectedRow as ObjectHistory)[key as keyof ObjectHistory] ||
                       (selectedRow as AdmissionsHistory)[key as keyof AdmissionsHistory]
+
+                    const shouldHighlight = differences[key]
                     return (
                       <React.Fragment key={key}>
                         {selectedRow.action === 'canceled' && key === 'note' && (
-                          <StyledListEntries isDifferent={isDifferent}>
+                          <StyledListEntries isDifferent={shouldHighlight}>
                             {getKeyTranslation(key)}: {formatValue(value, key)}
                           </StyledListEntries>
                         )}
                         {selectedRow.action === 'modified' && (
-                          <StyledListEntries isDifferent={isDifferent}>
+                          <StyledListEntries isDifferent={shouldHighlight}>
                             {getKeyTranslation(key)}: {formatValue(value, key)}
                           </StyledListEntries>
                         )}

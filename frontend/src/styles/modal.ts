@@ -5,7 +5,7 @@ export const ModalContainer = styled(Box)`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 50%;
+  width: 45%;
   background-color: #dbdde5;
   border-radius: 30px;
   padding: 46px 32px;
@@ -18,7 +18,7 @@ export const CardsContainer = styled(Box)`
   display: flex;
   flex-direction: row;
   gap: 10px;
-  justify-content: space-around;
+  justify-content: space-evenly;
 `
 
 export const Cards = styled(Box)`
@@ -26,16 +26,17 @@ export const Cards = styled(Box)`
   flex-direction: column;
   gap: 20px;
   width: 45%;
+  padding-bottom: 20px;
 `
 
 export const InfoCards = styled(Box)`
   background-color: white;
   border-radius: 25px;
-  padding: 20px;
+  padding: 25px 35px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 13px;
+  gap: 15px;
 `
 
 export const ListEntries = styled(Box)`
@@ -45,6 +46,7 @@ export const ListEntries = styled(Box)`
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+  padding: 3px;
 `
 
 export const StyledListEntries = styled(ListEntries)<{ isDifferent: boolean }>`

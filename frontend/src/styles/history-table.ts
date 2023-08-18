@@ -11,11 +11,11 @@ export const getRowColor = (action: string): string => {
   } else if (action === 'canceled') {
     return '#df00001f'
   } else if (action === 'closed') {
-    return 'rgba(128,77,0,0.16)'
+    return 'rgba(255, 155, 3, 0.19)'
   } else if (action === 'created') {
     return '#00800029'
   } else if (action === 'deleted') {
-    return 'rgba(255,1,1,0.21)'
+    return 'rgba(255,1,1,0.15)'
   }
   return 'inherit'
 }

@@ -1,4 +1,3 @@
-import * as React from 'react'
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -22,7 +21,7 @@ export const HistoryTable = ({ size, data }: { size: Size } & any) => {
 
   const handleOpenModal = (rowIndex: number) => {
     const selectedRow = data[rowIndex]
-    const previousRow = data[rowIndex - 1]
+    const previousRow = data[rowIndex + 1]
     setSelectedRow(selectedRow)
     setPreviousRow(previousRow)
   }
