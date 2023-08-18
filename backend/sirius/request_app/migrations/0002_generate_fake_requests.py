@@ -108,6 +108,8 @@ class Migration(migrations.Migration):
                             timestamp=timestamp,
                             **car_history
                             )
+                            car_record.status = 'outdated'
+                            car_record.save()
                         elif not RequestHistory.objects.filter(action='canceled').exists() and index == len(CAR_RECORDS_HISTORY) - 1:
                             RecordHistory.objects.create(
                             action='canceled',
@@ -116,6 +118,8 @@ class Migration(migrations.Migration):
                             timestamp=timestamp,
                             **car_history
                             )
+                            car_record.status = 'outdated'
+                            car_record.save()
                         elif not RequestHistory.objects.filter(action='outdated').exists() and index == len(CAR_RECORDS_HISTORY) - 1:
                             RecordHistory.objects.create(
                             action='outdated',
@@ -124,6 +128,8 @@ class Migration(migrations.Migration):
                             timestamp=timestamp,
                             **car_history
                             )
+                            car_record.status = 'outdated'
+                            car_record.save()
                         elif not RequestHistory.objects.filter(action='deleted').exists() and index == len(CAR_RECORDS_HISTORY) - 1:
                             RecordHistory.objects.create(
                             action='deleted',
@@ -132,6 +138,8 @@ class Migration(migrations.Migration):
                             timestamp=timestamp,
                             **car_history
                             )
+                            car_record.status = 'outdated'
+                            car_record.save()
                         last_modified_time = max(last_modified_time, timestamp)
                     exisiting_cars.append(car_record.get_last_version().car_number)
 
@@ -162,6 +170,8 @@ class Migration(migrations.Migration):
                             timestamp=timestamp,
                             **human_history
                             )
+                            human_record.status = 'outdated'
+                            human_record.save()
                         elif not RequestHistory.objects.filter(action='canceled').exists() and index == len(HUMAN_RECORDS_HISTORY) - 1:
                             RecordHistory.objects.create(
                             action='canceled',
@@ -170,6 +180,8 @@ class Migration(migrations.Migration):
                             timestamp=timestamp,
                             **human_history
                             )
+                            human_record.status = 'outdated'
+                            human_record.save()
                         elif not RequestHistory.objects.filter(action='outdated').exists() and index == len(HUMAN_RECORDS_HISTORY) - 1:
                             RecordHistory.objects.create(
                             action='outdated',
@@ -178,6 +190,8 @@ class Migration(migrations.Migration):
                             timestamp=timestamp,
                             **human_history
                             )
+                            human_record.status = 'outdated'
+                            human_record.save()
                         elif not RequestHistory.objects.filter(action='deleted').exists() and index == len(HUMAN_RECORDS_HISTORY) - 1:
                             RecordHistory.objects.create(
                             action='deleted',
@@ -186,6 +200,8 @@ class Migration(migrations.Migration):
                             timestamp=timestamp,
                             **human_history
                             )
+                            human_record.status = 'outdated'
+                            human_record.save()
                         last_modified_time = max(last_modified_time, timestamp)
                     created_human_record = human_record.get_info()
                     existing_humen.append(
