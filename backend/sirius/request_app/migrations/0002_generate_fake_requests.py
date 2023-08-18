@@ -194,6 +194,7 @@ class Migration(migrations.Migration):
                             created_human_record['last_name'],
                             created_human_record['surname']
                         )
+                    )
                 if not RequestHistory.objects.filter(action='closed').exists():
                     request.status = 'outdated'
                     request.save()
