@@ -98,7 +98,7 @@ export const DynamicHeader = () => {
                     : 'Error'
                 }`}</CustomTypography>
                 <Box sx={{ flexGrow: 1 }} />
-                {currentAccountData?.role === ACCOUNT_ROLES.specialist.en && (
+                {currentAccountData?.role === ACCOUNT_ROLES.manager.en && (
                   <>
                     <CustomButton
                       isActive={activeButton === 'directories'}
