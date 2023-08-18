@@ -14,8 +14,14 @@ import { EmployeesPage } from './pages/employees'
 import { AccountsPage } from './pages/accounts'
 import { AdmissionsPage } from './pages/admissions'
 import { AdmissionViewPage } from './pages/admission-view'
+import { useRefreshabilityCheck } from './hooks/refreshability-check'
+import { useEffect } from 'react'
+import { useSelector } from 'react-redux'
+import { AuthState } from './__data__/states/auth'
 
 export const App: React.FC = (): JSX.Element => {
+  const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
+  const refreshabilityCheck = useRefreshabilityCheck()
   function Header() {
     const location = useLocation()
     const isLoginRoute = location.pathname === '/'
@@ -29,6 +35,13 @@ export const App: React.FC = (): JSX.Element => {
       </>
     )
   }
+  useEffect(() => {
+    refreshabilityCheck()
+
+    return () => {
+      clearInterval(intervalId)
+    }
+  })
 
   return (
     <>

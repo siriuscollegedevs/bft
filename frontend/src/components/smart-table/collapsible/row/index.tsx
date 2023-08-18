@@ -12,6 +12,7 @@ import { Account, Accounts, AccountToObject, AdmissionsHistory, ObjectInArray } 
 import { ACCOUNT_ROLES } from '../../../../__data__/consts/account-roles'
 import { CustomCollapseCell } from '../../../../styles/table'
 import { useSelector } from 'react-redux'
+import { dateParser } from '../../../../utils/date-parser'
 
 type CommonData = AdmissionsHistory | Accounts | AccountToObject | ObjectInArray
 
@@ -33,14 +34,6 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
 
   const itsAdmissionsView = ({ currentURL }: { currentURL: myURL }): boolean =>
     currentURL.startsWith('/admissions/view')
-
-  const dateParser = (str: string) => {
-    const date = new Date(str)
-    const day = String(date.getDate()).padStart(2, '0')
-    const month = String(date.getMonth() + 1).padStart(2, '0')
-    const year = date.getFullYear()
-    return `${day}.${month}.${year}`
-  }
 
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 

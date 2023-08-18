@@ -88,18 +88,10 @@ class AccountObjectSerializer(serializers.Serializer):
     object_ids = serializers.ListField(child=serializers.UUIDField(), allow_empty=False)
 
 
-class ObjectsInMatchSerializer(serializers.Serializer):
-    match_id = serializers.UUIDField()
-    name = serializers.CharField(max_length=DEFAULT_LEN)
-
-
 class AccountToObjectSerializer(UUIDMixin, serializers.Serializer):
     role = serializers.CharField(max_length=ACCOUNT_TYPE_LEN)
     first_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
     surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
     last_name = serializers.CharField(max_length=NAMES_LEN)
     username = serializers.CharField(max_length=NAMES_LEN)
-    objects = ObjectsInMatchSerializer(many=True)
-
-class AccountMatches(ObjectSerializer, serializers.Serializer):
-    match_id = serializers.UUIDField()
+    objects = serializers.ListField(child=serializers.CharField(max_length=DEFAULT_LEN))

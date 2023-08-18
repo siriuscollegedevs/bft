@@ -14,7 +14,7 @@ import {
 import { useState } from 'react'
 import { DeleteDialog } from '../delete-dialog'
 
-type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
+export type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
 
 export type ButtonNames = {
   buttonNames: ButtonName[]
@@ -56,11 +56,9 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
   const navigate = useNavigate()
   const location = useLocation()
 
-  const [deleteAccountMutation, { isError: deleteError, isSuccess: deleteSuccess }] = useDeleteAccountByIdMutation()
-  const [deleteObjectMutation, { isError: deleteObjectError, isSuccess: deleteObjectSuccess }] =
-    useDeleteObjectByIdMutation()
-  const [deleteEmployeesMutation, { isError: deleteEmployeesError, isSuccess: deleteEmployeesSuccess }] =
-    useDeleteAccountToObjectByIdMutation()
+  const [deleteAccountMutation] = useDeleteAccountByIdMutation()
+  const [deleteObjectMutation] = useDeleteObjectByIdMutation()
+  const [deleteEmployeesMutation] = useDeleteAccountToObjectByIdMutation()
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
   const { refetch: refetchAccountData } = useGetAllAccountsQuery()
