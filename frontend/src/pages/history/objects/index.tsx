@@ -1,38 +1,38 @@
 import { EntityTitle } from '../../../components/entity-title'
 import { HistoryTable } from '../../../components/smart-table/history-table'
 import { SideBarContainer } from '../../../styles/sidebar'
-import { useGetAccountHistoryByIdQuery } from '../../../__data__/service/account.api'
 import { useParams } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useMemo } from 'react'
 import { compareDates } from '../../../utils/sorting'
+import { useGetObjectHistoryByIdQuery } from '../../../__data__/service/object.api'
 
-export const AccountsHistory = () => {
+export const ObjectsHistory = () => {
   const { id } = useParams()
   const {
-    data: accountsHistoryData,
-    error: accountsHistoryError,
-    isLoading: accountsHistoryLoading,
-    refetch: accountHistoryRefetch
-  } = useGetAccountHistoryByIdQuery(id ?? '')
+    data: objectsHistoryData,
+    error: objectsHistoryError,
+    isLoading: objectsHistoryLoading,
+    refetch: objectsHistoryRefetch
+  } = useGetObjectHistoryByIdQuery(id ?? '')
 
   useEffect(() => {
-    accountHistoryRefetch()
-  }, [accountsHistoryData])
+    objectsHistoryRefetch()
+  }, [objectsHistoryData])
 
   const sortedRows = useMemo(() => {
-    if (accountsHistoryData) {
-      return [...accountsHistoryData].sort(compareDates)
+    if (objectsHistoryData) {
+      return [...objectsHistoryData].sort(compareDates)
     } else {
       return []
     }
-  }, [accountsHistoryData])
+  }, [objectsHistoryData])
 
   return (
     <>
       <EntityTitle isSwitch={false} isSearchField={false} />
       <SideBarContainer>
-        {accountsHistoryLoading || accountsHistoryError ? (
+        {objectsHistoryLoading || objectsHistoryError ? (
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>{sortedRows ? <HistoryTable size={{ width: '100%', height: '100%' }} data={sortedRows} /> : <></>}</>

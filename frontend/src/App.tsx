@@ -15,6 +15,8 @@ import { AccountsPage } from './pages/accounts'
 import { AdmissionsPage } from './pages/admissions'
 import { AdmissionViewPage } from './pages/admission-view'
 import { AccountsHistory } from './pages/history/accounts'
+import { ObjectsHistory } from './pages/history/objects'
+import { AdmissionsHistory } from './pages/history/admissions'
 
 export const App: React.FC = (): JSX.Element => {
   function Header() {
@@ -57,9 +59,8 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/accounts/archive" element={<AccountsPage />} />
             <Route path="/admissions/:id/entries/create" element={<FormEditDirectories />} />
             <Route path="/accounts/history/:id" element={<AccountsHistory />} />
-            {/*<Route path="/objects/history/:id" element={<Accounts />} />*/}
-            {/*<Route path="/employees/history/:id" element={<Accounts />} />*/}
-            {/*<Route path="/admissions/history/:id" element={<Accounts />} />*/}
+            <Route path="/objects/history/:id" element={<ObjectsHistory />} />
+            <Route path="/admissions/history/:id" element={<AdmissionsHistory />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

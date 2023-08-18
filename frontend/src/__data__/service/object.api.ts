@@ -40,7 +40,7 @@ export const apiObject = createApi({
       })
     }),
     getObjectHistoryById: builder.query<ObjectHistory[], string>({
-      query: objectId => `/account/history/${objectId}`
+      query: objectId => `/object/history/${objectId}`
     })
   })
 })

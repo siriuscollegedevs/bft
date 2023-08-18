@@ -44,7 +44,7 @@ export const apiAdmissions = createApi({
       })
     }),
     getAdmissionsHistoryById: builder.query<AdmissionsHistory[], string>({
-      query: admissionsId => `/request/history/${admissionsId}`
+      query: admissionsId => `/request/record/history/${admissionsId}`
     }),
     getRecordOfAdmissions: builder.query<AdmissionsHistory[], string>({
       query: admissionsId => `/request/${admissionsId}`

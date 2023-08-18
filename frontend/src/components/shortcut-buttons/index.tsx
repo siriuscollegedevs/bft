@@ -69,11 +69,14 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
     if (title === 'edit') {
       navigate(`${location.pathname}/${id}`)
     } else if (title === 'trash') {
-      handleDelete();
+      handleDelete()
     } else if (title === 'history') {
-      navigate(`${location.pathname}/history/${id}`)
+      const newPath = location.pathname.includes('/archive')
+        ? location.pathname.replace('/archive', '')
+        : location.pathname
+      navigate(`${newPath}/history/${id}`)
     }
-  };
+  }
 
   const openDeleteDialog = () => {
     setDeleteDialogOpen(true)

@@ -111,7 +111,7 @@ export type Admissions = {
 export type AdmissionsHistory = {
   id: string
   timestamp: string
-  status: string
+  action: string
   car_number: string
   car_brand: string
   car_model: string
