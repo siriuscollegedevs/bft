@@ -93,10 +93,12 @@ export const DynamicHeader = () => {
                   <LogoIcon />
                 </HeaderLogo>
                 <CustomTypography>{`Доступ.${
-                  currentAccountData?.role !== null ? ACCOUNT_ROLES[currentAccountData?.role as keyof typeof ACCOUNT_ROLES].ru : 'Error'
+                  currentAccountData?.role !== null
+                    ? ACCOUNT_ROLES[currentAccountData?.role as keyof typeof ACCOUNT_ROLES].ru
+                    : 'Error'
                 }`}</CustomTypography>
                 <Box sx={{ flexGrow: 1 }} />
-                {currentAccountData?.role === ACCOUNT_ROLES.manager.ru && (
+                {currentAccountData?.role === ACCOUNT_ROLES.specialist.en && (
                   <>
                     <CustomButton
                       isActive={activeButton === 'directories'}
