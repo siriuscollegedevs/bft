@@ -103,7 +103,7 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
     await refetchData()
   }
 
-  if (buttonNames.length === 0 || buttonNames.length > 3) {
+  if (buttonNames.length > 3) {
     return <h6>Error</h6>
   }
 
