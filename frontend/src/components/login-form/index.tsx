@@ -1,50 +1,58 @@
 import { CircularProgress, FormControl } from '@mui/material'
 import { useState } from 'react'
-import { useLoginMutation, useRefreshMutation } from '../../__data__/service/auth.api'
+import { useLoginMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { LoginButton, PasswordTextField, SignInContainer, SignInTextField, TitleTypography } from '../../styles/login'
-import { setAccessToken, setCSRFToken, setTimeAccessToken } from '../../__data__/states/auth'
+import {
+  setAccessToken,
+  setCSRFToken,
+  setIntervalId,
+  setLoginData,
+  setTimeAccessToken,
+  setUpdateProcess
+} from '../../__data__/states/auth'
 import { useDispatch } from 'react-redux'
 import { setAccountId } from '../../__data__/states/account'
 import { getCookie } from '../../utils/cookie-parser'
+import { useRefreshToken } from '../../hooks/refresh-token'
 
-export let intervalId: NodeJS.Timer
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [showLoader, setShowLoader] = useState(false)
   const navigate = useNavigate()
   const [loginMutation, { isLoading: loginLoading, isError: loginError }] = useLoginMutation()
-  const [refreshTokenMutation] = useRefreshMutation()
   const dispatch = useDispatch()
+  const refresh = useRefreshToken()
 
   const handleLogin = async () => {
     try {
       setShowLoader(true)
       const response = await loginMutation({ username: login, password: password }).unwrap()
-      dispatch(setAccessToken(response.access))
       dispatch(setAccountId({ id: response.account_id }))
-      dispatch(setTimeAccessToken(response.access_exp))
-      dispatch(setCSRFToken(getCookie('csrftoken')))
 
-      intervalId = setInterval(refreshToken, response.access_exp / 2)
+      const intervalId = setInterval(async () => {
+        const newToken = await refresh()
+        if (newToken) {
+          dispatch(setAccessToken(newToken))
+        }
+      }, response.access_exp / 2)
+
+      dispatch(
+        setLoginData({
+          access: response.access,
+          accessTokenUpdateInterval: response.access_exp,
+          csrf: getCookie('csrftoken'),
+          updateProcess: true,
+          intervalId: intervalId
+        })
+      )
 
       return response ? navigate('/navigation') : null
     } catch (error) {
       console.log(error)
     } finally {
       setShowLoader(false)
-    }
-  }
-
-  const refreshToken = async () => {
-    try {
-      const response = await refreshTokenMutation()
-      if ('data' in response) {
-        dispatch(setAccessToken(response.data.access))
-      }
-    } catch (error) {
-      console.error('Error refreshing token:', error)
     }
   }
 
