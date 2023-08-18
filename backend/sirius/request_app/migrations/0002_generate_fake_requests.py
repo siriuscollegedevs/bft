@@ -22,16 +22,16 @@ CAR_RECORDS = [
 ] * 10
 
 CAR_RECORDS_HISTORY = [
-    {'car_number': 'О997МХ23', 'car_brand': 'Kia', 'car_model': 'Sorento', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10)},
-    {'car_number': 'В437ОН123', 'car_brand': 'Geely', 'car_model': 'Coolray', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 20)},
-    {'car_number': 'А359АН23', 'car_brand': 'Exeed', 'car_model': 'LX', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12)},
-    {'car_number': 'М509ХР23', 'car_brand': 'Porsche', 'car_model': 'Cayenne', 'type': 'for_long_time', 'from_date': date(2023, 9, 12), 'to_date': date(2023, 9, 20)},
-    {'car_number': 'Е789ЕЕ123', 'car_brand': 'Chery', 'car_model': 'Tiggo', 'type': 'for_once', 'to_date': date(2023, 9, 15), 'from_date': date(2023, 9, 15)},
-    {'car_number': 'А083НУ23', 'car_brand': 'Geely', 'car_model': 'Coolray', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 23)},
-    {'car_number': 'А359АН123', 'car_brand': 'Cadillac', 'car_model': 'Escalade', 'type': 'for_once', 'to_date': date(2023, 9, 13), 'from_date': date(2023, 9, 13)},
-    {'car_number': 'М809МС23', 'car_brand': 'Chevrolet', 'car_model': 'Tahoe', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 13)},
-    {'car_number': 'Р534НА123', 'car_brand': 'Chevrolet', 'car_model': 'Captiva', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12)},
-    {'car_number': 'К215ВВ23', 'car_brand': 'Ford', 'car_model': 'Focus', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 20)},
+    {'car_number': 'О997МХ23', 'car_brand': 'Kia', 'car_model': 'Sorento', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10), 'note': 'Какое-то примечание'},
+    {'car_number': 'В437ОН123', 'car_brand': 'Geely', 'car_model': 'Coolray', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
+    {'car_number': 'А359АН23', 'car_brand': 'Exeed', 'car_model': 'LX', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание'},
+    {'car_number': 'М509ХР23', 'car_brand': 'Porsche', 'car_model': 'Cayenne', 'type': 'for_long_time', 'from_date': date(2023, 9, 12), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
+    {'car_number': 'Е789ЕЕ123', 'car_brand': 'Chery', 'car_model': 'Tiggo', 'type': 'for_once', 'to_date': date(2023, 9, 15), 'from_date': date(2023, 9, 15), 'note': 'Какое-то примечание'},
+    {'car_number': 'А083НУ23', 'car_brand': 'Geely', 'car_model': 'Coolray', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 23), 'note': 'Какое-то примечание'},
+    {'car_number': 'А359АН123', 'car_brand': 'Cadillac', 'car_model': 'Escalade', 'type': 'for_once', 'to_date': date(2023, 9, 13), 'from_date': date(2023, 9, 13), 'note': 'Какое-то примечание'},
+    {'car_number': 'М809МС23', 'car_brand': 'Chevrolet', 'car_model': 'Tahoe', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 13), 'note': 'Какое-то примечание'},
+    {'car_number': 'Р534НА123', 'car_brand': 'Chevrolet', 'car_model': 'Captiva', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание'},
+    {'car_number': 'К215ВВ23', 'car_brand': 'Ford', 'car_model': 'Focus', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
 ]
 
 HUMAN_RECORDS = [
@@ -39,16 +39,16 @@ HUMAN_RECORDS = [
 ] * 10
 
 HUMAN_RECORDS_HISTORY = [
-    {'first_name': 'Андрей', 'last_name': 'Семенов', 'surname': 'Николаевич', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10)},
-    {'first_name': 'Николай', 'last_name': 'Иванов', 'surname': 'Григорьевич', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 20)},
-    {'first_name': 'Арсений', 'last_name': 'Кутузов', 'surname': 'Иванович', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12)},
-    {'first_name': 'Фёдор', 'last_name': 'Баранов', 'surname': 'Глебович', 'type': 'for_long_time', 'from_date': date(2023, 9, 12), 'to_date': date(2023, 9, 20)},
-    {'first_name': 'Татьяна', 'last_name': 'Куликова ', 'surname': 'Григорьевна', 'type': 'for_once', 'to_date': date(2023, 9, 15), 'from_date': date(2023, 9, 15)},
-    {'first_name': 'Иван', 'last_name': 'Капустин', 'surname': 'Маркович', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 23)},
-    {'first_name': 'Владимир', 'last_name': 'Лобанов', 'surname': 'Иванович', 'type': 'for_once', 'to_date': date(2023, 9, 13), 'from_date': date(2023, 9, 13)},
-    {'first_name': 'Александр', 'last_name': 'Уткин', 'surname': 'Даниилович', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 13)},
-    {'first_name': 'Виктория', 'last_name': 'Ефимова', 'surname': 'Ивановна', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12)},
-    {'first_name': 'Алексей', 'last_name': 'Сальников', 'surname': 'Вячеславович', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 20)},
+    {'first_name': 'Андрей', 'last_name': 'Семенов', 'surname': 'Николаевич', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10), 'note': 'Какое-то примечание'},
+    {'first_name': 'Николай', 'last_name': 'Иванов', 'surname': 'Григорьевич', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
+    {'first_name': 'Арсений', 'last_name': 'Кутузов', 'surname': 'Иванович', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание'},
+    {'first_name': 'Фёдор', 'last_name': 'Баранов', 'surname': 'Глебович', 'type': 'for_long_time', 'from_date': date(2023, 9, 12), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
+    {'first_name': 'Татьяна', 'last_name': 'Куликова ', 'surname': 'Григорьевна', 'type': 'for_once', 'to_date': date(2023, 9, 15), 'from_date': date(2023, 9, 15), 'note': 'Какое-то примечание'},
+    {'first_name': 'Иван', 'last_name': 'Капустин', 'surname': 'Маркович', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 23), 'note': 'Какое-то примечание'},
+    {'first_name': 'Владимир', 'last_name': 'Лобанов', 'surname': 'Иванович', 'type': 'for_once', 'to_date': date(2023, 9, 13), 'from_date': date(2023, 9, 13), 'note': 'Какое-то примечание'},
+    {'first_name': 'Александр', 'last_name': 'Уткин', 'surname': 'Даниилович', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 13), 'note': 'Какое-то примечание'},
+    {'first_name': 'Виктория', 'last_name': 'Ефимова', 'surname': 'Ивановна', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание'},
+    {'first_name': 'Алексей', 'last_name': 'Сальников', 'surname': 'Вячеславович', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
 ]
 
 
@@ -59,6 +59,7 @@ class Migration(migrations.Migration):
             existing_request_object = []
             account = Account.objects.filter(status='active', role='specialist').first()
             for request_info in REQUESTS:
+                last_modified_time = datetime(2020, 1, 1)
                 request = Request.objects.create(status='active')
                 RequestHistory.objects.create(
                     request=request,
@@ -90,6 +91,7 @@ class Migration(migrations.Migration):
                         **car_info
                     )
                     for index, car_history in enumerate(CAR_RECORDS_HISTORY):
+                        timestamp = request_info['timestamp'] + timedelta(index+2)
                         if car_history['car_number'] not in exisiting_cars:
                             RecordHistory.objects.create(
                             action='modified',
@@ -98,6 +100,39 @@ class Migration(migrations.Migration):
                             timestamp=request_info['timestamp'] + timedelta(index+1),
                             **car_history
                             )
+                        if not RequestHistory.objects.filter(action='closed').exists() and index == len(CAR_RECORDS_HISTORY) - 1:
+                            RecordHistory.objects.create(
+                            action='closed',
+                            modified_by=account,
+                            record=car_record,
+                            timestamp=timestamp,
+                            **car_history
+                            )
+                        elif not RequestHistory.objects.filter(action='canceled').exists() and index == len(CAR_RECORDS_HISTORY) - 1:
+                            RecordHistory.objects.create(
+                            action='canceled',
+                            modified_by=account,
+                            record=car_record,
+                            timestamp=timestamp,
+                            **car_history
+                            )
+                        elif not RequestHistory.objects.filter(action='outdated').exists() and index == len(CAR_RECORDS_HISTORY) - 1:
+                            RecordHistory.objects.create(
+                            action='outdated',
+                            modified_by=account,
+                            record=car_record,
+                            timestamp=timestamp,
+                            **car_history
+                            )
+                        elif not RequestHistory.objects.filter(action='deleted').exists() and index == len(CAR_RECORDS_HISTORY) - 1:
+                            RecordHistory.objects.create(
+                            action='deleted',
+                            modified_by=account,
+                            record=car_record,
+                            timestamp=timestamp,
+                            **car_history
+                            )
+                        last_modified_time = max(last_modified_time, timestamp)
                     exisiting_cars.append(car_record.get_last_version().car_number)
                     # HUMAN RECORD CREATION
                     human_record = Record.objects.create(status='active', request=request)
@@ -109,6 +144,7 @@ class Migration(migrations.Migration):
                         **human_info
                     )
                     for index, human_history in enumerate(HUMAN_RECORDS_HISTORY):
+                        timestamp = request_info['timestamp'] + timedelta(index+2)
                         if (human_history['first_name'], human_history['last_name'], human_history['surname']) not in existing_humen:
                             RecordHistory.objects.create(
                             action='modified',
@@ -117,7 +153,80 @@ class Migration(migrations.Migration):
                             timestamp=request_info['timestamp'] + timedelta(index+1),
                             **human_history
                             )
+                        if not RequestHistory.objects.filter(action='closed').exists() and index == len(HUMAN_RECORDS_HISTORY) - 1:
+                            RecordHistory.objects.create(
+                            action='closed',
+                            modified_by=account,
+                            record=human_record,
+                            timestamp=timestamp,
+                            **human_history
+                            )
+                        elif not RequestHistory.objects.filter(action='canceled').exists() and index == len(HUMAN_RECORDS_HISTORY) - 1:
+                            RecordHistory.objects.create(
+                            action='canceled',
+                            modified_by=account,
+                            record=human_record,
+                            timestamp=timestamp,
+                            **human_history
+                            )
+                        elif not RequestHistory.objects.filter(action='outdated').exists() and index == len(HUMAN_RECORDS_HISTORY) - 1:
+                            RecordHistory.objects.create(
+                            action='outdated',
+                            modified_by=account,
+                            record=human_record,
+                            timestamp=timestamp,
+                            **human_history
+                            )
+                        elif not RequestHistory.objects.filter(action='deleted').exists() and index == len(HUMAN_RECORDS_HISTORY) - 1:
+                            RecordHistory.objects.create(
+                            action='deleted',
+                            modified_by=account,
+                            record=human_record,
+                            timestamp=timestamp,
+                            **human_history
+                            )
+                        last_modified_time = max(last_modified_time, timestamp)
                     existing_humen.append((human_history['first_name'], human_history['last_name'], human_history['surname']))
+                if not RequestHistory.objects.filter(action='closed').exists():
+                    request.status = 'outdated'
+                    request.save()
+                    RequestHistory.objects.create(
+                        request=request,
+                        action='closed',
+                        modified_by=account,
+                        code=request_info['code'],
+                        timestamp=last_modified_time + timedelta(1)
+                    )
+                elif not RequestHistory.objects.filter(action='canceled').exists():
+                    request.status = 'outdated'
+                    request.save()
+                    RequestHistory.objects.create(
+                        request=request,
+                        action='canceled',
+                        modified_by=account,
+                        code=request_info['code'],
+                        timestamp=last_modified_time + timedelta(1)
+                    )
+                elif not RequestHistory.objects.filter(action='outdated').exists():
+                    request.status = 'outdated'
+                    request.save()
+                    RequestHistory.objects.create(
+                        request=request,
+                        action='outdated',
+                        modified_by=account,
+                        code=request_info['code'],
+                        timestamp=last_modified_time + timedelta(1)
+                    )
+                elif not RequestHistory.objects.filter(action='deleted').exists():
+                    request.status = 'outdated'
+                    request.save()
+                    RequestHistory.objects.create(
+                        request=request,
+                        action='deleted',
+                        modified_by=account,
+                        code=request_info['code'],
+                        timestamp=last_modified_time + timedelta(1)
+                    )
 
 
     dependencies = [
