@@ -9,14 +9,19 @@ import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useMemo, useState } from 'react'
-import { sortData } from '../../components/smart-table/sorting'
-
-type ButtonName = 'edit' | 'history' | 'trash'
+import { sortData } from '../../utils/sorting'
+import { SearchState } from '../../__data__/states/search'
+import { Box } from '@mui/system'
+import { getButtonNames } from '../../components/shortcut-buttons/button-names'
+import { ButtonName } from '../../components/shortcut-buttons'
 
 export const AccountsPage = () => {
   const location = useLocation()
   const isArchivePage = location.pathname === '/accounts/archive'
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
+
+  const search = useSelector((state: { search: SearchState }) => state.search)
+  const splitSearchQuery = search.searchFilter.split(' ')
 
   const {
     data: accountsData,
@@ -24,14 +29,10 @@ export const AccountsPage = () => {
     isLoading: accountsLoading,
     refetch: accountRefetch
   } = useGetAllAccountsQuery()
-  const {
-    data: accountsArchiveData,
-    error: accountsArchiveError,
-    isLoading: accountsArchiveLoading,
-    refetch: accountArchiveRefetch
-  } = useGetAllArchiveAccountsQuery()
+  const { data: accountsArchiveData, refetch: accountArchiveRefetch } = useGetAllArchiveAccountsQuery()
 
   const [tableData, setTableData] = useState(isArchivePage ? accountsArchiveData : accountsData)
+  const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole)
 
   useEffect(() => {
     if (isArchivePage) {
@@ -51,15 +52,16 @@ export const AccountsPage = () => {
     }
   }, [tableData])
 
-  let buttonNames: ButtonName[] = []
-
-  if (isArchivePage) {
-    buttonNames = ['history']
-  } else if (currentAccountRole === ACCOUNT_ROLES.administrator.en) {
-    buttonNames = ['edit', 'history', 'trash']
-  } else if (currentAccountRole === ACCOUNT_ROLES.manager.en) {
-    buttonNames = ['history']
-  }
+  const filteredTableData = sortedRows?.filter(item => {
+    return splitSearchQuery.every(
+      queryPart =>
+        item.first_name.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+        item.surname.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+        item.last_name.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+        item.username.toLowerCase().includes(queryPart.toLowerCase()) ||
+        ACCOUNT_ROLES[item.role as keyof typeof ACCOUNT_ROLES].en.toLowerCase().startsWith(queryPart.toLowerCase())
+    )
+  })
 
   return (
     <>
@@ -70,15 +72,21 @@ export const AccountsPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {sortedRows ? (
-              <SmartTable
-                buttonNames={buttonNames}
-                size={{
-                  width: '100%',
-                  height: '100%'
-                }}
-                data={sortedRows}
-              />
+            {filteredTableData ? (
+              filteredTableData.length > 0 ? (
+                <SmartTable
+                  buttonNames={buttonNames}
+                  size={{
+                    width: '100%',
+                    height: '100%'
+                  }}
+                  data={filteredTableData}
+                />
+              ) : (
+                <Box sx={{ width: '100%' }}>
+                  <p>Ничего не найдено, проверьте введенные данные.</p>
+                </Box>
+              )
             ) : (
               <></>
             )}

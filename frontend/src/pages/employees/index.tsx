@@ -5,7 +5,6 @@ import { SideBarContainer } from '../../styles/sidebar'
 import { useLocation } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Account, AccountToObject } from '../../types/api'
-import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import {
   useGetAllAccountToObjectArchiveQuery,
   useGetAllAccountToObjectQuery
@@ -13,9 +12,11 @@ import {
 import { FiltersState } from '../../__data__/states/filters'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useMemo, useState } from 'react'
-import { sortData } from '../../components/smart-table/sorting'
-
-type ButtonName = 'edit' | 'history' | 'trash'
+import { sortData } from '../../utils/sorting'
+import { getButtonNames } from '../../components/shortcut-buttons/button-names'
+import { ButtonName } from '../../components/shortcut-buttons'
+import { SearchState } from '../../__data__/states/search'
+import { Box } from '@mui/system'
 
 export const EmployeesPage = () => {
   const location = useLocation()
@@ -31,17 +32,11 @@ export const EmployeesPage = () => {
   const { data: employeesArchiveData, refetch: employeesArchiveRefetch } = useGetAllAccountToObjectArchiveQuery()
 
   const filters = useSelector((state: { filters: FiltersState }) => state.filters)
+  const search = useSelector((state: { search: SearchState }) => state.search)
+  const splitSearchQuery = search.searchFilter.split(' ')
+
   const [tableData, setTableData] = useState(isArchivePage ? employeesArchiveData : employeesData)
-
-  let buttonNames: ButtonName[] = []
-
-  if (isArchivePage) {
-    buttonNames = ['history']
-  } else if (currentAccountRole === ACCOUNT_ROLES.administrator.en) {
-    buttonNames = ['edit', 'history', 'trash']
-  } else if (currentAccountRole === ACCOUNT_ROLES.manager.en) {
-    buttonNames = ['history']
-  }
+  const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole)
 
   const dataFilters = (data: AccountToObject[]) => {
     return data
@@ -71,6 +66,15 @@ export const EmployeesPage = () => {
     }
   }, [tableData])
 
+  const filteredTableData = sortedRows?.filter(item => {
+    return splitSearchQuery.every(
+      queryPart =>
+        item.first_name?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+        item.surname?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
+        item.last_name.toLowerCase().startsWith(queryPart.toLowerCase())
+    )
+  })
+
   return (
     <>
       <EntityTitle isSwitch={true} isSearchField={true} />
@@ -80,15 +84,21 @@ export const EmployeesPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {sortedRows ? (
-              <SmartTable
-                buttonNames={buttonNames}
-                size={{
-                  width: '100%',
-                  height: '100%'
-                }}
-                data={dataFilters(sortedRows)}
-              />
+            {filteredTableData ? (
+              filteredTableData.length > 0 ? (
+                <SmartTable
+                  buttonNames={buttonNames}
+                  size={{
+                    width: '100%',
+                    height: '100%'
+                  }}
+                  data={dataFilters(filteredTableData)}
+                />
+              ) : (
+                <Box sx={{ width: '100%' }}>
+                  <p>Ничего не найдено, проверьте введенные данные.</p>
+                </Box>
+              )
             ) : (
               <></>
             )}
