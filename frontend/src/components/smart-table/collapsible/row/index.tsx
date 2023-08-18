@@ -130,7 +130,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                   {(itsEmployees({ currentURL }) || itsEmployeesArchive({ currentURL })) && 'objects' in row && (
                     <TableRow sx={{ height: '47px' }}>
                       <CustomCollapseCell align="left" sx={{ padding: '6px 0 6px 54px' }}>
-                        {Array.isArray(row.objects) && row.objects.map(valueRow => valueRow.name).join(', ')}
+                        {Array.isArray(row.objects) && row.objects.map(valueRow => valueRow).join(', ')}
                       </CustomCollapseCell>
                     </TableRow>
                   )}
