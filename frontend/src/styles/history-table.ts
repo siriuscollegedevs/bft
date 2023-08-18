@@ -16,6 +16,9 @@ export const getRowColor = (action: string): string => {
     return '#00800029'
   } else if (action === 'deleted') {
     return 'rgba(255,1,1,0.15)'
+  } else if (action === 'password_changed') {
+    return '#0072ff1c'
   }
+
   return 'inherit'
 }

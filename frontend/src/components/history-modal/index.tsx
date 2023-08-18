@@ -29,7 +29,7 @@ export const BasicModal = ({ open, handleClose, selectedRow, prewRow }: ModalPro
   const desiredFields: { [key: string]: string[] } = {
     '/accounts/': ['last_name', 'first_name', 'surname', 'username', 'role'],
     '/objects/': ['name'],
-    '/admissions/': ['car_model', 'car_brand', 'car_number', 'type', 'from_date', 'to_date', 'note']
+    '/admissions/': ['car_brand', 'car_model', 'car_number', 'type', 'from_date', 'to_date', 'note']
   }
 
   const location = useLocation()
@@ -120,7 +120,7 @@ export const BasicModal = ({ open, handleClose, selectedRow, prewRow }: ModalPro
                             {getKeyTranslation(key)}: {formatValue(value, key)}
                           </StyledListEntries>
                         )}
-                        {selectedRow.action === 'modified' && (
+                        {(selectedRow.action === 'modified') && (
                           <StyledListEntries isDifferent={shouldHighlight}>
                             {getKeyTranslation(key)}: {formatValue(value, key)}
                           </StyledListEntries>
