@@ -2,6 +2,7 @@ from django.db import migrations
 from django.contrib.auth.models import User
 from ..models import Account, AccountHistory
 from django.db import transaction
+from datetime import datetime, timedelta
 
 
 USER_DATA = [
@@ -24,8 +25,23 @@ USER_DATA = [
 ]
 
 ACCOUNT_DATA = [
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'}
-] * 16
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 1, 10)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 2, 15)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 3, 2)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 4, 5)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 5, 6)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 7, 23)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 8, 3)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 1, 20)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 2, 17)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 3, 19)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 4, 26)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 5, 13)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 6, 17)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 7, 18)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 8, 5)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 3, 7)}
+]
 
 ACCOUNT_ROLES = [
     {'role': 'manager'},
@@ -64,19 +80,21 @@ class Migration(migrations.Migration):
                 user = User.objects.create_user(**user_data)
                 account = Account.objects.create(status='active', user=user, **account_role)
                 AccountHistory.objects.create(account=account, modified_by=admin, **account_data)
-                for iter, record in enumerate(ACCOUNT_HISTORY):
+                for index, record in enumerate(ACCOUNT_HISTORY):
                     if (record['first_name'], record['last_name'], record['surname']) not in existing_accounts:
                         AccountHistory.objects.create(
                             account=account,
                             modified_by=admin,
                             action='modified',
+                            timestamp=account_data['timestamp'] + timedelta(index+1),
                             **record
                         )
-                        if iter == len(ACCOUNT_HISTORY) - 1:
+                        if index == len(ACCOUNT_HISTORY) - 1:
                             AccountHistory.objects.create(
                             account=account,
                             modified_by=admin,
                             action='deleted',
+                            timestamp=account_data['timestamp'] + timedelta(index+1),
                             **record
                             )
                             account.status = 'outdated'

@@ -79,7 +79,7 @@ class Migration(migrations.Migration):
                         request_object_count += 1
                 exisiting_cars = []
                 existing_humen = []
-                for car_info, human_info in list(zip(CAR_RECORDS, HUMAN_RECORDS)):
+                for car_info, human_info in zip(CAR_RECORDS, HUMAN_RECORDS):
                     # CAR RECORD CREATION
                     car_record = Record.objects.create(status='active', request=request)
                     RecordHistory.objects.create(
@@ -89,13 +89,13 @@ class Migration(migrations.Migration):
                         timestamp=request_info['timestamp'],
                         **car_info
                     )
-                    for car_history in CAR_RECORDS_HISTORY:
+                    for index, car_history in enumerate(CAR_RECORDS_HISTORY):
                         if car_history['car_number'] not in exisiting_cars:
                             RecordHistory.objects.create(
                             action='modified',
                             modified_by=account,
                             record=car_record,
-                            timestamp=request_info['timestamp']+timedelta(1.0),
+                            timestamp=request_info['timestamp'] + timedelta(index+1),
                             **car_history
                             )
                     exisiting_cars.append(car_record.get_last_version().car_number)
@@ -108,13 +108,13 @@ class Migration(migrations.Migration):
                         timestamp=request_info['timestamp'],
                         **human_info
                     )
-                    for human_history in HUMAN_RECORDS_HISTORY:
+                    for index, human_history in enumerate(HUMAN_RECORDS_HISTORY):
                         if (human_history['first_name'], human_history['last_name'], human_history['surname']) not in existing_humen:
                             RecordHistory.objects.create(
                             action='modified',
                             modified_by=account,
                             record=human_record,
-                            timestamp=request_info['timestamp']+timedelta(1.0),
+                            timestamp=request_info['timestamp'] + timedelta(index+1),
                             **human_history
                             )
                     existing_humen.append((human_history['first_name'], human_history['last_name'], human_history['surname']))

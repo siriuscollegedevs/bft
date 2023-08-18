@@ -2,6 +2,7 @@ from django.db import migrations
 from django.db import transaction
 from django.contrib.auth.models import User
 from ..models import Account, AccountHistory, Object, ObjectHistory
+from datetime import datetime, timedelta
 
 
 USER_DATA = [
@@ -24,22 +25,22 @@ USER_DATA = [
 ]
 
 ACCOUNT_DATA = [
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created'},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 1, 16)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 2, 20)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 3, 10)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 4, 25)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 6, 7)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 7, 9)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 1, 23)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 2, 7)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 3, 4)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 4, 5)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 5, 14)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 6, 3)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 7, 9)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 8, 1)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 4, 9)},
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'action': 'created', 'timestamp': datetime(2023, 1, 8)},
 ]
 
 ACCOUNT_ROLES = [
@@ -50,12 +51,12 @@ ACCOUNT_ROLES = [
 ] * 4
 
 OBJECT_DATA = [
-    {'version': 0, 'name': 'Фишт'},
-    {'version': 0, 'name': 'Арена'},
-    {'version': 0, 'name': 'Айсберг'},
-    {'version': 0, 'name': 'Лицей'},
-    {'version': 0, 'name': 'Образовательный центр'},
-    {'version': 0, 'name': 'Парк науки и искусства'},
+    {'version': 0, 'name': 'Фишт', 'timestamp': datetime(2023, 1, 16)},
+    {'version': 0, 'name': 'Арена', 'timestamp': datetime(2023, 2, 20)},
+    {'version': 0, 'name': 'Айсберг', 'timestamp': datetime(2023, 3, 4)},
+    {'version': 0, 'name': 'Лицей', 'timestamp': datetime(2023, 5, 14)},
+    {'version': 0, 'name': 'Образовательный центр', 'timestamp': datetime(2023, 8, 1)},
+    {'version': 0, 'name': 'Парк науки и искусства', 'timestamp': datetime(2023, 1, 8)},
 ]
 
 ACCOUNT_HISTORY = [
@@ -97,12 +98,13 @@ class Migration(migrations.Migration):
                 user = User.objects.create_user(**user_data)
                 account = Account.objects.create(status='active', user=user, **account_role)
                 AccountHistory.objects.create(account=account, modified_by=account, **account_data)
-                for record in ACCOUNT_HISTORY:
+                for index, record in enumerate(ACCOUNT_HISTORY):
                     if (record['first_name'], record['last_name'], record['surname']) not in existing_accounts:
                         AccountHistory.objects.create(
                             account=account,
                             modified_by=account,
                             action='modified',
+                            timestamp=account_data['timestamp'] + timedelta(index+1),
                             **record
                         )
                 created_account = account.get_data_from_history()
@@ -113,16 +115,30 @@ class Migration(migrations.Migration):
                 object_inst = Object.objects.create(status='active')
                 ObjectHistory.objects.create(object=object_inst, modified_by=account, action='created', **object_data)
                 vers = 0
-                for record in OBJECT_HISTORY:
+                for index, record in enumerate(OBJECT_HISTORY):
                     if record['name'] not in existing_objects:
                         vers += 1
-                        ObjectHistory.objects.create(version=vers, object=object_inst, modified_by=account, action='modified', **record)
+                        ObjectHistory.objects.create(
+                            version=vers,
+                            object=object_inst,
+                            modified_by=account,
+                            action='modified',
+                            timestamp=object_data['timestamp'] + timedelta(index+1),
+                            **record
+                        )
                 existing_objects.append(object_inst.get_info().name)
                 OBJECT_HISTORY.append(OBJECT_HISTORY.pop(0))
                 object_inst = Object.objects.create(status='outdated')
                 ObjectHistory.objects.create(object=object_inst, modified_by=account, action='created', **object_data)
                 object_data['version'] += 1
-                ObjectHistory.objects.create(object=object_inst, modified_by=account, action='deleted', **object_data)
+                ObjectHistory.objects.create(
+                    object=object_inst,
+                    modified_by=account,
+                    action='deleted',
+                    version=object_data['version'],
+                    name=object_data['name'],
+                    timestamp=object_data['timestamp'] + timedelta(1)
+                )
 
     dependencies = [
         ('sirius_access', '0001_initial'),
