@@ -57,7 +57,7 @@ class LoginView(APIView):
                 }
                 res['X-CSRFToken'] = csrf.get_token(request)
                 return res
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_401_UNAUTHORIZED, data={'error': 'Неверный логин или пароль.'})
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
