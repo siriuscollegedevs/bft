@@ -43,7 +43,7 @@ export const EmployeesPage = () => {
       ? data.filter(
           employee =>
             filters.objectNameFilter.length === 0 ||
-            employee.objects.some(object => filters.objectNameFilter.includes(object.name))
+            employee.objects.some(object => filters.objectNameFilter.includes(object))
         )
       : []
   }

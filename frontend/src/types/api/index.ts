@@ -159,7 +159,7 @@ export type AccountToObject = {
   surname?: string
   last_name: string
   username: string
-  objects: ObjectInArray[]
+  objects: string[]
 }
 
 export type AccountToObjectCreate = {
