@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError
 from .config import ACCOUNT_TYPE_LEN, TYPE_CHOICES_ACCOUNT, ACTION_ACCOUNT_LEN, ACCOUNT_HISTORY_CHOICES
 from sirius.config import *
 from django.conf.global_settings import AUTH_USER_MODEL
+from django.utils import timezone
 
 
 class UUIDMixin(models.Model):
@@ -64,7 +65,7 @@ def is_positive(number: int):
 class ObjectHistory(UUIDMixin, models.Model):
     version = models.IntegerField(default=0, validators=[is_positive])
     name = models.CharField(max_length=DEFAULT_LEN)
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=timezone.now) # TODO change to auto_now_add=True
     object = models.ForeignKey(Object, on_delete=models.PROTECT)
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT)
     action = models.CharField(max_length=DEFAULT_ACTION_LEN, choices=HISTORY_CHOICES)
@@ -74,7 +75,7 @@ class ObjectHistory(UUIDMixin, models.Model):
 
 
 class AccountHistory(UUIDMixin, models.Model):
-    timestamp = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(default=timezone.now) # TODO change to auto_now_add=True
     account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='modified')
     first_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True)
     last_name = models.CharField(max_length=NAMES_LEN)
