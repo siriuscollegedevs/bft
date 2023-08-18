@@ -8,7 +8,10 @@ import { useSelector } from 'react-redux'
 import { Admissions, Objects } from '../../types/api'
 import { useEffect, useMemo, useState } from 'react'
 import { FiltersState } from '../../__data__/states/filters'
-import { compareDates } from '../../components/smart-table/sorting'
+import { compareDates } from '../../utils/sorting'
+import { SearchState } from '../../__data__/states/search'
+import { Box } from '@mui/system'
+import { dateParser } from '../../utils/date-parser'
 
 export const AdmissionsPage = () => {
   const [admissionsMutation, { data: admissionsData, isLoading: admissionsLoading, isError }] =
@@ -20,6 +23,9 @@ export const AdmissionsPage = () => {
   const [hasData, setHasData] = useState(false)
   const [data, setData] = useState<Admissions[]>()
   const filters = useSelector((state: { filters: FiltersState }) => state.filters)
+
+  const search = useSelector((state: { search: SearchState }) => state.search)
+  const splitSearchQuery = search.searchFilter.split(' ')
 
   const filteredObjectIds = currentAccountObjects
     .filter(obj => filters.objectNameFilter.includes(obj.name))
@@ -53,6 +59,12 @@ export const AdmissionsPage = () => {
     }
   }, [data])
 
+  const filteredTableData = sortedRows?.filter(item => {
+    return splitSearchQuery.every(
+      queryPart => dateParser(item.timestamp).includes(queryPart) || item.code.includes(queryPart)
+    )
+  })
+
   return (
     <>
       <EntityTitle isSearchField={true} isSwitch={true} />
@@ -62,15 +74,23 @@ export const AdmissionsPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {sortedRows && (
-              <SmartTable
-                buttonNames={['edit', 'history', 'trash']}
-                size={{
-                  width: '100%',
-                  height: '100%'
-                }}
-                data={filteredData(sortedRows)}
-              />
+            {filteredTableData ? (
+              filteredTableData.length > 0 ? (
+                <SmartTable
+                  buttonNames={['edit', 'history', 'trash']}
+                  size={{
+                    width: '100%',
+                    height: '100%'
+                  }}
+                  data={filteredData(filteredTableData)}
+                />
+              ) : (
+                <Box sx={{ width: '100%' }}>
+                  <p>Ничего не найдено, проверьте введенные данные.</p>
+                </Box>
+              )
+            ) : (
+              <></>
             )}
             <Sidebar isSearch={true} isObjects={true} isButton={true} />
           </>

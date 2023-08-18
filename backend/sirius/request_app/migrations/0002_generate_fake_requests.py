@@ -134,6 +134,7 @@ class Migration(migrations.Migration):
                             )
                         last_modified_time = max(last_modified_time, timestamp)
                     exisiting_cars.append(car_record.get_last_version().car_number)
+
                     # HUMAN RECORD CREATION
                     human_record = Record.objects.create(status='active', request=request)
                     RecordHistory.objects.create(
@@ -186,7 +187,13 @@ class Migration(migrations.Migration):
                             **human_history
                             )
                         last_modified_time = max(last_modified_time, timestamp)
-                    existing_humen.append((human_history['first_name'], human_history['last_name'], human_history['surname']))
+                    created_human_record = human_record.get_info()
+                    existing_humen.append(
+                        (
+                            created_human_record['first_name'],
+                            created_human_record['last_name'],
+                            created_human_record['surname']
+                        )
                 if not RequestHistory.objects.filter(action='closed').exists():
                     request.status = 'outdated'
                     request.save()

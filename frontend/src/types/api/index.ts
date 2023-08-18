@@ -1,6 +1,7 @@
 import { CurrentAccountId } from '../../__data__/states/account'
 import { AuthState } from '../../__data__/states/auth'
 import { FiltersState } from '../../__data__/states/filters'
+import { SearchState } from '../../__data__/states/search'
 
 export type Accounts = {
   id: string
@@ -143,6 +144,7 @@ export type RootState = {
   currentAccount: CurrentAccountId & Account & { accountObjects: Objects[] }
   auth: AuthState
   filters: FiltersState
+  search: SearchState
 }
 
 export type ObjectInArray = {

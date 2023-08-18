@@ -1,12 +1,12 @@
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { clearAccount } from '../../__data__/states/account'
-import { clearAuth } from '../../__data__/states/auth'
+import { AuthState, clearAuth } from '../../__data__/states/auth'
 import { useLogoutMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { deleteCookie } from '../../utils/cookie-parser'
-import { intervalId } from '../../components/login-form'
 
 export const useLogout = () => {
+  const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [logoutMutation] = useLogoutMutation()
