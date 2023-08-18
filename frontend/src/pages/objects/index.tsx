@@ -8,13 +8,16 @@ import { useLocation } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { Account } from '../../types/api'
 import { useSelector } from 'react-redux'
-import { sortData } from '../../components/smart-table/sorting'
-
-type ButtonName = 'edit' | 'history' | 'trash'
+import { sortData } from '../../utils/sorting'
+import { SearchState } from '../../__data__/states/search'
+import { Box } from '@mui/system'
+import { getButtonNames } from '../../components/shortcut-buttons/button-names'
+import { ButtonName } from '../../components/shortcut-buttons'
 
 export const ObjectsPage = () => {
   const location = useLocation()
   const isArchivePage = location.pathname === '/objects/archive'
+  const search = useSelector((state: { search: SearchState }) => state.search)
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
   const {
     data: objectsData,
@@ -28,6 +31,8 @@ export const ObjectsPage = () => {
     isLoading: objectsArchiveLoading,
     refetch: refetchObjectsArchiveData
   } = useGetAllArchiveObjectsQuery()
+
+  const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole)
   const [tableData, setTableData] = useState(isArchivePage ? objectsArchiveData : objectsData)
 
   useEffect(() => {
@@ -48,15 +53,10 @@ export const ObjectsPage = () => {
     }
   }, [tableData])
 
-  let buttonNames: ButtonName[] = []
+  const filteredTableData = sortedRows?.filter(item =>
+    item.name.toLowerCase().includes(search.searchFilter.toLowerCase())
+  )
 
-  if (isArchivePage) {
-    buttonNames = ['history']
-  } else if (currentAccountRole === 'administrator') {
-    buttonNames = ['edit', 'history', 'trash']
-  } else if (currentAccountRole === 'manager') {
-    buttonNames = ['history']
-  }
   return (
     <>
       <EntityTitle isSwitch={true} isSearchField={true} />
@@ -66,15 +66,21 @@ export const ObjectsPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {sortedRows ? (
-              <SmartTable
-                buttonNames={buttonNames}
-                size={{
-                  width: '100%',
-                  height: '100%'
-                }}
-                data={sortedRows}
-              />
+            {filteredTableData ? (
+              filteredTableData.length > 0 ? (
+                <SmartTable
+                  buttonNames={buttonNames}
+                  size={{
+                    width: '100%',
+                    height: '100%'
+                  }}
+                  data={filteredTableData}
+                />
+              ) : (
+                <Box sx={{ width: '100%' }}>
+                  <p>Ничего не найдено, проверьте введенные данные.</p>
+                </Box>
+              )
             ) : (
               <></>
             )}

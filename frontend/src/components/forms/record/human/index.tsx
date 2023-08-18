@@ -64,13 +64,12 @@ export const Human = () => {
     }))
   }
 
-  const handleSubmit = () => {
-    setShowLoader(true)
+  const fieldsCheck = () => {
     let hasEmptyField = false
 
     for (const [key, value] of Object.entries(fields)) {
-      if (key !== 'note' && value.trim() === '') {
-        hasEmptyField = !hasEmptyField
+      if (key !== 'note' && key !== 'type' && value.trim() === '') {
+        hasEmptyField = true
         setError(prevError => ({
           ...prevError,
           [key]: true
@@ -82,9 +81,17 @@ export const Human = () => {
         }))
       }
     }
+    return hasEmptyField
+  }
+
+  const handleSubmit = async () => {
+    setShowLoader(true)
+    const hasEmptyField = await fieldsCheck()
+
     setHasValidation(true)
+
     try {
-      if (!Object.values(error).some(value => value) && id && fields.type) {
+      if (!hasEmptyField && id && fields.type) {
         createHumanRecordMutation({
           recordId: id,
           recordData: {
@@ -97,9 +104,9 @@ export const Human = () => {
             note: fields.note
           }
         })
-      }
-      if (!createHumanRecordError) {
-        navigate(`/admissions/view/${id}`)
+        if (!createHumanRecordError) {
+          navigate(`/admissions/view/${id}`)
+        }
       }
     } catch (error) {
       console.log(error)
@@ -117,7 +124,7 @@ export const Human = () => {
         sx={{ m: 1, width: '85%' }}
         required
         error={hasValidation && error.lastName}
-        helperText={!fields.lastName && 'Это поле обязательно.'}
+        helperText={!fields.lastName ? 'Это поле обязательно.' : ' '}
         value={fields.lastName}
         onChange={e => handleFieldChange('lastName', e.target.value)}
       />
@@ -128,7 +135,7 @@ export const Human = () => {
         sx={{ m: 1, width: '85%' }}
         required
         error={hasValidation && error.firstName}
-        helperText={!fields.firstName && 'Это поле обязательно.'}
+        helperText={!fields.firstName ? 'Это поле обязательно.' : ' '}
         value={fields.firstName}
         onChange={e => handleFieldChange('firstName', e.target.value)}
       />
@@ -139,7 +146,7 @@ export const Human = () => {
         sx={{ m: 1, width: '85%' }}
         required
         error={hasValidation && error.surname}
-        helperText={!fields.surname && 'Это поле обязательно.'}
+        helperText={!fields.surname ? 'Это поле обязательно.' : ' '}
         value={fields.surname}
         onChange={e => handleFieldChange('surname', e.target.value)}
       />
