@@ -3,25 +3,19 @@ import { useState } from 'react'
 import { useLoginMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { LoginButton, PasswordTextField, SignInContainer, SignInTextField, TitleTypography } from '../../styles/login'
-import {
-  setAccessToken,
-  setCSRFToken,
-  setIntervalId,
-  setLoginData,
-  setTimeAccessToken,
-  setUpdateProcess
-} from '../../__data__/states/auth'
+import { setAccessToken, setLoginData } from '../../__data__/states/auth'
 import { useDispatch } from 'react-redux'
 import { setAccountId } from '../../__data__/states/account'
 import { getCookie } from '../../utils/cookie-parser'
 import { useRefreshToken } from '../../hooks/refresh-token'
+import { AlertDialog } from './alert-dialog'
 
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
   const [password, setPassword] = useState('')
   const [showLoader, setShowLoader] = useState(false)
   const navigate = useNavigate()
-  const [loginMutation, { isLoading: loginLoading, isError: loginError }] = useLoginMutation()
+  const [loginMutation, { isLoading: loginLoading, isError: loginError, error: loginErrorStatus }] = useLoginMutation()
   const dispatch = useDispatch()
   const refresh = useRefreshToken()
 
@@ -58,6 +52,7 @@ export const LoginForm = () => {
 
   return (
     <SignInContainer fixed>
+      {loginErrorStatus && 'status' in loginErrorStatus && <>{loginErrorStatus.status !== 401 && <AlertDialog />}</>}
       <FormControl className="sign-in" color="primary" sx={{ alignItems: 'center' }}>
         <TitleTypography variant="h4">Авторизация</TitleTypography>
         <SignInTextField
@@ -69,7 +64,12 @@ export const LoginForm = () => {
           margin="dense"
           color="primary"
           focused
-          error={loginError}
+          error={loginErrorStatus && 'status' in loginErrorStatus && loginErrorStatus.status === 401}
+          helperText={
+            loginError && loginErrorStatus && 'status' in loginErrorStatus && loginErrorStatus.status === 401
+              ? 'Неправильный логин или пароль'
+              : ' '
+          }
           onChange={e => setLogin(e.target.value)}
           placeholder="Введите логин"
         />
@@ -82,10 +82,16 @@ export const LoginForm = () => {
           margin="dense"
           color="primary"
           focused
-          error={loginError}
+          error={loginErrorStatus && 'status' in loginErrorStatus && loginErrorStatus.status === 401}
+          helperText={
+            loginError && loginErrorStatus && 'status' in loginErrorStatus && loginErrorStatus.status === 401
+              ? 'Неправильный логин или пароль'
+              : ' '
+          }
           onChange={e => setPassword(e.target.value)}
           placeholder="Введите пароль"
         />
+
         <LoginButton
           type="submit"
           onClick={handleLogin}

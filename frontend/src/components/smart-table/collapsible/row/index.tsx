@@ -85,16 +85,16 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
             </TableCell>
             {currentAccountRole === 'security_officer' ? (
               row.last_name !== null ? (
-                <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
+                <TableCell align="left" sx={{ height: '47px' }}>
                   {row.last_name + ' ' + row.first_name}
                 </TableCell>
               ) : (
-                <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
+                <TableCell align="left" sx={{ height: '47px' }}>
                   {row.car_brand + ' ' + row.car_model + ' ' + row.car_number}
                 </TableCell>
               )
             ) : (
-              <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
+              <TableCell align="left" sx={{ height: '47px' }}>
                 {row.last_name !== null
                   ? row.last_name + ' ' + row.first_name + ' ' + row.surname
                   : row.car_brand + ' ' + row.car_model + ' ' + row.car_number}
