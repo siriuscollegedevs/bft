@@ -1,8 +1,20 @@
-import { Roles } from '../../../types/account'
+import { AccountRoles } from '../../../types/account'
 
-export const ACCOUNT_ROLES: Roles = {
-  administrator: 'Администратор',
-  manager: 'Руководитель',
-  specialist: 'Сотрудник СБ',
-  security_officer: 'Сотрудник охраны'
+export const ACCOUNT_ROLES: AccountRoles = {
+  administrator: {
+    en: 'administrator',
+    ru: 'Администратор'
+  },
+  manager: {
+    en: 'manager',
+    ru: 'Руководитель'
+  },
+  specialist: {
+    en: 'specialist',
+    ru: 'Сотрудник СБ'
+  },
+  security_officer: {
+    en: 'security_officer',
+    ru: 'Сотрудник охраны'
+  }
 }

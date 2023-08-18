@@ -171,7 +171,7 @@ export const FormAccount = () => {
       >
         {Object.entries(ACCOUNT_ROLES).map(([roleValue, roleLabel]) => (
           <MenuItem key={roleValue} value={roleValue}>
-            {roleLabel}
+            {roleLabel.ru}
           </MenuItem>
         ))}
       </TextField>

@@ -63,8 +63,8 @@ export const UserSettings = () => {
     сhangeAccountPasswordMutation({
       accountId: currentAccountId,
       admissionsBody: {
-        status: currentAccountRole === Object.keys(ACCOUNT_ROLES)[0] ? currentAccountRole : '',
-        current_password: currentAccountRole === Object.keys(ACCOUNT_ROLES)[0] ? '' : oldPassword,
+        status: currentAccountRole === ACCOUNT_ROLES.administrator.en ? currentAccountRole : '',
+        current_password: currentAccountRole === ACCOUNT_ROLES.administrator.en ? '' : oldPassword,
         new_password: newPassword
       }
     })
@@ -97,7 +97,7 @@ export const UserSettings = () => {
               width: '100%'
             }}
           >
-            {currentAccountRole !== Object.keys(ACCOUNT_ROLES)[0] ? (
+            {currentAccountRole !== ACCOUNT_ROLES.administrator.en ? (
               <FormControl
                 sx={{ m: 1, width: '85%' }}
                 variant="outlined"

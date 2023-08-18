@@ -50,7 +50,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
             <TableCell align="left" sx={{ height: '47px', width: '40%' }}>
               {row.last_name} {row.first_name} {row.surname}
             </TableCell>
-            <TableCell align="left">{ACCOUNT_ROLES[row?.role]}</TableCell>
+            <TableCell align="left">{ACCOUNT_ROLES[row?.role as keyof typeof ACCOUNT_ROLES].ru}</TableCell>
             <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
               <Box display="flex" alignItems="center" justifyContent="flex-end">
                 <ShortcutButtons buttonNames={buttonNames} id={row.id} />

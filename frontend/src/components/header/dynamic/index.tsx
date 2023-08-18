@@ -61,19 +61,19 @@ export const DynamicHeader = () => {
 
   const handleLogoClick = () => {
     switch (currentAccountRole) {
-      case Object.keys(ACCOUNT_ROLES)[0]: {
+      case ACCOUNT_ROLES.administrator.en: {
         navigate('/directories')
         break
       }
-      case Object.keys(ACCOUNT_ROLES)[1]: {
+      case ACCOUNT_ROLES.manager.en: {
         navigate('/navigation')
         break
       }
-      case Object.keys(ACCOUNT_ROLES)[2]: {
+      case ACCOUNT_ROLES.specialist.en: {
         navigate('/navigation')
         break
       }
-      case Object.keys(ACCOUNT_ROLES)[3]: {
+      case ACCOUNT_ROLES.security_officer.en: {
         navigate('/admissions')
         break
       }
@@ -93,10 +93,10 @@ export const DynamicHeader = () => {
                   <LogoIcon />
                 </HeaderLogo>
                 <CustomTypography>{`Доступ.${
-                  currentAccountData?.role !== null ? ACCOUNT_ROLES[currentAccountData?.role] : 'Error'
+                  currentAccountData?.role !== null ? ACCOUNT_ROLES[currentAccountData?.role as keyof typeof ACCOUNT_ROLES].ru : 'Error'
                 }`}</CustomTypography>
                 <Box sx={{ flexGrow: 1 }} />
-                {currentAccountData?.role === ACCOUNT_ROLES.manager && (
+                {currentAccountData?.role === ACCOUNT_ROLES.manager.ru && (
                   <>
                     <CustomButton
                       isActive={activeButton === 'directories'}

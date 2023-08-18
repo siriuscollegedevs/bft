@@ -59,7 +59,7 @@ export const AccountsPage = () => {
         item.surname.toLowerCase().startsWith(queryPart.toLowerCase()) ||
         item.last_name.toLowerCase().startsWith(queryPart.toLowerCase()) ||
         item.username.toLowerCase().includes(queryPart.toLowerCase()) ||
-        ACCOUNT_ROLES[item.role].toLowerCase().startsWith(queryPart.toLowerCase())
+        ACCOUNT_ROLES[item.role as keyof typeof ACCOUNT_ROLES].ru.toLowerCase().startsWith(queryPart.toLowerCase())
     )
   })
 

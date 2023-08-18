@@ -27,11 +27,11 @@ export const ButtonGroup = () => {
 
   useEffect(() => {
     switch (currentAccountRole) {
-      case Object.keys(ACCOUNT_ROLES)[0]: {
+      case ACCOUNT_ROLES.administrator.en: {
         navigate('/directories')
         break
       }
-      case Object.keys(ACCOUNT_ROLES)[3]: {
+      case ACCOUNT_ROLES.security_officer.en: {
         navigate('/admissions')
       }
     }
@@ -59,7 +59,7 @@ export const ButtonGroup = () => {
           gap: '15px'
         }}
       >
-        {currentAccountRole === Object.keys(ACCOUNT_ROLES)[1] && (
+        {currentAccountRole === ACCOUNT_ROLES.manager.en && (
           <>
             <CustomButton variant="outlined" onClick={() => navigate('/directories')}>
               Справочники
@@ -71,7 +71,7 @@ export const ButtonGroup = () => {
             </CustomButton>
           </>
         )}
-        {currentAccountRole === Object.keys(ACCOUNT_ROLES)[2] && (
+        {currentAccountRole === ACCOUNT_ROLES.specialist.en && (
           <>
             <CustomButton variant="outlined" onClick={() => navigate('/admissions')}>
               Заявки
