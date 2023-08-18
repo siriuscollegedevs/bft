@@ -25,8 +25,16 @@ RECORD_API_STATUSES = ('canceled', 'closed')
 REQUESTID_ERROR_MSG = {'error': 'Invalid RequestId'}
 RECORDID_ERROR_MSG = {'error': 'Invalid RequestdId'}
 
+NO_RECORDS_FOUND_ERROR = {"error": "Записи не найдены"}
+NO_SEARCH_RECORDS_FOUND_ERROR = {"error": "Записи по запросу не найдены"}
+
 # SERIALIZER FIELDS SETS
 RECORD_GENERAL_FIELDS = ["car_number", "car_brand", "car_model",
                          "type", "first_name", "surname", "last_name", "from_date", "to_date", "note"]
 REQUEST_GET_FIELDS = RECORD_GENERAL_FIELDS + ["id"]
 GET_RECORD_HISTORY_FIELDS = RECORD_GENERAL_FIELDS + ["action", "timestamp", "modified_by"]
+
+# EXPAND SEARCH KEYS
+HUMAN_RECORD_KEYS = ('first_name', 'last_name', 'surname')
+CAR_RECORD_KEYS = ('car_number', 'car_brand', 'car_model')
+GENERAL_RECORD_KEYS = ('type', 'from_date', 'to_date', 'note', 'objects')

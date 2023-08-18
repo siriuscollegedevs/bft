@@ -616,6 +616,7 @@ class GetPutDeleteAccountToObjectView(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
 
+
     @extend_schema(responses={
         status.HTTP_204_NO_CONTENT: None,
         status.HTTP_401_UNAUTHORIZED: None,
