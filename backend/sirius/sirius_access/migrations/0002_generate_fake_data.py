@@ -107,6 +107,14 @@ class Migration(migrations.Migration):
                             timestamp=account_data['timestamp'] + timedelta(index+1),
                             **record
                         )
+                    if index == len(ACCOUNT_HISTORY) - 1:
+                        AccountHistory.objects.create(
+                            account=account,
+                            modified_by=account,
+                            action='password_changed',
+                            timestamp=account_data['timestamp'] + timedelta(index+2),
+                            **record
+                        )
                 created_account = account.get_data_from_history()
                 existing_accounts.append((created_account['first_name'], created_account['last_name'], created_account['surname']))
                 ACCOUNT_HISTORY.append(ACCOUNT_HISTORY.pop(0))
