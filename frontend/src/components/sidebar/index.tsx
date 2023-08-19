@@ -18,7 +18,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { setObjectNamesFilter } from '../../__data__/states/filters'
 import { useEffect } from 'react'
 
-type SidebarProps = {
+export type SidebarProps = {
   isSearch: boolean
   isObjects: boolean
   isButton: boolean
@@ -33,6 +33,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
   const currentAccountObject = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
+
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
 
   const {
@@ -77,11 +78,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
     }
   }
 
+  const shouldHideSidebar = !isSearch && !isObjects && !isButton
+
   return (
     <Box
       sx={{
         width: '320px',
-        display: 'flex',
+        display: shouldHideSidebar ? 'none' : 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
         alignItems: 'center'

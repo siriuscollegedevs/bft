@@ -13,6 +13,7 @@ import { SearchState } from '../../__data__/states/search'
 import { Box } from '@mui/system'
 import { getButtonNames } from '../../components/shortcut-buttons/button-names'
 import { ButtonName } from '../../components/shortcut-buttons'
+import { generateSidebarProps } from '../../components/sidebar/generate-sidebar-props'
 
 export const ObjectsPage = () => {
   const location = useLocation()
@@ -32,7 +33,8 @@ export const ObjectsPage = () => {
     refetch: refetchObjectsArchiveData
   } = useGetAllArchiveObjectsQuery()
 
-  const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole)
+  const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole, 'object')
+  const sidebarProps = generateSidebarProps(currentAccountRole, 'object')
   const [tableData, setTableData] = useState(isArchivePage ? objectsArchiveData : objectsData)
 
   useEffect(() => {
@@ -84,7 +86,7 @@ export const ObjectsPage = () => {
             ) : (
               <></>
             )}
-            <Sidebar isSearch={false} isObjects={false} isButton={true} />
+            <Sidebar {...sidebarProps} />
           </>
         )}
       </SideBarContainer>

@@ -146,10 +146,10 @@ class RecordHistory(UUIDMixin, models.Model):
         db_table = 'records_history'
 
 
-class RequestHistory(models.Model):
+class RequestHistory(UUIDMixin, models.Model):
     timestamp = models.DateTimeField(default=timezone.now) #auto_now_add=True
     request = models.ForeignKey(Request, on_delete=models.PROTECT)
-    code = models.IntegerField(unique=True, editable=False)
+    code = models.IntegerField(editable=False)
     action = models.CharField(max_length=ACTION_RECORD_LEN, choices=STATUS_CHOICES_RECORD)
     modified_by = models.ForeignKey(Account, on_delete=models.PROTECT)
 

@@ -17,6 +17,7 @@ import { getButtonNames } from '../../components/shortcut-buttons/button-names'
 import { ButtonName } from '../../components/shortcut-buttons'
 import { SearchState } from '../../__data__/states/search'
 import { Box } from '@mui/system'
+import { generateSidebarProps } from '../../components/sidebar/generate-sidebar-props'
 
 export const EmployeesPage = () => {
   const location = useLocation()
@@ -36,14 +37,15 @@ export const EmployeesPage = () => {
   const splitSearchQuery = search.searchFilter.split(' ')
 
   const [tableData, setTableData] = useState(isArchivePage ? employeesArchiveData : employeesData)
-  const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole)
+  const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole, 'employee')
+  const sidebarProps = generateSidebarProps(currentAccountRole, 'employee')
 
   const dataFilters = (data: AccountToObject[]) => {
     return data
       ? data.filter(
           employee =>
             filters.objectNameFilter.length === 0 ||
-            employee.objects.some(object => filters.objectNameFilter.includes(object.name))
+            employee.objects.some(object => filters.objectNameFilter.includes(object))
         )
       : []
   }
@@ -102,7 +104,7 @@ export const EmployeesPage = () => {
             ) : (
               <></>
             )}
-            <Sidebar isSearch={true} isObjects={true} isButton={true} />
+            <Sidebar {...sidebarProps} />
           </>
         )}
       </SideBarContainer>
