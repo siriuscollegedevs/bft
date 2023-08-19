@@ -2,7 +2,7 @@ import { EntityTitle } from '../../components/entity-title'
 import { Sidebar } from '../../components/sidebar'
 import { SmartTable } from '../../components/smart-table'
 import { SideBarContainer } from '../../styles/sidebar'
-import { useGetAllAdmissionsMutation } from '../../__data__/service/admission.api'
+import { useGetAllAdmissionsMutation, useGetAllArchiveAdmissionsMutation } from '../../__data__/service/admission.api'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useSelector } from 'react-redux'
 import { Admissions, Objects } from '../../types/api'
@@ -12,10 +12,18 @@ import { compareDates } from '../../utils/sorting'
 import { SearchState } from '../../__data__/states/search'
 import { Box } from '@mui/system'
 import { dateParser } from '../../utils/date-parser'
+import { useLocation } from 'react-router-dom'
 
 export const AdmissionsPage = () => {
-  const [admissionsMutation, { data: admissionsData, isLoading: admissionsLoading, isError }] =
+  const location = useLocation()
+  console.log('Current location:', location.pathname)
+  const isArchivePage = location.pathname === '/admissions/archive'
+  const [admissionsMutation, { data: admissionsData, isLoading: admissionsLoading, isError: admissionsError }] =
     useGetAllAdmissionsMutation()
+  const [
+    admissionsArchiveMutation,
+    { data: admissionsArchiveData, isLoading: admissionsArchiveLoading, isError: admissionsArchiveError }
+  ] = useGetAllArchiveAdmissionsMutation()
   const currentAccountObjects = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
@@ -41,15 +49,19 @@ export const AdmissionsPage = () => {
   }
 
   useEffect(() => {
-    setData(filteredData(admissionsData))
-  }, [admissionsData, filters])
+    setData(isArchivePage ? admissionsArchiveData : admissionsData)
+    setHasData(true)
+  }, [location.pathname, filters])
 
   useEffect(() => {
     if (idArray.length > 0 && !hasData) {
+      admissionsArchiveMutation(idArray)
       admissionsMutation(idArray)
-      setHasData(true)
+      // setData(isArchivePage ? admissionsArchiveData : admissionsData)
+
+      // setHasData(true)
     }
-  }, [idArray, hasData])
+  }, [idArray, location])
 
   const sortedRows = useMemo(() => {
     if (data) {
@@ -70,27 +82,23 @@ export const AdmissionsPage = () => {
       <EntityTitle isSearchField={true} isSwitch={true} />
 
       <SideBarContainer>
-        {admissionsLoading || isError ? (
+        {admissionsLoading || admissionsError ? (
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {filteredTableData ? (
-              filteredTableData.length > 0 ? (
-                <SmartTable
-                  buttonNames={['edit', 'history', 'trash']}
-                  size={{
-                    width: '100%',
-                    height: '100%'
-                  }}
-                  data={filteredData(filteredTableData)}
-                />
-              ) : (
-                <Box sx={{ width: '100%' }}>
-                  <p>Ничего не найдено, проверьте введенные данные.</p>
-                </Box>
-              )
+            {filteredTableData && filteredTableData.length > 0 ? (
+              <SmartTable
+                buttonNames={['edit', 'history', 'trash']}
+                size={{
+                  width: '100%',
+                  height: '100%'
+                }}
+                data={filteredTableData}
+              />
             ) : (
-              <></>
+              <Box sx={{ width: '100%' }}>
+                <p>Ничего не найдено, проверьте введенные данные.</p>
+              </Box>
             )}
             <Sidebar isSearch={true} isObjects={true} isButton={true} />
           </>

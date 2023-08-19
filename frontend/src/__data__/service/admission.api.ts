@@ -18,8 +18,16 @@ export const apiAdmissions = createApi({
         credentials: 'include'
       })
     }),
-    getAllArchiveAdmissions: builder.query<Admissions[], void>({
-      query: () => '/request/archive'
+    getAllArchiveAdmissions: builder.mutation<Admissions[], string[]>({
+      query: objectsIds => ({
+        url: '/request/archive',
+        method: 'POST',
+        body: {
+          ids: objectsIds
+        },
+        providesTags: ['admissions'],
+        credentials: 'include'
+      })
     }),
     createAdmissions: builder.mutation<Admissions, void>({
       query: () => ({
@@ -79,7 +87,7 @@ export const apiAdmissions = createApi({
 
 export const {
   useGetAllAdmissionsMutation,
-  useGetAllArchiveAdmissionsQuery,
+  useGetAllArchiveAdmissionsMutation,
   useCreateAdmissionsMutation,
   useUpdateAdmissionStatusMutation,
   useGetAdmissionsHistoryByIdQuery,

@@ -120,7 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
                       }
                     }}
                   >
-                    {currentAccountObject[0].name}
+                    {currentAccountObject[0]?.name}
                   </SidebarButton>
                 ) : (
                   <FormControl

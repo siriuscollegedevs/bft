@@ -62,6 +62,7 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/objects" element={<ObjectsPage />} />
             <Route path="/objects/archive" element={<ObjectsPage />} />
             <Route path="/admissions" element={<AdmissionsPage />} />
+            <Route path="/admissions/archive" element={<AdmissionsPage />} />
             <Route path="/admissions/view/:id" element={<AdmissionViewPage />} />
             <Route path="/employees" element={<EmployeesPage />} />
             <Route path="/employees/archive" element={<EmployeesPage />} />
