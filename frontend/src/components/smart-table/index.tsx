@@ -3,7 +3,7 @@ import { Basic, CurrentURL } from './basic'
 import { Collapsible, myURL } from './collapsible'
 import { ButtonNames } from '../shortcut-buttons'
 
-const basicURLs = ['/objects', '/objects/archive', '/admissions']
+const basicURLs = ['/objects', '/objects/archive', '/admissions', '/admissions/archive']
 const collapsibleURLs = ['/accounts', '/employees', '/admissions/']
 
 export type Size = {
