@@ -2,7 +2,7 @@ import { EntityTitle } from '../../components/entity-title'
 import { Sidebar } from '../../components/sidebar'
 import { SmartTable } from '../../components/smart-table'
 import { SideBarContainer } from '../../styles/sidebar'
-import { useGetAllAdmissionsMutation } from '../../__data__/service/admission.api'
+import { useGetAllAdmissionsMutation, useGetAllArchiveAdmissionsMutation } from '../../__data__/service/admission.api'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useSelector } from 'react-redux'
 import { Admissions, Objects } from '../../types/api'
@@ -12,6 +12,7 @@ import { compareDates } from '../../utils/sorting'
 import { SearchState } from '../../__data__/states/search'
 import { Box } from '@mui/system'
 import { dateParser } from '../../utils/date-parser'
+import { useLocation } from 'react-router-dom'
 
 export const AdmissionsPage = () => {
   const [admissionsMutation, { data: admissionsData, isLoading: admissionsLoading, isError }] =
@@ -19,10 +20,17 @@ export const AdmissionsPage = () => {
   const currentAccountObjects = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
+  const [
+    admissionsArchiveMutation,
+    { data: admissionsArchiveData, isLoading: admissionsArchiveLoading, isError: admissionsArchiveError }
+  ] = useGetAllArchiveAdmissionsMutation()
   const idArray: string[] = currentAccountObjects.map(object => object.id)
   const [hasData, setHasData] = useState(false)
+  const [hasArchiveData, setHasArchiveData] = useState(false)
   const [data, setData] = useState<Admissions[]>()
   const filters = useSelector((state: { filters: FiltersState }) => state.filters)
+  const location = useLocation()
+  const isArchivePage = location.pathname.includes('/archive')
 
   const search = useSelector((state: { search: SearchState }) => state.search)
   const splitSearchQuery = search.searchFilter.split(' ')
@@ -41,21 +49,33 @@ export const AdmissionsPage = () => {
   }
 
   useEffect(() => {
-    setData(filteredData(admissionsData))
-  }, [admissionsData, filters])
+    setData(isArchivePage ? admissionsArchiveData : admissionsData)
+  }, [admissionsData, admissionsArchiveData, filters, isArchivePage])
+
 
   useEffect(() => {
     if (idArray.length > 0 && !hasData) {
-      admissionsMutation(idArray)
-      setHasData(true)
+      if (!isArchivePage) {
+        admissionsMutation(idArray)
+        setHasData(true)
+      }
     }
-  }, [idArray, hasData])
+  }, [idArray, hasData, isArchivePage])
+
+  useEffect(() => {
+    if (idArray.length > 0 && !hasArchiveData) {
+      if (isArchivePage) {
+        admissionsArchiveMutation(idArray)
+        setHasArchiveData(true)
+      }
+    }
+  }, [idArray, hasArchiveData, isArchivePage])
 
   const sortedRows = useMemo(() => {
     if (data) {
-      return data.sort(compareDates)
+      return [...data].sort(compareDates);
     } else {
-      return []
+      return [];
     }
   }, [data])
 
@@ -70,7 +90,7 @@ export const AdmissionsPage = () => {
       <EntityTitle isSearchField={true} isSwitch={true} />
 
       <SideBarContainer>
-        {admissionsLoading || isError ? (
+        {admissionsLoading || isError || admissionsArchiveLoading || admissionsArchiveError ? (
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>

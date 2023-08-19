@@ -22,6 +22,7 @@ import { AuthState } from './__data__/states/auth'
 export const App: React.FC = (): JSX.Element => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
   const refreshabilityCheck = useRefreshabilityCheck()
+
   function Header() {
     const location = useLocation()
     const isLoginRoute = location.pathname === '/'
@@ -35,6 +36,7 @@ export const App: React.FC = (): JSX.Element => {
       </>
     )
   }
+
   useEffect(() => {
     refreshabilityCheck()
 
@@ -62,6 +64,7 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/objects" element={<ObjectsPage />} />
             <Route path="/objects/archive" element={<ObjectsPage />} />
             <Route path="/admissions" element={<AdmissionsPage />} />
+            <Route path="/admissions/archive" element={<AdmissionsPage />} />
             <Route path="/admissions/view/:id" element={<AdmissionViewPage />} />
             <Route path="/employees" element={<EmployeesPage />} />
             <Route path="/employees/archive" element={<EmployeesPage />} />
