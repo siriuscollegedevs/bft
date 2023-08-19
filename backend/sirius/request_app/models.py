@@ -146,7 +146,7 @@ class RecordHistory(UUIDMixin, models.Model):
         db_table = 'records_history'
 
 
-class RequestHistory(models.Model):
+class RequestHistory(UUIDMixin, models.Model):
     timestamp = models.DateTimeField(default=timezone.now) #auto_now_add=True
     request = models.ForeignKey(Request, on_delete=models.PROTECT)
     code = models.IntegerField(editable=False)
