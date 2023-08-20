@@ -20,14 +20,14 @@ import { sortData } from '../../utils/sorting'
 import { ObjectsSelector } from './objects-selector'
 
 export const AdmissionCreate = () => {
+  const [createAdmission, { data: createAdmissionData }] = useCreateAdmissionsMutation()
   const { id } = useParams<string>()
-
+  const [admissionCode, setAdmissionCode] = useState<number | string>(createAdmissionData?.timestamp || 'Код заявки')
   const navigate = useNavigate()
   const [updateStatus] = useUpdateAdmissionStatusMutation()
   const { data: RecordsOfAdmissionData, refetch: RecordsOfAdmissionRefetchData } = useGetRecordOfAdmissionsQuery(
     id ?? ''
   )
-  const [createAdmission] = useCreateAdmissionsMutation()
   const search = useSelector((state: { search: SearchState }) => state.search)
   const splitSearchQuery = search.searchFilter.split(' ')
   const [selectedObject, setSelectedObject] = useState<string[]>([])
@@ -41,6 +41,12 @@ export const AdmissionCreate = () => {
       createAdmission(selectedObject)
     }
   }, [selectedObject])
+
+  useEffect(() => {
+    if (createAdmissionData) {
+      setAdmissionCode(createAdmissionData?.timestamp)
+    }
+  }, [])
 
   const sortedData: AdmissionsHistory[] = useMemo(() => {
     if (RecordsOfAdmissionData) {
@@ -77,7 +83,7 @@ export const AdmissionCreate = () => {
   return (
     <>
       <ObjectsSelector onSelectObject={handleObjectSelect} />
-      <EntityTitle isSwitch={false} isSearchField={false} />
+      <EntityTitle isSwitch={false} isSearchField={false} customTitle={admissionCode} />
       <Box
         sx={{
           alignItems: 'center',
@@ -98,9 +104,6 @@ export const AdmissionCreate = () => {
           }}
         >
           <Box>
-            <SearchField />
-          </Box>
-          <Box>
             <Button
               variant="contained"
               sx={{ marginRight: '14px' }}
@@ -108,9 +111,8 @@ export const AdmissionCreate = () => {
             >
               Добавить запись
             </Button>
-            <Button variant="contained" sx={{ marginRight: '14px' }} onClick={() => navigate(`/admissions/${id}`)}>
-              Редактировать
-            </Button>
+          </Box>
+          <Box>
             {id && <CanceledDialog admissionId={id} />}
             <Button
               variant="contained"

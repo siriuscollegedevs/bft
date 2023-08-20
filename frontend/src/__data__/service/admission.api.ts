@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Admissions, AdmissionsHistory, SearchOfAdmissions } from '../../types/api'
+import { Admissions, AdmissionsHistory, CreateAdmission, SearchOfAdmissions } from '../../types/api'
 import { baseQuery } from '../utils'
 
 export const apiAdmissions = createApi({
@@ -29,7 +29,7 @@ export const apiAdmissions = createApi({
         credentials: 'include'
       })
     }),
-    createAdmissions: builder.mutation<Admissions, string[]>({
+    createAdmissions: builder.mutation<CreateAdmission, string[]>({
       query: objectsIds => ({
         url: '/request/create',
         method: 'POST',
