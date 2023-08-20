@@ -18,7 +18,9 @@ import { useRefreshabilityCheck } from './hooks/refreshability-check'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { AuthState } from './__data__/states/auth'
-import { AdvancedSearch } from './pages/search'
+import { AccountAdvancedSearch } from './pages/search/account'
+import { EmployeeAdvancedSearch } from './pages/search/employee'
+import { AdmissionsAdvancedSearch } from './pages/search/admissions'
 
 export const App: React.FC = (): JSX.Element => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
@@ -72,8 +74,9 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/accounts" element={<AccountsPage />} />
             <Route path="/accounts/archive" element={<AccountsPage />} />
             <Route path="/admissions/:id/entries/create" element={<FormEditDirectories />} />
-            <Route path="/accounts/search" element={<AdvancedSearch />} />
-            <Route path="/employees/search" element={<AdvancedSearch />} />
+            <Route path="/accounts/search" element={<AccountAdvancedSearch />} />
+            <Route path="/employees/search" element={<EmployeeAdvancedSearch />} />
+            <Route path="/admissions/search" element={<AdmissionsAdvancedSearch />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

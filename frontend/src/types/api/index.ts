@@ -138,7 +138,7 @@ export type SearchOfAdmissions = {
   car_number: string
   car_brand: string
   car_model: string
-  object: string
+  objects: string[]
   type: string
   first_name: string
   surname: string
@@ -167,6 +167,13 @@ export type AccountToObject = {
   surname?: string
   last_name: string
   username: string
+  objects: string[]
+}
+
+export type AccountToObjectSearch = {
+  first_name?: string
+  surname?: string
+  last_name: string
   objects: string[]
 }
 

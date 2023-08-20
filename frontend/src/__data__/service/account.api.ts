@@ -102,6 +102,6 @@ export const {
   useDeleteAccountByIdMutation,
   useGetAccountHistoryByIdQuery,
   useAccountSearchMutation,
-    useAccountArchiveSearchMutation,
+  useAccountArchiveSearchMutation,
   useChangeAccountPasswordMutation
 } = apiAccount
