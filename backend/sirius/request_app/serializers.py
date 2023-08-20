@@ -15,6 +15,7 @@ class RequestSerializer(UUIDMixin, serializers.Serializer):
 
 
 class PostRequestSerializer(UUIDMixin, serializers.Serializer):
+    timestamp = serializers.DateField()
     code = serializers.IntegerField()
 
 
