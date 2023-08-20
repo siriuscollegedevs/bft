@@ -27,6 +27,7 @@ RECORDID_ERROR_MSG = {'error': 'Invalid RequestdId'}
 
 NO_RECORDS_FOUND_ERROR = {"error": "Записи не найдены"}
 NO_SEARCH_RECORDS_FOUND_ERROR = {"error": "Записи по запросу не найдены"}
+NO_OBJECTS_GIVEN_ERROR = {'error': 'Не предоставлены объекты для закрепления'}
 
 # SERIALIZER FIELDS SETS
 RECORD_GENERAL_FIELDS = ["car_number", "car_brand", "car_model",
