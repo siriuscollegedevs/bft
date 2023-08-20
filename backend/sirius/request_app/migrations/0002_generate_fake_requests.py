@@ -100,46 +100,6 @@ class Migration(migrations.Migration):
                             timestamp=request_info['timestamp'] + timedelta(index+1),
                             **car_history
                             )
-                        if not RequestHistory.objects.filter(action='closed').exists() and index == len(CAR_RECORDS_HISTORY) - 1:
-                            RecordHistory.objects.create(
-                            action='closed',
-                            modified_by=account,
-                            record=car_record,
-                            timestamp=timestamp,
-                            **car_history
-                            )
-                            car_record.status = 'outdated'
-                            car_record.save()
-                        elif not RequestHistory.objects.filter(action='canceled').exists() and index == len(CAR_RECORDS_HISTORY) - 1:
-                            RecordHistory.objects.create(
-                            action='canceled',
-                            modified_by=account,
-                            record=car_record,
-                            timestamp=timestamp,
-                            **car_history
-                            )
-                            car_record.status = 'outdated'
-                            car_record.save()
-                        elif not RequestHistory.objects.filter(action='outdated').exists() and index == len(CAR_RECORDS_HISTORY) - 1:
-                            RecordHistory.objects.create(
-                            action='outdated',
-                            modified_by=account,
-                            record=car_record,
-                            timestamp=timestamp,
-                            **car_history
-                            )
-                            car_record.status = 'outdated'
-                            car_record.save()
-                        elif not RequestHistory.objects.filter(action='deleted').exists() and index == len(CAR_RECORDS_HISTORY) - 1:
-                            RecordHistory.objects.create(
-                            action='deleted',
-                            modified_by=account,
-                            record=car_record,
-                            timestamp=timestamp,
-                            **car_history
-                            )
-                            car_record.status = 'outdated'
-                            car_record.save()
                         last_modified_time = max(last_modified_time, timestamp)
                     exisiting_cars.append(car_record.get_last_version().car_number)
 
@@ -162,46 +122,6 @@ class Migration(migrations.Migration):
                             timestamp=request_info['timestamp'] + timedelta(index+1),
                             **human_history
                             )
-                        if not RequestHistory.objects.filter(action='closed').exists() and index == len(HUMAN_RECORDS_HISTORY) - 1:
-                            RecordHistory.objects.create(
-                            action='closed',
-                            modified_by=account,
-                            record=human_record,
-                            timestamp=timestamp,
-                            **human_history
-                            )
-                            human_record.status = 'outdated'
-                            human_record.save()
-                        elif not RequestHistory.objects.filter(action='canceled').exists() and index == len(HUMAN_RECORDS_HISTORY) - 1:
-                            RecordHistory.objects.create(
-                            action='canceled',
-                            modified_by=account,
-                            record=human_record,
-                            timestamp=timestamp,
-                            **human_history
-                            )
-                            human_record.status = 'outdated'
-                            human_record.save()
-                        elif not RequestHistory.objects.filter(action='outdated').exists() and index == len(HUMAN_RECORDS_HISTORY) - 1:
-                            RecordHistory.objects.create(
-                            action='outdated',
-                            modified_by=account,
-                            record=human_record,
-                            timestamp=timestamp,
-                            **human_history
-                            )
-                            human_record.status = 'outdated'
-                            human_record.save()
-                        elif not RequestHistory.objects.filter(action='deleted').exists() and index == len(HUMAN_RECORDS_HISTORY) - 1:
-                            RecordHistory.objects.create(
-                            action='deleted',
-                            modified_by=account,
-                            record=human_record,
-                            timestamp=timestamp,
-                            **human_history
-                            )
-                            human_record.status = 'outdated'
-                            human_record.save()
                         last_modified_time = max(last_modified_time, timestamp)
                     created_human_record = human_record.get_info()
                     existing_humen.append(
@@ -211,7 +131,9 @@ class Migration(migrations.Migration):
                             created_human_record['surname']
                         )
                     )
+                action = None
                 if not RequestHistory.objects.filter(action='closed').exists():
+                    action = 'closed'
                     request.status = 'outdated'
                     request.save()
                     RequestHistory.objects.create(
@@ -222,6 +144,7 @@ class Migration(migrations.Migration):
                         timestamp=last_modified_time + timedelta(1)
                     )
                 elif not RequestHistory.objects.filter(action='canceled').exists():
+                    action = 'canceled'
                     request.status = 'outdated'
                     request.save()
                     RequestHistory.objects.create(
@@ -232,6 +155,7 @@ class Migration(migrations.Migration):
                         timestamp=last_modified_time + timedelta(1)
                     )
                 elif not RequestHistory.objects.filter(action='outdated').exists():
+                    action = 'outdated'
                     request.status = 'outdated'
                     request.save()
                     RequestHistory.objects.create(
@@ -242,6 +166,7 @@ class Migration(migrations.Migration):
                         timestamp=last_modified_time + timedelta(1)
                     )
                 elif not RequestHistory.objects.filter(action='deleted').exists():
+                    action = 'deleted'
                     request.status = 'outdated'
                     request.save()
                     RequestHistory.objects.create(
@@ -251,6 +176,23 @@ class Migration(migrations.Migration):
                         code=request_info['code'],
                         timestamp=last_modified_time + timedelta(1)
                     )
+                if action is not None:
+                    existing_records = Record.objects.filter(status='active', request=request)
+                    for record in existing_records:
+                        record_history = record.get_last_version()
+                        record_data = {
+                            key: record_history.__dict__[key] for key in record_history.__dict__ if key not in [
+                                'id', '_state', 'modified_by_id', 'timestamp', 'action'
+                                ]
+                        }
+                        RecordHistory.objects.create(
+                            action=action,
+                            modified_by=account,
+                            timestamp=last_modified_time + timedelta(1),
+                            **record_data
+                        )
+                        record.status = 'outdated'
+                        record.save()
 
 
     dependencies = [

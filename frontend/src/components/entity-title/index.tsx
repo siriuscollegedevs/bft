@@ -22,15 +22,13 @@ const urlTitle: UrlTitle = [
 ]
 
 export const EntityTitle: React.FC<IsSwitchProps> = ({ isSearchField, isSwitch }) => {
-  const [checked, setChecked] = React.useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const currentUrl = location.pathname
+  const isArchivePage = currentUrl.includes('/archive')
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked)
-    const currentUrl = window.location.pathname
-    const updatedUrl = event.target.checked ? currentUrl + '/archive' : currentUrl.replace('/archive', '')
-    navigate(updatedUrl)
+  const handleChange = () => {
+    navigate(isArchivePage ? currentUrl.replace('/archive', '') : currentUrl + '/archive')
   }
 
   const getTitleFromUrl = (url: string): string => {
@@ -55,7 +53,6 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSearchField, isSwitch }
     return 'Не найдено'
   }
 
-  const currentUrl = location.pathname
   const title = getTitleFromUrl(currentUrl)
 
   return (
@@ -98,7 +95,7 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSearchField, isSwitch }
             {isSwitch ? (
               <FormControlLabel
                 control={
-                  <Switch checked={checked} onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />
+                  <Switch checked={isArchivePage} onChange={handleChange} inputProps={{ 'aria-label': 'controlled' }} />
                 }
                 label="архив записей"
               />
