@@ -21,6 +21,14 @@ export type Account = {
   password: string
 }
 
+export type AccountExpandSearch = {
+  role: string
+  first_name: string
+  surname: string
+  last_name: string
+  username: string
+}
+
 export type ExpandSearchAdmissionsBody = {
   role?: string
   first_name?: string

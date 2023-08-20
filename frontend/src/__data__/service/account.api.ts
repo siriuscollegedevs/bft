@@ -65,6 +65,19 @@ export const apiAccount = createApi({
         }
       })
     }),
+    accountArchiveSearch: builder.mutation<Accounts[], ExpandSearchAdmissionsBody>({
+      query: accountData => ({
+        url: '/account/expand_search/archive',
+        method: 'POST',
+        body: {
+          role: accountData?.role,
+          first_name: accountData?.first_name,
+          surname: accountData?.surname,
+          last_name: accountData?.last_name,
+          username: accountData?.username
+        }
+      })
+    }),
     changeAccountPassword: builder.mutation<void, { accountId: string; admissionsBody: ChangePasswordData }>({
       query: ({ accountId, admissionsBody }) => ({
         url: `/account/change_pswd/${accountId}`,
@@ -89,5 +102,6 @@ export const {
   useDeleteAccountByIdMutation,
   useGetAccountHistoryByIdQuery,
   useAccountSearchMutation,
+    useAccountArchiveSearchMutation,
   useChangeAccountPasswordMutation
 } = apiAccount
