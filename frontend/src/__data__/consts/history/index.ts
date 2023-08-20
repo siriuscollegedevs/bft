@@ -46,7 +46,7 @@ export const formatValue = (value: number | string | string[], key: string) => {
   } else if (key === 'to_date' || key === 'from_date') {
     return typeof value !== 'number' ? dateParser(value) : value
   } else if (key === 'role') {
-    return ACCOUNT_ROLES[value]
+    return ACCOUNT_ROLES[value as keyof typeof ACCOUNT_ROLES]
   } else if (key === 'type') {
     return typeof value !== 'number' ? getObjectValueByKey(value, RECORD_TYPE) : value
   }
