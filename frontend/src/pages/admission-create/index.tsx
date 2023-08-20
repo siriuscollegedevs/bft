@@ -1,27 +1,46 @@
 import { Button } from '@mui/material'
 import { Box } from '@mui/system'
+import { useEffect, useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useParams, useNavigate } from 'react-router-dom'
+import { RECORD_TYPE } from '../../__data__/consts/record'
+import {
+  useUpdateAdmissionStatusMutation,
+  useGetRecordOfAdmissionsQuery,
+  useCreateAdmissionsMutation
+} from '../../__data__/service/admission.api'
+import { SearchState } from '../../__data__/states/search'
+import { CanceledDialog } from '../../components/canceled-dialog'
 import { EntityTitle } from '../../components/entity-title'
 import { SearchField } from '../../components/search-field'
 import { SmartTable } from '../../components/smart-table'
-import { useNavigate, useParams } from 'react-router-dom'
-import { useGetRecordOfAdmissionsQuery, useUpdateAdmissionStatusMutation } from '../../__data__/service/admission.api'
-import { CanceledDialog } from '../../components/canceled-dialog'
-import { useMemo } from 'react'
-import { sortData } from '../../utils/sorting'
-import { useSelector } from 'react-redux'
-import { SearchState } from '../../__data__/states/search'
+import { AdmissionsHistory, Objects } from '../../types/api'
 import { dateParser } from '../../utils/date-parser'
-import { RECORD_TYPE } from '../../__data__/consts/record'
-import { AdmissionsHistory } from '../../types/api'
+import { sortData } from '../../utils/sorting'
+import { ObjectsSelector } from './objects-selector'
 
-export const AdmissionViewPage = () => {
+export const AdmissionCreate = () => {
   const { id } = useParams<string>()
+
   const navigate = useNavigate()
   const [updateStatus] = useUpdateAdmissionStatusMutation()
-  const { data: RecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(id ?? '')
-
+  const { data: RecordsOfAdmissionData, refetch: RecordsOfAdmissionRefetchData } = useGetRecordOfAdmissionsQuery(
+    id ?? ''
+  )
+  const [createAdmission] = useCreateAdmissionsMutation()
   const search = useSelector((state: { search: SearchState }) => state.search)
   const splitSearchQuery = search.searchFilter.split(' ')
+  const [selectedObject, setSelectedObject] = useState<string[]>([])
+
+  const handleObjectSelect = (selected: Objects[]) => {
+    setSelectedObject(selected.map(obj => obj.id))
+  }
+
+  useEffect(() => {
+    if (selectedObject.length > 0) {
+      createAdmission(selectedObject)
+    }
+  }, [selectedObject])
 
   const sortedData: AdmissionsHistory[] = useMemo(() => {
     if (RecordsOfAdmissionData) {
@@ -57,6 +76,7 @@ export const AdmissionViewPage = () => {
 
   return (
     <>
+      <ObjectsSelector onSelectObject={handleObjectSelect} />
       <EntityTitle isSwitch={false} isSearchField={false} />
       <Box
         sx={{

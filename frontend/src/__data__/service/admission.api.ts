@@ -29,10 +29,11 @@ export const apiAdmissions = createApi({
         credentials: 'include'
       })
     }),
-    createAdmissions: builder.mutation<Admissions, void>({
-      query: () => ({
-        url: '/request',
-        method: 'POST'
+    createAdmissions: builder.mutation<Admissions, string[]>({
+      query: objectsIds => ({
+        url: '/request/create',
+        method: 'POST',
+        body: { object_ids: objectsIds }
       })
     }),
     updateAdmissionStatus: builder.mutation<
