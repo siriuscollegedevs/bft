@@ -107,13 +107,20 @@ class PostRequest(APIView):
                         req_code = get_max_code() + 1
                     except Exception:
                         return Response(status=status.HTTP_400_BAD_REQUEST) # NOTE не удалось получить код
-                RequestHistory.objects.create(
+                req_history = RequestHistory.objects.create(
                     request=req,
                     code=req_code,
                     action='created',
                     modified_by=get_user(request)
                 )
-                return Response(serializers.PostRequestSerializer({'id': req.id, 'code': req_code}).data)
+                return Response(
+                    serializers.PostRequestSerializer(
+                        {
+                            'id': req.id,
+                            'code': req_code,
+                            'timestamp': req_history.timestamp.date()
+                        }
+                    ).data)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
