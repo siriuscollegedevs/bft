@@ -18,6 +18,9 @@ import { useRefreshabilityCheck } from './hooks/refreshability-check'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { AuthState } from './__data__/states/auth'
+import { AccountsHistory } from './pages/history/accounts'
+import { ObjectsHistory } from './pages/history/objects'
+import { AdmissionsHistory } from './pages/history/admissions'
 import { AdmissionCreate } from './pages/admission-create'
 
 export const App: React.FC = (): JSX.Element => {
@@ -68,18 +71,21 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/objects/archive" element={<ObjectsPage />} />
             <Route path="/objects/create" element={<FormEditDirectories />} />
             <Route path="/objects/:id" element={<FormEditDirectories />} />
+            <Route path="/objects/history/:id" element={<ObjectsHistory />} />
 
             <Route path="/admissions" element={<AdmissionsPage />} />
             <Route path="/admissions/archive" element={<AdmissionsPage />} />
             <Route path="/admissions/create" element={<AdmissionCreate />} />
             <Route path="/admissions/view/:id" element={<AdmissionViewPage />} />
             <Route path="/admissions/:id/record/create" element={<FormEditDirectories />} />
+            <Route path="/admissions/history/:id" element={<AdmissionsHistory />} />
 
             <Route path="/employees" element={<EmployeesPage />} />
             <Route path="/employees/archive" element={<EmployeesPage />} />
 
             <Route path="/accounts" element={<AccountsPage />} />
             <Route path="/accounts/archive" element={<AccountsPage />} />
+            <Route path="/accounts/history/:id" element={<AccountsHistory />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
