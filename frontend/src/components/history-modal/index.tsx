@@ -83,12 +83,12 @@ export const BasicModal = ({ open, handleClose, selectedRow, prewRow }: ModalPro
                     const shouldHighlight = differences[key]
                     return (
                       <React.Fragment key={key}>
-                        {prewRow.action === 'canceled' && key === 'note' && (
-                          <StyledListEntries isDifferent={shouldHighlight}>
-                            {getKeyTranslation(key)}: {formatValue(prewValue, key)}
-                          </StyledListEntries>
+                        {selectedRow.action === 'canceled' && key === 'note' && (
+                            <StyledListEntries isDifferent={shouldHighlight}>
+                              {getKeyTranslation(key)}: {formatValue(prewValue, key)}
+                            </StyledListEntries>
                         )}
-                        {(prewRow.action === 'modified' || prewRow.action === 'created') && (
+                        {(prewRow.action === 'modified' || prewRow.action === 'created') && selectedRow.action !== 'canceled' &&(
                           <StyledListEntries isDifferent={shouldHighlight}>
                             {getKeyTranslation(key)}: {formatValue(prewValue, key)}
                           </StyledListEntries>
