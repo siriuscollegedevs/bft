@@ -107,7 +107,7 @@ export const Transport = () => {
           }
         })
         if (!createTransportRecordError) {
-          navigate(`/admissions/view/${id}`)
+          navigate(-1)
         }
       }
     } catch (error) {

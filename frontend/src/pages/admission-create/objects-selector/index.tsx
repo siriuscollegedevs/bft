@@ -12,9 +12,10 @@ import {
   SelectChangeEvent
 } from '@mui/material'
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Objects } from '../../../types/api'
 import { useNavigate } from 'react-router-dom'
+import { setShowObjectsSelector } from '../../../__data__/states/admission-technical'
 
 type ObjectsSelectorProps = {
   onSelectObject: (selected: Objects[]) => void
@@ -25,6 +26,7 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
   const [hasSelected, setHasSelected] = useState(false)
   const [selectedObjects, setSelectedObjects] = useState<Objects[]>([])
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const currentAccountObjects = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
@@ -37,6 +39,7 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
   const handleNext = () => {
     setOpen(false)
     onSelectObject(selectedObjects)
+    dispatch(setShowObjectsSelector({ showObjectsSelector: false }))
   }
 
   const handleChange = (event: SelectChangeEvent<string[]>) => {

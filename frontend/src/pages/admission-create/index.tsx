@@ -1,9 +1,8 @@
 import { Button } from '@mui/material'
 import { Box } from '@mui/system'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-import { useParams, useNavigate } from 'react-router-dom'
-import { RECORD_TYPE } from '../../__data__/consts/record'
+import { useNavigate } from 'react-router-dom'
 import {
   useUpdateAdmissionStatusMutation,
   useGetRecordOfAdmissionsQuery,
@@ -12,17 +11,17 @@ import {
 import { SearchState } from '../../__data__/states/search'
 import { CanceledDialog } from '../../components/canceled-dialog'
 import { EntityTitle } from '../../components/entity-title'
-import { SearchField } from '../../components/search-field'
-import { SmartTable } from '../../components/smart-table'
-import { AdmissionsHistory, Objects } from '../../types/api'
-import { dateParser } from '../../utils/date-parser'
-import { sortData } from '../../utils/sorting'
+import { Objects } from '../../types/api'
 import { ObjectsSelector } from './objects-selector'
+import { AdmissionTechnical } from '../../__data__/states/admission-technical'
+import { EmptyAdmission } from '../../components/admission-messages/is-empty'
 
 export const AdmissionCreate = () => {
   const [createAdmission, { data: createAdmissionData }] = useCreateAdmissionsMutation()
-  const { id } = useParams<string>()
   const navigate = useNavigate()
+  const shouldDisplayObjectSelector = useSelector(
+    (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.showObjectsSelector
+  )
   const [updateStatus] = useUpdateAdmissionStatusMutation()
   const { data: RecordsOfAdmissionData, refetch: RecordsOfAdmissionRefetchData } = useGetRecordOfAdmissionsQuery(
     createAdmissionData?.id ?? ''
@@ -40,38 +39,6 @@ export const AdmissionCreate = () => {
       createAdmission(selectedObject)
     }
   }, [selectedObject])
-
-  const sortedData: AdmissionsHistory[] = useMemo(() => {
-    if (RecordsOfAdmissionData) {
-      const people = RecordsOfAdmissionData.filter(item => item.last_name !== null)
-      const cars = RecordsOfAdmissionData.filter(item => item.last_name === null)
-
-      const sortedPeople = sortData(people, 'last_name')
-      const sortedCars = sortData(cars, 'car_brand')
-
-      return [...sortedPeople, ...sortedCars]
-    } else {
-      return []
-    }
-  }, [RecordsOfAdmissionData])
-
-  const filteredTableData: AdmissionsHistory[] = sortedData?.filter(item => {
-    if (item !== null) {
-      return splitSearchQuery.every(
-        queryPart =>
-          dateParser(item.timestamp).includes(queryPart) ||
-          (RECORD_TYPE as Record<string, string>)[item.type].toLowerCase().startsWith(queryPart.toLowerCase()) ||
-          item.car_number?.toLowerCase().includes(queryPart.toLowerCase()) ||
-          item.car_brand?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
-          item.car_model?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
-          item.first_name?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
-          item.surname?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
-          item.last_name?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
-          item.from_date?.includes(queryPart) ||
-          item.to_date?.includes(queryPart)
-      )
-    }
-  })
 
   return (
     <>
@@ -100,19 +67,26 @@ export const AdmissionCreate = () => {
             <Button
               variant="contained"
               sx={{ marginRight: '14px' }}
-              onClick={() => navigate(`/admissions/${id}/record/create`)}
+              onClick={() =>
+                navigate(`/admissions/${createAdmissionData?.id}/record/create`, {
+                  state: { showObjectSelector: true }
+                })
+              }
             >
               Добавить запись
             </Button>
           </Box>
           <Box>
-            {id && <CanceledDialog admissionId={id} />}
+            {createAdmissionData?.id && <CanceledDialog admissionId={createAdmissionData?.id} />}
             <Button
               variant="contained"
               sx={{ marginLeft: '14px' }}
               onClick={() => {
-                if (id) {
-                  updateStatus({ admissionId: id, admissionData: { status: 'closed', reason: '' } })
+                if (createAdmissionData?.id) {
+                  updateStatus({
+                    admissionId: createAdmissionData?.id,
+                    admissionData: { status: 'closed', reason: '' }
+                  })
                 }
               }}
             >
@@ -120,24 +94,9 @@ export const AdmissionCreate = () => {
             </Button>
           </Box>
         </Box>
-        {filteredTableData ? (
-          filteredTableData.length > 0 ? (
-            <SmartTable
-              buttonNames={[]}
-              size={{
-                width: '90%',
-                height: '100%'
-              }}
-              data={filteredTableData}
-            />
-          ) : (
-            <Box sx={{ width: '90%', height: '100%' }}>
-              <p>Ничего не найдено, проверьте введенные данные.</p>
-            </Box>
-          )
-        ) : (
-          <></>
-        )}
+        <Box sx={{ width: '90%', height: '100%' }}>
+          <EmptyAdmission />
+        </Box>
       </Box>
     </>
   )

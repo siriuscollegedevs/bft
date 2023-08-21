@@ -1,4 +1,5 @@
 import { CurrentAccountId } from '../../__data__/states/account'
+import { AdmissionTechnical } from '../../__data__/states/admission-technical'
 import { AuthState } from '../../__data__/states/auth'
 import { FiltersState } from '../../__data__/states/filters'
 import { SearchState } from '../../__data__/states/search'
@@ -151,6 +152,7 @@ export type RootState = {
   auth: AuthState
   filters: FiltersState
   search: SearchState
+  admissionTechnical: AdmissionTechnical
 }
 
 export type ObjectInArray = {

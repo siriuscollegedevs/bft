@@ -13,7 +13,7 @@ import { SetStateAction, useState } from 'react'
 import { RECORD_FIELDS, RECORD_TYPE } from '../../../../__data__/consts/record'
 import { Box } from '@mui/system'
 import { useCreateHumanRecordMutation } from '../../../../__data__/service/record.api'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 
 type FieldsState = {
   lastName: string
@@ -105,7 +105,7 @@ export const Human = () => {
           }
         })
         if (!createHumanRecordError) {
-          navigate(`/admissions/view/${id}`)
+          navigate(-1)
         }
       }
     } catch (error) {
