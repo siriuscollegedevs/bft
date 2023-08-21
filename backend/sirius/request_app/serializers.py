@@ -14,6 +14,11 @@ class RequestSerializer(UUIDMixin, serializers.Serializer):
     object_ids = serializers.ListField(child=serializers.UUIDField(), allow_empty=False)
 
 
+class PostRequestSerializer(UUIDMixin, serializers.Serializer):
+    timestamp = serializers.DateField()
+    code = serializers.IntegerField()
+
+
 class RecordSerializer(UUIDMixin, serializers.Serializer):
     timestamp = serializers.DateTimeField(read_only=True)
     action = serializers.CharField(read_only=True)
@@ -80,6 +85,7 @@ class ChangeStatusSerializer(serializers.Serializer):
 
 class RequestSearchSerializer(serializers.Serializer):
     request_id = serializers.UUIDField()
+    code = serializers.IntegerField()
     id = serializers.UUIDField()
     type = serializers.CharField()
     objects = serializers.ListField(child=serializers.CharField())
