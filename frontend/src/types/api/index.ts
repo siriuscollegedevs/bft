@@ -151,6 +151,7 @@ export type SearchOfAdmissions = {
 export type SearchOfAdmissionsResponse = {
   id: string
   request_id: string
+  code: number
   car_number: string
   car_brand: string
   car_model: string

@@ -67,12 +67,12 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
 
   const handleButtonClick = (title: ButtonName) => {
     const newPath = location.pathname.includes('/archive')
-        ? location.pathname.replace('/archive', '')
-        : location.pathname
+      ? location.pathname.replace('/archive', '')
+      : location.pathname
 
     const newSearchPath = location.pathname.includes('/search')
-        ? location.pathname.replace('/search', '')
-        : location.pathname
+      ? location.pathname.replace('/search', '')
+      : location.pathname
 
     if (title === 'edit') {
       navigate(`${newSearchPath}/${id}`)

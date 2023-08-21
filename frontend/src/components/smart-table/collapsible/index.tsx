@@ -25,7 +25,7 @@ export const Collapsible = ({
 }: { currentURL: myURL } & ButtonNames & { size: Size } & any) => {
   const groupedData: { [key: string]: SearchOfAdmissionsResponse[] } = data.reduce(
     (groups: { [key: string]: SearchOfAdmissionsResponse[] }, item: SearchOfAdmissionsResponse) => {
-      const groupId = item.request_id
+      const groupId = item.code
       if (!groups[groupId]) {
         groups[groupId] = []
       }
@@ -45,7 +45,7 @@ export const Collapsible = ({
           <Paper elevation={1}>
             <Table>
               <TableBody>
-                {groupedData[groupId].map((item) => (
+                {groupedData[groupId].map(item => (
                   <>
                     <Row row={item} buttonNames={buttonNames} currentURL={currentURL} />
                   </>
