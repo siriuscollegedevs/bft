@@ -16,12 +16,12 @@ const admissionTechnical = createSlice({
     setShowObjectsSelector: (state, action: PayloadAction<AdmissionTechnical>) => {
       return { ...state, showObjectsSelector: action.payload.showObjectsSelector }
     },
-    clearAccount: () => {
+    clearAdmissionTechnical: () => {
       return initialState
     }
   }
 })
 
-export const { setShowObjectsSelector } = admissionTechnical.actions
+export const { setShowObjectsSelector, clearAdmissionTechnical } = admissionTechnical.actions
 export const admissionTechnicalReducer = admissionTechnical.reducer
 export const selectAdmissionTechnical = (state: RootState) => state.admissionTechnical

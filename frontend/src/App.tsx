@@ -21,7 +21,7 @@ import { AuthState } from './__data__/states/auth'
 import { AccountsHistory } from './pages/history/accounts'
 import { ObjectsHistory } from './pages/history/objects'
 import { AdmissionsHistory } from './pages/history/admissions'
-import { AdmissionCreate } from './pages/admission-create'
+import { AdmissionCreate } from './pages/admission-ce/create'
 
 export const App: React.FC = (): JSX.Element => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
