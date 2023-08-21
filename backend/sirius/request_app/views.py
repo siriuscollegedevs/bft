@@ -426,6 +426,7 @@ class RequestExpandSearch(APIView):
                 res = []
                 for record in records:
                     record_info = record.get_info()
+                    record_info['code'] = record.request.get_last_version().code
                     record_info['request_id'] = record.request.id
                     record_info['objects'] = list(
                         map(
