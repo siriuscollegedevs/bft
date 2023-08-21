@@ -21,6 +21,9 @@ import { AuthState } from './__data__/states/auth'
 import { AccountAdvancedSearch } from './pages/search/account'
 import { EmployeeAdvancedSearch } from './pages/search/employee'
 import { AdmissionsAdvancedSearch } from './pages/search/admissions'
+import { AccountsHistory } from './pages/history/accounts'
+import { ObjectsHistory } from './pages/history/objects'
+import { AdmissionsHistory } from './pages/history/admissions'
 
 export const App: React.FC = (): JSX.Element => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
@@ -74,6 +77,9 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/accounts" element={<AccountsPage />} />
             <Route path="/accounts/archive" element={<AccountsPage />} />
             <Route path="/admissions/:id/entries/create" element={<FormEditDirectories />} />
+            <Route path="/accounts/history/:id" element={<AccountsHistory />} />
+            <Route path="/objects/history/:id" element={<ObjectsHistory />} />
+            <Route path="/admissions/history/:id" element={<AdmissionsHistory />} />
             <Route path="/accounts/search" element={<AccountAdvancedSearch />} />
             <Route path="/employees/search" element={<EmployeeAdvancedSearch />} />
             <Route path="/admissions/search" element={<AdmissionsAdvancedSearch />} />

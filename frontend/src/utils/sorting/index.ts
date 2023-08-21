@@ -1,6 +1,4 @@
-import { Admissions } from '../../types/api'
-
-export const compareDates = (a: Admissions, b: Admissions) => {
+export const compareDates = (a: any, b: any) => {
   const dateA = new Date(a.timestamp)
   const dateB = new Date(b.timestamp)
   return dateB.getTime() - dateA.getTime()
