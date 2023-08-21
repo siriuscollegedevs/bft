@@ -1,5 +1,5 @@
 import React from 'react'
-import { Paper, Box, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { SmartTable } from '../../smart-table'
 import { ButtonName } from '../../shortcut-buttons'
 import CircularProgress from '@mui/material/CircularProgress'
@@ -33,7 +33,7 @@ export const SearchTableContent: React.FC<SearchTableProps> = ({
 
   if (checked === 'archive' ? tableArchiveData : tableData) {
     return (
-      <Paper elevation={1} sx={{ width: '100%' }}>
+      <Box sx={{ width: '100%' }}>
         <SmartTable
           buttonNames={buttonNames}
           size={{
@@ -42,7 +42,7 @@ export const SearchTableContent: React.FC<SearchTableProps> = ({
           }}
           data={checked === 'archive' ? tableArchiveData : tableData}
         />
-      </Paper>
+      </Box>
     )
   } else {
     return (

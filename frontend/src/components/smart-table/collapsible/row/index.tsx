@@ -8,13 +8,20 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp'
 import { ReactComponent as HumanIcon } from '../../../../assets/human.svg'
 import { ReactComponent as CarIcon } from '../../../../assets/car.svg'
 import { RECORD_FIELDS, RECORD_TYPE, getObjectValueByKey } from '../../../../__data__/consts/record'
-import { Account, Accounts, AccountToObject, AdmissionsHistory, ObjectInArray } from '../../../../types/api'
+import {
+  Account,
+  Accounts,
+  AccountToObject,
+  AdmissionsHistory,
+  ObjectInArray,
+  SearchOfAdmissionsResponse
+} from '../../../../types/api'
 import { ACCOUNT_ROLES } from '../../../../__data__/consts/account-roles'
 import { CustomCollapseCell } from '../../../../styles/table'
 import { useSelector } from 'react-redux'
 import { dateParser } from '../../../../utils/date-parser'
 
-type CommonData = AdmissionsHistory | Accounts | AccountToObject | ObjectInArray
+type CommonData = AdmissionsHistory | Accounts | AccountToObject | ObjectInArray | SearchOfAdmissionsResponse
 
 export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & ButtonNames & { currentURL: myURL }) => {
   const [open, setOpen] = useState(false)

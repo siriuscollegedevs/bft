@@ -148,6 +148,22 @@ export type SearchOfAdmissions = {
   note: string
 }
 
+export type SearchOfAdmissionsResponse = {
+  id: string
+  request_id: string
+  car_number: string
+  car_brand: string
+  car_model: string
+  objects: string[]
+  type: string
+  first_name: string
+  surname: string
+  last_name: string
+  from_date: string
+  to_date: string
+  note: string
+}
+
 export type RootState = {
   currentAccount: CurrentAccountId & Account & { accountObjects: Objects[] }
   auth: AuthState
