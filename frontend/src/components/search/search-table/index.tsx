@@ -31,7 +31,7 @@ export const SearchTableContent: React.FC<SearchTableProps> = ({
     return <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
   }
 
-  if (checked === 'archive' ? tableArchiveData : tableData) {
+  if ((checked === 'archive' ? tableArchiveData : tableData) && (checked === 'archive' ? tableArchiveData.length > 0 : tableData.length > 0)) {
     return (
       <Box sx={{ width: '100%' }}>
         <SmartTable
