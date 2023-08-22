@@ -95,3 +95,21 @@ class CookieTokenRefreshView(jwt_views.TokenRefreshView):
             del response.data['refresh']
         response['X-CSRFToken'] = request.COOKIES.get('csrftoken')
         return super().finalize_response(request, response, *args, **kwargs)
+
+
+class ClearCookie(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        try:
+            refresh_token = request.COOKIES.get(settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'])
+            token = tokens.RefreshToken(refresh_token)
+            token.blacklist()
+            res = Response()
+            res.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_REFRESH'], samesite='None')
+            res.delete_cookie(settings.SIMPLE_JWT['AUTH_COOKIE_ACCESS'], samesite='None')
+            res.delete_cookie('X-CSRFToken', samesite='None')
+            res.delete_cookie('csrftoken', samesite='None')
+            return res
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
