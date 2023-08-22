@@ -44,7 +44,7 @@ export const AdmissionViewEdit = () => {
   useEffect(() => {
     updateRecordsOfAdmissionData()
     updateHistoryAdmissionData()
-  }, [recordsOfAdmissionData])
+  }, [id])
 
   const sortedData: AdmissionsHistory[] = useMemo(() => {
     if (recordsOfAdmissionData) {
