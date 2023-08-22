@@ -52,7 +52,6 @@ export const AdmissionsPage = () => {
     setData(isArchivePage ? admissionsArchiveData : admissionsData)
   }, [admissionsData, admissionsArchiveData, filters, isArchivePage])
 
-
   useEffect(() => {
     if (idArray.length > 0 && !hasData) {
       if (!isArchivePage) {
@@ -73,9 +72,9 @@ export const AdmissionsPage = () => {
 
   const sortedRows = useMemo(() => {
     if (data) {
-      return [...data].sort(compareDates);
+      return [...data].sort(compareDates)
     } else {
-      return [];
+      return []
     }
   }, [data])
 
@@ -97,7 +96,7 @@ export const AdmissionsPage = () => {
             {filteredTableData ? (
               filteredTableData.length > 0 ? (
                 <SmartTable
-                  buttonNames={['edit', 'history', 'trash']}
+                  buttonNames={['edit', 'cancel', 'toRepay']}
                   size={{
                     width: '100%',
                     height: '100%'
