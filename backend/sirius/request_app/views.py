@@ -221,7 +221,13 @@ class CarRecord(PostRecord):
     record_type = 'car'
 
 
-class DeletePutRecord(APIView):
+class DeletePutGetRecord(APIView):
+
+    def get(self, _, RecordId):
+        record = get_record(RecordId)
+        if not record:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+        return Response(serializers.RecordSerializer(record.get_info()).data)
 
     @extend_schema(
         responses={
