@@ -51,7 +51,14 @@ export const LoginForm = () => {
   }
 
   return (
-    <SignInContainer fixed>
+    <SignInContainer
+      fixed
+      sx={{
+        '& .MuiFormHelperText-root': {
+          marginLeft: 0
+        }
+      }}
+    >
       {loginErrorStatus && 'status' in loginErrorStatus && <>{loginErrorStatus.status !== 401 && <AlertDialog />}</>}
       <FormControl className="sign-in" color="primary" sx={{ alignItems: 'center' }}>
         <TitleTypography variant="h4">Авторизация</TitleTypography>

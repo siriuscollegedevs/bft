@@ -5,6 +5,7 @@ import { Size } from '..'
 import React from 'react'
 import { CustomTypography } from '../../../styles/header'
 import { SearchOfAdmissionsResponse } from '../../../types/api'
+import { useNavigate } from 'react-router-dom'
 
 export type myURL =
   | '/accounts'
@@ -23,6 +24,7 @@ export const Collapsible = ({
   size,
   data
 }: { currentURL: myURL } & ButtonNames & { size: Size } & any) => {
+  const navigate = useNavigate()
   const groupedData: { [key: string]: SearchOfAdmissionsResponse[] } = data.reduce(
     (groups: { [key: string]: SearchOfAdmissionsResponse[] }, item: SearchOfAdmissionsResponse) => {
       const groupId = item.code
@@ -39,7 +41,10 @@ export const Collapsible = ({
     <>
       {Object.keys(groupedData).map(groupId => (
         <React.Fragment key={groupId}>
-          <CustomTypography sx={{ color: '#4F4F4F', textAlign: 'start', fontSize: '16px', m: '20px 0' }}>
+          <CustomTypography
+            sx={{ color: '#4F4F4F', textAlign: 'start', fontSize: '16px', m: '20px 0', cursor: 'pointer' }}
+            onClick={() => navigate(`/admissions/view/${groupedData[groupId][0].request_id}`)}
+          >
             #{groupId}
           </CustomTypography>
           <Paper elevation={1}>
