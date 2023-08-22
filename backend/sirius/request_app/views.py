@@ -12,6 +12,7 @@ from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
 from sirius.config import DB_ERROR
 from sirius_access.config import OBJECTID_ERROR_MSG
+import openpyxl
 
 
 def get_request(RequestId):
@@ -449,3 +450,45 @@ class ActualRequestExpandSearch(RequestExpandSearch):
 
 class ArchiveRequestExpandSearch(RequestExpandSearch):
     status = 'outdated'
+
+
+def excel(request):
+    wb = openpyxl.load_workbook(request.FILES["excel_file"])
+    worksheet = wb["Заявка"]
+    try:
+        req = Request.objects.get(id=request.POST['request_id'])
+    except Exception:
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
+    start = START
+    dates = {"to_date": worksheet[TO_DATE_CELL].value, "from_date": worksheet[FROM_DATE_CELL].value}
+    type = "for_once" if dates["to_date"] == dates["from_date"] else "for_long_time"
+
+    try:
+        with transaction.atomic():
+            while True:
+                if worksheet['B' + start].value == 'Список автотранспортных средств':
+                    start = str(int(start) + 2)
+                    break
+                if not worksheet['B' + start].value:
+                    start = str(int(start) + 1)
+                    continue
+                record = Record.objects.create(status='active', request=req)
+                data = {"last_name": worksheet[LAST_NAME_FIELD_LETTER + start].value,
+                        "first_name": worksheet[FIRST_NAME_FIELD_LETTER + start].value,
+                        "surname": worksheet[SURNAME_FIELD_LETTER + start].value
+                        }
+                RecordHistory.objects.create(action='created', modified_by=get_user(
+                    request), record=record, type=type, **data, **dates)
+                start = str(int(start) + 1)
+            while True:
+                if not worksheet['B' + start].value:
+                    return Response(status=status.HTTP_200_OK)
+                record = Record.objects.create(status='active', request=req)
+                data = {"car_brand": worksheet[CAR_BRAND_FIELD_LETTER + start].value,
+                        "note": worksheet[CAR_NOTE_FIELD_LETTER + start].value,
+                        "car_number": worksheet[CAR_NUMBER_FIELD_LETTER + start].value}
+                RecordHistory.objects.create(action='created', modified_by=get_user(
+                    request), record=record, type=type, **data, **dates)
+                start = str(int(start) + 1)
+    except Exception:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
