@@ -460,7 +460,7 @@ def excel(request):
     except Exception:
         return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
     start = START
-    dates = {"to_date": worksheet[TO_DATE_CELL].value, "from_date": worksheet[FROM_DATE_CELL].value}
+    dates = {"to_date" : worksheet[TO_DATE_CELL].value.date(), "from_date" : worksheet[FROM_DATE_CELL].value.date()}
     type = "for_once" if dates["to_date"] == dates["from_date"] else "for_long_time"
 
     try:
