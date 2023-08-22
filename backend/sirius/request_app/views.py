@@ -386,10 +386,12 @@ class RequestExpandSearch(APIView):
         record_type = ''
         for key, item in request.data.items():
             if not record_type:
-                if key in HUMAN_RECORD_KEYS and item:
+                if key in HUMAN_RECORD_KEYS and item and isinstance(item, str):
+                    item = item.capitalize()
                     record_type = 'human'
                     search_records[key] = item
-                elif key in CAR_RECORD_KEYS and item:
+                elif key in CAR_RECORD_KEYS and item and isinstance(item, str):
+                    item = item.upper()
                     record_type = 'car'
                     search_records[key] = item
                 elif key in GENERAL_RECORD_KEYS and item:
