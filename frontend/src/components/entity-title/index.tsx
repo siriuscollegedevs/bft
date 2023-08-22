@@ -9,6 +9,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 type IsSwitchProps = {
   isSearchField: boolean
   isSwitch: boolean
+  customTitle?: string | number
 }
 
 type UrlTitle = [string, string][]
@@ -21,7 +22,7 @@ const urlTitle: UrlTitle = [
   ['/admissions', 'Заявки']
 ]
 
-export const EntityTitle: React.FC<IsSwitchProps> = ({ isSearchField, isSwitch }) => {
+export const EntityTitle: React.FC<IsSwitchProps> = ({ isSearchField, isSwitch, customTitle }) => {
   const navigate = useNavigate()
   const location = useLocation()
   const currentUrl = location.pathname
@@ -53,7 +54,7 @@ export const EntityTitle: React.FC<IsSwitchProps> = ({ isSearchField, isSwitch }
     return 'Не найдено'
   }
 
-  const title = getTitleFromUrl(currentUrl)
+  const title = customTitle || getTitleFromUrl(currentUrl)
 
   return (
     <>

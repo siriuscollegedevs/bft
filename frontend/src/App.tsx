@@ -24,6 +24,8 @@ import { AdmissionsAdvancedSearch } from './pages/search/admissions'
 import { AccountsHistory } from './pages/history/accounts'
 import { ObjectsHistory } from './pages/history/objects'
 import { AdmissionsHistory } from './pages/history/admissions'
+import { AdmissionCreate } from './pages/admission-ce/create'
+import { AdmissionViewEdit } from './pages/admission-ce/edit'
 
 export const App: React.FC = (): JSX.Element => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
@@ -60,29 +62,38 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/" element={<Login />} />
             <Route path="/navigation" element={<Main />} />
             <Route path="/settings" element={<Settings />} />
+
             <Route path="/directories" element={<MainDirectories />} />
-            <Route path="/accounts/create" element={<FormEditDirectories />} />
-            <Route path="/objects/create" element={<FormEditDirectories />} />
-            <Route path="/employees/create" element={<FormEditDirectories />} />
-            <Route path="/accounts/:id" element={<FormEditDirectories />} />
-            <Route path="/objects/:id" element={<FormEditDirectories />} />
-            <Route path="/employees/:id" element={<FormEditDirectories />} />
+            <Route path="/directories/accounts/create" element={<FormEditDirectories />} />
+            <Route path="/directories/objects/create" element={<FormEditDirectories />} />
+            <Route path="/directories/employees/create" element={<FormEditDirectories />} />
+            <Route path="/directories/accounts/:id" element={<FormEditDirectories />} />
+            <Route path="/directories/objects/:id" element={<FormEditDirectories />} />
+            <Route path="/directories/employees/:id" element={<FormEditDirectories />} />
+
             <Route path="/objects" element={<ObjectsPage />} />
             <Route path="/objects/archive" element={<ObjectsPage />} />
+            <Route path="/objects/create" element={<FormEditDirectories />} />
+            <Route path="/objects/:id" element={<FormEditDirectories />} />
+            <Route path="/objects/history/:id" element={<ObjectsHistory />} />
+
             <Route path="/admissions" element={<AdmissionsPage />} />
             <Route path="/admissions/archive" element={<AdmissionsPage />} />
+            <Route path="/admissions/create" element={<AdmissionCreate />} />
+            <Route path="/admissions/:id" element={<AdmissionViewEdit />} />
             <Route path="/admissions/view/:id" element={<AdmissionViewPage />} />
+            <Route path="/admissions/:id/record/create" element={<FormEditDirectories />} />
+            <Route path="/admissions/history/:id" element={<AdmissionsHistory />} />
+            <Route path="/admissions/search" element={<AdmissionsAdvancedSearch />} />
+
             <Route path="/employees" element={<EmployeesPage />} />
             <Route path="/employees/archive" element={<EmployeesPage />} />
+            <Route path="/employees/search" element={<EmployeeAdvancedSearch />} />
+
             <Route path="/accounts" element={<AccountsPage />} />
             <Route path="/accounts/archive" element={<AccountsPage />} />
-            <Route path="/admissions/:id/entries/create" element={<FormEditDirectories />} />
             <Route path="/accounts/history/:id" element={<AccountsHistory />} />
-            <Route path="/objects/history/:id" element={<ObjectsHistory />} />
-            <Route path="/admissions/history/:id" element={<AdmissionsHistory />} />
             <Route path="/accounts/search" element={<AccountAdvancedSearch />} />
-            <Route path="/employees/search" element={<EmployeeAdvancedSearch />} />
-            <Route path="/admissions/search" element={<AdmissionsAdvancedSearch />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

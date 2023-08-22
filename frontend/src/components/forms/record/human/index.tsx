@@ -13,7 +13,13 @@ import { SetStateAction, useState } from 'react'
 import { RECORD_FIELDS, RECORD_TYPE } from '../../../../__data__/consts/record'
 import { Box } from '@mui/system'
 import { useCreateHumanRecordMutation } from '../../../../__data__/service/record.api'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  AdmissionTechnical,
+  setIdsOfCreatedAdmissions,
+  setIsCreateFlag
+} from '../../../../__data__/states/admission-technical'
 
 type FieldsState = {
   lastName: string
@@ -34,7 +40,13 @@ export const Human = () => {
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
   const [showLoader, setShowLoader] = useState(false)
   const { id } = useParams()
+  const dispatch = useDispatch()
   const navigate = useNavigate()
+  const location = useLocation()
+  const isCreateFlag = useSelector(
+    (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.isCreateFlag
+  )
+  const admissionId = location.state?.id
   const [createHumanRecordMutation, { isLoading: createHumanRecordLoading, isError: createHumanRecordError }] =
     useCreateHumanRecordMutation()
   const [fields, setFields] = useState<FieldsState>({
@@ -92,7 +104,7 @@ export const Human = () => {
 
     try {
       if (!hasEmptyField && id && fields.type) {
-        createHumanRecordMutation({
+        const mutationResponse = await createHumanRecordMutation({
           recordId: id,
           recordData: {
             first_name: fields.firstName,
@@ -104,8 +116,21 @@ export const Human = () => {
             note: fields.note
           }
         })
-        if (!createHumanRecordError) {
-          navigate(`/admissions/view/${id}`)
+        if (
+          !createHumanRecordError &&
+          'data' in mutationResponse &&
+          mutationResponse.data &&
+          mutationResponse.data.id
+        ) {
+          if (isCreateFlag) {
+            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+            navigate(`/admissions/${admissionId}`, {
+              state: { create: true }
+            })
+          } else {
+            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+            navigate(-1)
+          }
         }
       }
     } catch (error) {

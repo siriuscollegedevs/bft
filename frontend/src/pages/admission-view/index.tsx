@@ -6,7 +6,7 @@ import { SmartTable } from '../../components/smart-table'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetRecordOfAdmissionsQuery, useUpdateAdmissionStatusMutation } from '../../__data__/service/admission.api'
 import { CanceledDialog } from '../../components/canceled-dialog'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { sortData } from '../../utils/sorting'
 import { useSelector } from 'react-redux'
 import { SearchState } from '../../__data__/states/search'
@@ -18,10 +18,16 @@ export const AdmissionViewPage = () => {
   const { id } = useParams<string>()
   const navigate = useNavigate()
   const [updateStatus] = useUpdateAdmissionStatusMutation()
-  const { data: RecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(id ?? '')
+  const { data: RecordsOfAdmissionData, refetch: updateRecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(
+    id ?? ''
+  )
 
   const search = useSelector((state: { search: SearchState }) => state.search)
   const splitSearchQuery = search.searchFilter.split(' ')
+
+  useEffect(() => {
+    updateRecordsOfAdmissionData()
+  }, [id])
 
   const sortedData: AdmissionsHistory[] = useMemo(() => {
     if (RecordsOfAdmissionData) {
@@ -84,7 +90,7 @@ export const AdmissionViewPage = () => {
             <Button
               variant="contained"
               sx={{ marginRight: '14px' }}
-              onClick={() => navigate(`/admissions/${id}/entries/create`)}
+              onClick={() => navigate(`/admissions/${id}/record/create`)}
             >
               Добавить запись
             </Button>
