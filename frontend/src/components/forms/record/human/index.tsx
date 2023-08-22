@@ -41,10 +41,8 @@ export const Human = () => {
   const location = useLocation()
   const isCreateFlagSet = location.state?.create === true
   const admissionId = location.state?.id
-  const [
-    createHumanRecordMutation,
-    { data: createHumanRecordData, isLoading: createHumanRecordLoading, isError: createHumanRecordError }
-  ] = useCreateHumanRecordMutation()
+  const [createHumanRecordMutation, { isLoading: createHumanRecordLoading, isError: createHumanRecordError }] =
+    useCreateHumanRecordMutation()
   const [fields, setFields] = useState<FieldsState>({
     lastName: '',
     firstName: '',
@@ -100,7 +98,7 @@ export const Human = () => {
 
     try {
       if (!hasEmptyField && id && fields.type) {
-        createHumanRecordMutation({
+        const mutationResponse = await createHumanRecordMutation({
           recordId: id,
           recordData: {
             first_name: fields.firstName,
@@ -112,9 +110,14 @@ export const Human = () => {
             note: fields.note
           }
         })
-        if (!createHumanRecordError && createHumanRecordData) {
+        if (
+          !createHumanRecordError &&
+          'data' in mutationResponse &&
+          mutationResponse.data &&
+          mutationResponse.data.id
+        ) {
           if (isCreateFlagSet) {
-            dispatche(setIdsOfCreatedAdmissions(createHumanRecordData.id))
+            dispatche(setIdsOfCreatedAdmissions(mutationResponse.data.id))
             navigate(`/admissions/${admissionId}`, {
               state: { create: true }
             })

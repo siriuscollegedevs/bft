@@ -43,7 +43,7 @@ export const Transport = () => {
   const admissionId = location.state?.id
   const [
     createTransportRecordMutation,
-    { data: createTransportRecordData, isLoading: createTransportRecordLoading, isError: createTransportRecordError }
+    { isLoading: createTransportRecordLoading, isError: createTransportRecordError }
   ] = useCreateCarRecordMutation()
   const [fields, setFields] = useState<FieldsState>({
     car_number: '',
@@ -100,7 +100,7 @@ export const Transport = () => {
 
     try {
       if (!hasEmptyField && id && fields.type) {
-        createTransportRecordMutation({
+        const mutationResponse = await createTransportRecordMutation({
           recordId: id,
           recordData: {
             car_brand: fields.car_brand,
@@ -112,9 +112,14 @@ export const Transport = () => {
             note: fields.note
           }
         })
-        if (!createTransportRecordError && createTransportRecordData) {
+        if (
+          !createTransportRecordError &&
+          'data' in mutationResponse &&
+          mutationResponse.data &&
+          mutationResponse.data.id
+        ) {
           if (isCreateFlagSet) {
-            dispatche(setIdsOfCreatedAdmissions(createTransportRecordData.id))
+            dispatche(setIdsOfCreatedAdmissions(mutationResponse.data.id))
             navigate(`/admissions/${admissionId}`, {
               state: { create: true }
             })
