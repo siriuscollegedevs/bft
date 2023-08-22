@@ -5,7 +5,7 @@ import { SideBarContainer } from '../../styles/sidebar'
 import { useGetAllAdmissionsMutation, useGetAllArchiveAdmissionsMutation } from '../../__data__/service/admission.api'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useSelector } from 'react-redux'
-import { Admissions, Objects } from '../../types/api'
+import { Account, Admissions, Objects } from '../../types/api'
 import { useEffect, useMemo, useState } from 'react'
 import { FiltersState } from '../../__data__/states/filters'
 import { compareDates } from '../../utils/sorting'
@@ -13,6 +13,8 @@ import { SearchState } from '../../__data__/states/search'
 import { Box } from '@mui/system'
 import { dateParser } from '../../utils/date-parser'
 import { useLocation } from 'react-router-dom'
+import { getButtonNames } from '../../components/shortcut-buttons/button-names'
+import { ButtonName } from '../../components/shortcut-buttons'
 
 export const AdmissionsPage = () => {
   const [admissionsMutation, { data: admissionsData, isLoading: admissionsLoading, isError }] =
@@ -20,6 +22,7 @@ export const AdmissionsPage = () => {
   const currentAccountObjects = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
+  const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
   const [
     admissionsArchiveMutation,
     { data: admissionsArchiveData, isLoading: admissionsArchiveLoading, isError: admissionsArchiveError }
@@ -31,10 +34,9 @@ export const AdmissionsPage = () => {
   const filters = useSelector((state: { filters: FiltersState }) => state.filters)
   const location = useLocation()
   const isArchivePage = location.pathname.includes('/archive')
-
+  const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole, 'admission')
   const search = useSelector((state: { search: SearchState }) => state.search)
   const splitSearchQuery = search.searchFilter.split(' ')
-
   const filteredObjectIds = currentAccountObjects
     .filter(obj => filters.objectNameFilter.includes(obj.name))
     .map(obj => obj.id)
@@ -96,7 +98,7 @@ export const AdmissionsPage = () => {
             {filteredTableData ? (
               filteredTableData.length > 0 ? (
                 <SmartTable
-                  buttonNames={['edit', 'cancel', 'toRepay']}
+                  buttonNames={buttonNames}
                   size={{
                     width: '100%',
                     height: '100%'
