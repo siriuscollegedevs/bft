@@ -354,14 +354,22 @@ class AccountExpandSearch(APIView):
         name='account_expand_search',
         fields={key: ser.CharField() for key in GET_ACCOUNT_FIELDS}))
     def post(self, request):
-        if all(map(lambda key: key in GET_ACCOUNT_FIELDS, request.data.keys())):
-            search_data = {key: value for key, value in request.data.items() if value}
-        else:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=INVALID_DATA_GIVEN_ERROR) ## NOTE переданы неизвестные атрибуты
+        account_search = dict()
+        for key, value in request.data.items():
+            if key == 'role' and value:
+                account_search['role'] = value
+            elif key == 'username' and value:
+                account_search['user__username'] = value
+        account_search['status'] = self.status
+        account_history_fields = ('first_name', 'last_name', 'surname')
+        search_data = {key: value.capitalize() for key, value in request.data.items() if key in account_history_fields and value and isinstance(value, str)}
         try:
             with transaction.atomic():
                 res = []
-                accounts = Account.objects.filter(status=self.status)
+                try:
+                    accounts = Account.objects.filter(**account_search)
+                except Exception:
+                    return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_SEARCH_ACCOUNTS_FOUND_ERROR)
                 if accounts:
                     if all([(not bool(value)) for value in list(request.data.values())]):
                         for account in accounts:
@@ -661,7 +669,7 @@ class AccountToObjectExpandSearchView(APIView):
             }))
     def post(self, request):
         account_keys = ('first_name', 'last_name', 'surname')
-        search_account = {key: value for key, value in request.data.items() if key in account_keys and value}
+        search_account = {key: value.capitalize() for key, value in request.data.items() if key in account_keys and value and isinstance(value, str)}
         objects, res = [], []
         try:
             with transaction.atomic():
