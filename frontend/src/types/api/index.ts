@@ -21,6 +21,14 @@ export type Account = {
   password: string
 }
 
+export type AccountExpandSearch = {
+  role: string
+  first_name: string
+  surname: string
+  last_name: string
+  username: string
+}
+
 export type ExpandSearchAdmissionsBody = {
   role?: string
   first_name?: string
@@ -130,7 +138,24 @@ export type SearchOfAdmissions = {
   car_number: string
   car_brand: string
   car_model: string
-  object: string
+  objects: string[]
+  type: string
+  first_name: string
+  surname: string
+  last_name: string
+  from_date: string
+  to_date: string
+  note: string
+}
+
+export type SearchOfAdmissionsResponse = {
+  id: string
+  request_id: string
+  code: number
+  car_number: string
+  car_brand: string
+  car_model: string
+  objects: string[]
   type: string
   first_name: string
   surname: string
@@ -159,6 +184,13 @@ export type AccountToObject = {
   surname?: string
   last_name: string
   username: string
+  objects: string[]
+}
+
+export type AccountToObjectSearch = {
+  first_name?: string
+  surname?: string
+  last_name: string
   objects: string[]
 }
 

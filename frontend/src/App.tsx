@@ -18,6 +18,9 @@ import { useRefreshabilityCheck } from './hooks/refreshability-check'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import { AuthState } from './__data__/states/auth'
+import { AccountAdvancedSearch } from './pages/search/account'
+import { EmployeeAdvancedSearch } from './pages/search/employee'
+import { AdmissionsAdvancedSearch } from './pages/search/admissions'
 import { AccountsHistory } from './pages/history/accounts'
 import { ObjectsHistory } from './pages/history/objects'
 import { AdmissionsHistory } from './pages/history/admissions'
@@ -77,6 +80,9 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/accounts/history/:id" element={<AccountsHistory />} />
             <Route path="/objects/history/:id" element={<ObjectsHistory />} />
             <Route path="/admissions/history/:id" element={<AdmissionsHistory />} />
+            <Route path="/accounts/search" element={<AccountAdvancedSearch />} />
+            <Route path="/employees/search" element={<EmployeeAdvancedSearch />} />
+            <Route path="/admissions/search" element={<AdmissionsAdvancedSearch />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>
