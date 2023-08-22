@@ -2,36 +2,43 @@ import { Button } from '@mui/material'
 import { Box } from '@mui/system'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { RECORD_TYPE } from '../../../__data__/consts/record'
 import {
-  useUpdateAdmissionStatusMutation,
   useGetRecordOfAdmissionsQuery,
   useDeleteAdmissionsByIdMutation,
   useGetAdmissionsHistoryByIdQuery
 } from '../../../__data__/service/admission.api'
 import { SearchState } from '../../../__data__/states/search'
 import { EntityTitle } from '../../../components/entity-title'
-import { SearchField } from '../../../components/search-field'
 import { SmartTable } from '../../../components/smart-table'
 import { AdmissionsHistory } from '../../../types/api'
 import { dateParser } from '../../../utils/date-parser'
 import { sortData } from '../../../utils/sorting'
-import { setShowObjectsSelector } from '../../../__data__/states/admission-technical'
+import {
+  AdmissionTechnical,
+  clearAdmissionTechnical,
+  setShowObjectsSelector
+} from '../../../__data__/states/admission-technical'
+import { useDeleteMultipleRecordsMutation } from '../../../__data__/service/record.api'
 
 export const AdmissionViewEdit = () => {
   const { id } = useParams<string>()
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const location = useLocation()
-  const isCreateFlagSet = location.state?.create === true
+  const isCreateFlag = useSelector(
+    (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.isCreateFlag
+  )
   const { data: recordsOfAdmissionData, refetch: updateRecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(
     id ?? ''
   )
   const { data: historyAdmissionData, refetch: updateHistoryAdmissionData } = useGetAdmissionsHistoryByIdQuery(id ?? '')
   const [deleteAdmission] = useDeleteAdmissionsByIdMutation()
-
+  const [deleteMultipleRecords] = useDeleteMultipleRecordsMutation()
   const search = useSelector((state: { search: SearchState }) => state.search)
+  const deleteMultipleRecordsIds = useSelector(
+    (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.idsOfCreatedAdmissions
+  )
   const splitSearchQuery = search.searchFilter.split(' ')
 
   useEffect(() => {
@@ -137,9 +144,10 @@ export const AdmissionViewEdit = () => {
             variant="contained"
             sx={{ marginRight: '4%' }}
             onClick={() => {
-              if (isCreateFlagSet) {
+              if (isCreateFlag) {
                 deleteAdmission(id ? id : '')
-                
+              } else {
+                deleteMultipleRecords(deleteMultipleRecordsIds)
               }
               dispatch(setShowObjectsSelector(true))
               navigate('/admissions')
@@ -150,7 +158,10 @@ export const AdmissionViewEdit = () => {
           <Button
             variant="contained"
             disabled={recordsOfAdmissionData ? recordsOfAdmissionData.length === 0 : true}
-            onClick={() => navigate('/admissions')}
+            onClick={() => {
+              dispatch(clearAdmissionTechnical())
+              navigate('/admissions')
+            }}
           >
             Сохранить
           </Button>

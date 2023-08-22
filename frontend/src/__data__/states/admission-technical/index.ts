@@ -4,11 +4,13 @@ import { RootState } from '../../../types/api'
 export type AdmissionTechnical = {
   showObjectsSelector: boolean
   idsOfCreatedAdmissions: string[]
+  isCreateFlag: boolean
 }
 
 const initialState = {
   showObjectsSelector: true,
-  idsOfCreatedAdmissions: ['']
+  idsOfCreatedAdmissions: [''],
+  isCreateFlag: false
 }
 
 const admissionTechnical = createSlice({
@@ -25,12 +27,16 @@ const admissionTechnical = createSlice({
         state.idsOfCreatedAdmissions.push(action.payload)
       }
     },
+    setIsCreateFlag: (state, action: PayloadAction<boolean>) => {
+      return { ...state, isCreateFlag: action.payload }
+    },
     clearAdmissionTechnical: () => {
       return initialState
     }
   }
 })
 
-export const { setShowObjectsSelector, setIdsOfCreatedAdmissions, clearAdmissionTechnical } = admissionTechnical.actions
+export const { setShowObjectsSelector, setIdsOfCreatedAdmissions, setIsCreateFlag, clearAdmissionTechnical } =
+  admissionTechnical.actions
 export const admissionTechnicalReducer = admissionTechnical.reducer
 export const selectAdmissionTechnical = (state: RootState) => state.admissionTechnical

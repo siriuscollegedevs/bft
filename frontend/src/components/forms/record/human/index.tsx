@@ -14,8 +14,12 @@ import { RECORD_FIELDS, RECORD_TYPE } from '../../../../__data__/consts/record'
 import { Box } from '@mui/system'
 import { useCreateHumanRecordMutation } from '../../../../__data__/service/record.api'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { useDispatch } from 'react-redux'
-import { setIdsOfCreatedAdmissions } from '../../../../__data__/states/admission-technical'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  AdmissionTechnical,
+  setIdsOfCreatedAdmissions,
+  setIsCreateFlag
+} from '../../../../__data__/states/admission-technical'
 
 type FieldsState = {
   lastName: string
@@ -36,10 +40,12 @@ export const Human = () => {
   const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
   const [showLoader, setShowLoader] = useState(false)
   const { id } = useParams()
-  const dispatche = useDispatch()
+  const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
-  const isCreateFlagSet = location.state?.create === true
+  const isCreateFlag = useSelector(
+    (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.isCreateFlag
+  )
   const admissionId = location.state?.id
   const [createHumanRecordMutation, { isLoading: createHumanRecordLoading, isError: createHumanRecordError }] =
     useCreateHumanRecordMutation()
@@ -116,12 +122,13 @@ export const Human = () => {
           mutationResponse.data &&
           mutationResponse.data.id
         ) {
-          if (isCreateFlagSet) {
-            dispatche(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+          if (isCreateFlag) {
+            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
             navigate(`/admissions/${admissionId}`, {
               state: { create: true }
             })
           } else {
+            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
             navigate(-1)
           }
         }

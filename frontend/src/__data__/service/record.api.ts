@@ -83,6 +83,15 @@ export const apiRecord = createApi({
           note: recordData.note
         }
       })
+    }),
+    deleteMultipleRecords: builder.mutation<void, string[]>({
+      query: recordIds => ({
+        url: '/request/records',
+        method: 'DELETE',
+        body: {
+          ids: recordIds
+        }
+      })
     })
   })
 })
@@ -94,5 +103,6 @@ export const {
   useUpdateHumanRecordByIdMutation,
   useCreateHumanRecordMutation,
   useUpdateCarRecordByIdMutation,
-  useCreateCarRecordMutation
+  useCreateCarRecordMutation,
+  useDeleteMultipleRecordsMutation
 } = apiRecord

@@ -8,7 +8,11 @@ import { Objects } from '../../../types/api'
 import { ObjectsSelector } from '../objects-selector'
 import { EmptyAdmission } from '../../../components/admission-messages/is-empty'
 import { useDispatch, useSelector } from 'react-redux'
-import { AdmissionTechnical, setShowObjectsSelector } from '../../../__data__/states/admission-technical'
+import {
+  AdmissionTechnical,
+  setIsCreateFlag,
+  setShowObjectsSelector
+} from '../../../__data__/states/admission-technical'
 
 export const AdmissionCreate = () => {
   const [createAdmission, { data: createAdmissionData }] = useCreateAdmissionsMutation()
@@ -62,11 +66,12 @@ export const AdmissionCreate = () => {
             <Button
               variant="contained"
               sx={{ marginRight: '14px' }}
-              onClick={() =>
+              onClick={() => {
+                dispatch(setIsCreateFlag(true))
                 navigate(`/admissions/${createAdmissionData?.id}/record/create`, {
-                  state: { create: true, id: createAdmissionData?.id }
+                  state: { id: createAdmissionData?.id }
                 })
-              }
+              }}
             >
               Добавить запись
             </Button>
