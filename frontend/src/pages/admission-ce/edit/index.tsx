@@ -123,7 +123,7 @@ export const AdmissionViewEdit = () => {
             </Button>
           </Box>
         </Box>
-        <Box sx={{ width: '90%', height: '100%' }}>
+        <Box sx={{ width: '90%', height: '100%', display: 'flex', justifyContent: 'center' }}>
           {filteredTableData && filteredTableData.length > 0 ? (
             <SmartTable
               buttonNames={['edit', 'cancel', 'toRepay']}
