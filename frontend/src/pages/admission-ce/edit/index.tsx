@@ -2,7 +2,7 @@ import { Button } from '@mui/material'
 import { Box } from '@mui/system'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { RECORD_TYPE } from '../../../__data__/consts/record'
 import {
   useGetRecordOfAdmissionsQuery,
@@ -12,7 +12,7 @@ import {
 import { SearchState } from '../../../__data__/states/search'
 import { EntityTitle } from '../../../components/entity-title'
 import { SmartTable } from '../../../components/smart-table'
-import { AdmissionsHistory } from '../../../types/api'
+import { Account, AdmissionsHistory } from '../../../types/api'
 import { dateParser } from '../../../utils/date-parser'
 import { sortData } from '../../../utils/sorting'
 import {
@@ -21,6 +21,8 @@ import {
   setShowObjectsSelector
 } from '../../../__data__/states/admission-technical'
 import { useDeleteMultipleRecordsMutation } from '../../../__data__/service/record.api'
+import { ButtonName } from '../../../components/shortcut-buttons'
+import { getButtonNames } from '../../../components/shortcut-buttons/button-names'
 
 export const AdmissionViewEdit = () => {
   const { id } = useParams<string>()
@@ -32,6 +34,10 @@ export const AdmissionViewEdit = () => {
   const { data: recordsOfAdmissionData, refetch: updateRecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(
     id ?? ''
   )
+  const location = useLocation()
+  const isArchivePage = location.pathname.includes('/archive')
+  const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
+  const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole, 'admission')
   const { data: historyAdmissionData, refetch: updateHistoryAdmissionData } = useGetAdmissionsHistoryByIdQuery(id ?? '')
   const [deleteAdmission] = useDeleteAdmissionsByIdMutation()
   const [deleteMultipleRecords] = useDeleteMultipleRecordsMutation()
@@ -88,7 +94,7 @@ export const AdmissionViewEdit = () => {
           justifyContent: 'center',
           flexDirection: 'column',
           width: '100%',
-          height: '70vh'
+          gap: '20px'
         }}
       >
         <Box
@@ -97,8 +103,7 @@ export const AdmissionViewEdit = () => {
             justifyContent: 'space-between',
             alignItems: 'center',
             width: '90%',
-            marginBottom: '30px',
-            marginTop: '8px'
+            marginTop: '-48px'
           }}
         >
           <Box>
@@ -123,12 +128,12 @@ export const AdmissionViewEdit = () => {
             </Button>
           </Box>
         </Box>
-        <Box sx={{ width: '90%', height: '100%' }}>
+        <Box sx={{ width: '90%', height: '65vh', display: 'flex', justifyContent: 'center', mt: '15px' }}>
           {filteredTableData && filteredTableData.length > 0 ? (
             <SmartTable
-              buttonNames={['edit', 'cancel', 'toRepay']}
+              buttonNames={buttonNames}
               size={{
-                width: '90%',
+                width: '100%',
                 height: '100%'
               }}
               data={filteredTableData}

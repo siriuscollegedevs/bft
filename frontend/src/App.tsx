@@ -64,12 +64,6 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/settings" element={<Settings />} />
 
             <Route path="/directories" element={<MainDirectories />} />
-            <Route path="/directories/accounts/create" element={<FormEditDirectories />} />
-            <Route path="/directories/objects/create" element={<FormEditDirectories />} />
-            <Route path="/directories/employees/create" element={<FormEditDirectories />} />
-            <Route path="/directories/accounts/:id" element={<FormEditDirectories />} />
-            <Route path="/directories/objects/:id" element={<FormEditDirectories />} />
-            <Route path="/directories/employees/:id" element={<FormEditDirectories />} />
 
             <Route path="/objects" element={<ObjectsPage />} />
             <Route path="/objects/archive" element={<ObjectsPage />} />
@@ -87,10 +81,14 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/admissions/search" element={<AdmissionsAdvancedSearch />} />
 
             <Route path="/employees" element={<EmployeesPage />} />
+            <Route path="/employees/:id" element={<FormEditDirectories />} />
+            <Route path="/employees/create" element={<FormEditDirectories />} />
             <Route path="/employees/archive" element={<EmployeesPage />} />
             <Route path="/employees/search" element={<EmployeeAdvancedSearch />} />
 
             <Route path="/accounts" element={<AccountsPage />} />
+            <Route path="/accounts/:id" element={<FormEditDirectories />} />
+            <Route path="/accounts/create" element={<FormEditDirectories />} />
             <Route path="/accounts/archive" element={<AccountsPage />} />
             <Route path="/accounts/history/:id" element={<AccountsHistory />} />
             <Route path="/accounts/search" element={<AccountAdvancedSearch />} />
