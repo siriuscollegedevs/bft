@@ -1,14 +1,15 @@
 import { CircularProgress, FormControl } from '@mui/material'
-import { useState } from 'react'
-import { useLoginMutation } from '../../__data__/service/auth.api'
+import {useEffect, useState} from 'react'
+import {useClearCookieQuery, useLoginMutation} from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { LoginButton, PasswordTextField, SignInContainer, SignInTextField, TitleTypography } from '../../styles/login'
 import { setAccessToken, setLoginData } from '../../__data__/states/auth'
 import { useDispatch } from 'react-redux'
 import { setAccountId } from '../../__data__/states/account'
-import { getCookie } from '../../utils/cookie-parser'
+import {deleteCookie, getCookie} from '../../utils/cookie-parser'
 import { useRefreshToken } from '../../hooks/refresh-token'
 import { AlertDialog } from './alert-dialog'
+import {useLogout} from '../../hooks/logout';
 
 export const LoginForm = () => {
   const [login, setLogin] = useState('')
@@ -18,6 +19,8 @@ export const LoginForm = () => {
   const [loginMutation, { isLoading: loginLoading, isError: loginError, error: loginErrorStatus }] = useLoginMutation()
   const dispatch = useDispatch()
   const refresh = useRefreshToken()
+  const { data: clearCookieData, error: clearCookieError, refetch: clearCookieRefetch } = useClearCookieQuery();
+  const logout = useLogout(navigate)
 
   const handleLogin = async () => {
     try {
@@ -49,6 +52,21 @@ export const LoginForm = () => {
       setShowLoader(false)
     }
   }
+
+  // if (loginErrorStatus && 'status' in loginErrorStatus && (loginErrorStatus.status === 403 || loginErrorStatus.status === 401)) {
+  //   clearCookieRefetch()
+  // }
+  //
+  // useEffect(() => {
+  //   if (loginErrorStatus && 'status' in loginErrorStatus && loginErrorStatus.status === 401 ) {
+  //     deleteCookie('csrftoken')
+  //     if (!clearCookieError) {
+  //       // Assuming the clearCookieData is an object returned from the API call
+  //       // and it confirms that cookies have been cleared successfully
+  //       console.log('Cookies cleared successfully');
+  //     }
+  //   }
+  // }, [clearCookieData, clearCookieError, loginErrorStatus]);
 
   return (
     <SignInContainer fixed>
