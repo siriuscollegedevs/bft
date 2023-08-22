@@ -35,6 +35,9 @@ export const Human = () => {
   const [showLoader, setShowLoader] = useState(false)
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  const isCreateFlagSet = location.state?.create === true
+  const admissionId = location.state?.id
   const [createHumanRecordMutation, { isLoading: createHumanRecordLoading, isError: createHumanRecordError }] =
     useCreateHumanRecordMutation()
   const [fields, setFields] = useState<FieldsState>({
@@ -105,7 +108,7 @@ export const Human = () => {
           }
         })
         if (!createHumanRecordError) {
-          navigate(-1)
+          isCreateFlagSet ? navigate(`/admissions/${admissionId}`) : navigate(-1)
         }
       }
     } catch (error) {

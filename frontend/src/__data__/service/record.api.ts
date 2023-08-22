@@ -22,7 +22,7 @@ export const apiRecord = createApi({
       })
     }),
     getRecordHistoryById: builder.query<AdmissionsHistory[], string>({
-      query: (recordId: string) => `/record/history/${recordId}`
+      query: recordId => `/request/record/history/${recordId}`
     }),
     updateHumanRecordById: builder.mutation<void, { recordId: string; recordData: Human }>({
       query: ({ recordId, recordData }) => ({

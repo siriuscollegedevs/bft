@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import { Box } from '@mui/system'
 import { useState, SetStateAction } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { RECORD_TYPE, RECORD_FIELDS } from '../../../../__data__/consts/record'
 import { CustomDefaultButton } from '../../../../styles/settings'
 import { useCreateCarRecordMutation } from '../../../../__data__/service/record.api'
@@ -35,6 +35,9 @@ export const Transport = () => {
   const [showLoader, setShowLoader] = useState(false)
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  const isCreateFlagSet = location.state?.create === true
+  const admissionId = location.state?.id
   const [
     createTransportRecordMutation,
     { isLoading: createTransportRecordLoading, isError: createTransportRecordError }
@@ -107,7 +110,7 @@ export const Transport = () => {
           }
         })
         if (!createTransportRecordError) {
-          navigate(-1)
+          isCreateFlagSet ? navigate(`/admissions/${admissionId}`) : navigate(-1)
         }
       }
     } catch (error) {

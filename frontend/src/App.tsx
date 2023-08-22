@@ -22,6 +22,7 @@ import { AccountsHistory } from './pages/history/accounts'
 import { ObjectsHistory } from './pages/history/objects'
 import { AdmissionsHistory } from './pages/history/admissions'
 import { AdmissionCreate } from './pages/admission-ce/create'
+import { AdmissionViewEdit } from './pages/admission-ce/edit'
 
 export const App: React.FC = (): JSX.Element => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
@@ -76,6 +77,7 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/admissions" element={<AdmissionsPage />} />
             <Route path="/admissions/archive" element={<AdmissionsPage />} />
             <Route path="/admissions/create" element={<AdmissionCreate />} />
+            <Route path="/admissions/:id" element={<AdmissionViewEdit />} />
             <Route path="/admissions/view/:id" element={<AdmissionViewPage />} />
             <Route path="/admissions/:id/record/create" element={<FormEditDirectories />} />
             <Route path="/admissions/history/:id" element={<AdmissionsHistory />} />

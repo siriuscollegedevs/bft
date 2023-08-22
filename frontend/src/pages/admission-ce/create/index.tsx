@@ -64,7 +64,7 @@ export const AdmissionCreate = () => {
               sx={{ marginRight: '14px' }}
               onClick={() =>
                 navigate(`/admissions/${createAdmissionData?.id}/record/create`, {
-                  state: { showObjectSelector: true }
+                  state: { create: true, id: createAdmissionData?.id }
                 })
               }
             >

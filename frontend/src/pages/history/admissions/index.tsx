@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useMemo } from 'react'
 import { compareDates } from '../../../utils/sorting'
-import { useGetAdmissionsHistoryByIdQuery } from '../../../__data__/service/admission.api'
+import { useGetRecordHistoryByIdQuery } from '../../../__data__/service/record.api'
 
 export const AdmissionsHistory = () => {
   const { id } = useParams()
@@ -14,7 +14,7 @@ export const AdmissionsHistory = () => {
     error: admissionsHistoryError,
     isLoading: admissionsHistoryLoading,
     refetch: admissionsHistoryRefetch
-  } = useGetAdmissionsHistoryByIdQuery(id ?? '')
+  } = useGetRecordHistoryByIdQuery(id ?? '')
 
   useEffect(() => {
     admissionsHistoryRefetch()
