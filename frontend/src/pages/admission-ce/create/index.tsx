@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom'
 import { useCreateAdmissionsMutation, useDeleteAdmissionsByIdMutation } from '../../../__data__/service/admission.api'
 import { EntityTitle } from '../../../components/entity-title'
 import { Objects } from '../../../types/api'
-import { ObjectsSelector } from '../objects-selector'
 import { EmptyAdmission } from '../../../components/admission-messages/is-empty'
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -13,6 +12,7 @@ import {
   setIsCreateFlag,
   setShowObjectsSelector
 } from '../../../__data__/states/admission-technical'
+import { ObjectsSelector } from '../../../components/objects-selector'
 
 export const AdmissionCreate = () => {
   const [createAdmission, { data: createAdmissionData }] = useCreateAdmissionsMutation()

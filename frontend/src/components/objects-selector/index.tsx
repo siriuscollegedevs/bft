@@ -13,9 +13,9 @@ import {
 } from '@mui/material'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { Objects } from '../../../types/api'
 import { useNavigate } from 'react-router-dom'
-import { setShowObjectsSelector } from '../../../__data__/states/admission-technical'
+import { Objects } from '../../types/api'
+import { setShowObjectsSelector } from '../../__data__/states/admission-technical'
 
 type ObjectsSelectorProps = {
   onSelectObject: (selected: Objects[]) => void
