@@ -447,5 +447,25 @@ class RequestExpandSearch(APIView):
 class ActualRequestExpandSearch(RequestExpandSearch):
     status = 'active'
 
+
 class ArchiveRequestExpandSearch(RequestExpandSearch):
     status = 'outdated'
+
+
+class DeleteRecords(APIView):
+
+    def delete(self, request):
+        record_ids = request.data.get('ids', None)
+        if record_ids is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+        try:
+            with transaction.atomic():
+                for record_id in record_ids:
+                    record = get_record(record_id)
+                    if not record:
+                        return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+                    record.make_outdated(user=get_user(request), action='deleted')
+
+                return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
