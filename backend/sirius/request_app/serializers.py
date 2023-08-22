@@ -85,6 +85,7 @@ class ChangeStatusSerializer(serializers.Serializer):
 
 class RequestSearchSerializer(serializers.Serializer):
     request_id = serializers.UUIDField()
+    code = serializers.IntegerField()
     id = serializers.UUIDField()
     type = serializers.CharField()
     objects = serializers.ListField(child=serializers.CharField())
