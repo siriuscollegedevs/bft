@@ -1,8 +1,8 @@
 import { Button } from '@mui/material'
 import { Box } from '@mui/system'
 import { useEffect, useMemo } from 'react'
-import { useSelector } from 'react-redux'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { RECORD_TYPE } from '../../../__data__/consts/record'
 import {
   useUpdateAdmissionStatusMutation,
@@ -17,11 +17,14 @@ import { SmartTable } from '../../../components/smart-table'
 import { AdmissionsHistory } from '../../../types/api'
 import { dateParser } from '../../../utils/date-parser'
 import { sortData } from '../../../utils/sorting'
+import { setShowObjectsSelector } from '../../../__data__/states/admission-technical'
 
 export const AdmissionViewEdit = () => {
   const { id } = useParams<string>()
   const navigate = useNavigate()
-  const [updateStatus] = useUpdateAdmissionStatusMutation()
+  const dispatch = useDispatch()
+  const location = useLocation()
+  const isCreateFlagSet = location.state?.create === true
   const { data: recordsOfAdmissionData, refetch: updateRecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(
     id ?? ''
   )
@@ -134,7 +137,11 @@ export const AdmissionViewEdit = () => {
             variant="contained"
             sx={{ marginRight: '4%' }}
             onClick={() => {
-              deleteAdmission(id ? id : '')
+              if (isCreateFlagSet) {
+                deleteAdmission(id ? id : '')
+                
+              }
+              dispatch(setShowObjectsSelector(true))
               navigate('/admissions')
             }}
           >

@@ -14,6 +14,8 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { RECORD_TYPE, RECORD_FIELDS } from '../../../../__data__/consts/record'
 import { CustomDefaultButton } from '../../../../styles/settings'
 import { useCreateCarRecordMutation } from '../../../../__data__/service/record.api'
+import { useDispatch } from 'react-redux'
+import { setIdsOfCreatedAdmissions } from '../../../../__data__/states/admission-technical'
 
 type FieldsState = {
   car_number: string
@@ -36,11 +38,12 @@ export const Transport = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const location = useLocation()
+  const dispatche = useDispatch()
   const isCreateFlagSet = location.state?.create === true
   const admissionId = location.state?.id
   const [
     createTransportRecordMutation,
-    { isLoading: createTransportRecordLoading, isError: createTransportRecordError }
+    { data: createTransportRecordData, isLoading: createTransportRecordLoading, isError: createTransportRecordError }
   ] = useCreateCarRecordMutation()
   const [fields, setFields] = useState<FieldsState>({
     car_number: '',
@@ -109,8 +112,15 @@ export const Transport = () => {
             note: fields.note
           }
         })
-        if (!createTransportRecordError) {
-          isCreateFlagSet ? navigate(`/admissions/${admissionId}`) : navigate(-1)
+        if (!createTransportRecordError && createTransportRecordData) {
+          if (isCreateFlagSet) {
+            dispatche(setIdsOfCreatedAdmissions(createTransportRecordData.id))
+            navigate(`/admissions/${admissionId}`, {
+              state: { create: true }
+            })
+          } else {
+            navigate(-1)
+          }
         }
       }
     } catch (error) {

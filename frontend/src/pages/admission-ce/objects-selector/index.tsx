@@ -39,7 +39,7 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
   const handleNext = () => {
     setOpen(false)
     onSelectObject(selectedObjects)
-    dispatch(setShowObjectsSelector({ showObjectsSelector: false }))
+    dispatch(setShowObjectsSelector(false))
   }
 
   const handleChange = (event: SelectChangeEvent<string[]>) => {

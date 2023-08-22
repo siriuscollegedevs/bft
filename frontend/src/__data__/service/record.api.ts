@@ -39,7 +39,7 @@ export const apiRecord = createApi({
         }
       })
     }),
-    createHumanRecord: builder.mutation<void, { recordId: string; recordData: Human }>({
+    createHumanRecord: builder.mutation<{ id: string }, { recordId: string; recordData: Human }>({
       query: ({ recordId, recordData }) => ({
         url: `/request/record/human/${recordId}`,
         method: 'POST',
@@ -69,7 +69,7 @@ export const apiRecord = createApi({
         }
       })
     }),
-    createCarRecord: builder.mutation<void, { recordId: string; recordData: Car }>({
+    createCarRecord: builder.mutation<{ id: string }, { recordId: string; recordData: Car }>({
       query: ({ recordId, recordData }) => ({
         url: `/request/record/car/${recordId}`,
         method: 'POST',

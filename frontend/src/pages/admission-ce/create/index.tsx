@@ -89,7 +89,7 @@ export const AdmissionCreate = () => {
             sx={{ marginRight: '4%' }}
             onClick={() => {
               deleteAdmission(createAdmissionData ? createAdmissionData?.id : '')
-              dispatch(setShowObjectsSelector({ showObjectsSelector: true }))
+              dispatch(setShowObjectsSelector(true))
               navigate('/admissions')
             }}
           >
