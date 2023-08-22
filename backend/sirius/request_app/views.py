@@ -207,7 +207,7 @@ class PostRecord(APIView):
                     record = Record.objects.create(status='active', request=req)
                     RecordHistory.objects.create(action='created', modified_by=get_user(
                         request), record=record, **serializer.validated_data)
-                    return Response(status=status.HTTP_201_CREATED)
+                    return Response(status=status.HTTP_201_CREATED, data={'id' : record.id})
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
