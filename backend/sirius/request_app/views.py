@@ -60,7 +60,8 @@ class GetRequests(APIView):
                 if line.request.id in request_ids:
                     continue
                 request_ids.add(line.request.id)
-                res.append(line.request.get_info())
+                if line.request.status == self.status:
+                    res.append(line.request.get_info())
         return Response(serializers.RequestSerializer(res, many=True).data)
 
 
