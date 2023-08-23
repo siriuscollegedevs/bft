@@ -1,4 +1,4 @@
-import {Route, Routes, BrowserRouter, useLocation, useNavigate} from 'react-router-dom'
+import { Route, Routes, BrowserRouter, useLocation } from 'react-router-dom'
 import { ThemeProvider } from '@mui/material'
 import { Classic } from './styles/theme'
 import { Login } from './pages/login'
@@ -21,15 +21,10 @@ import { AuthState } from './__data__/states/auth'
 import { AccountsHistory } from './pages/history/accounts'
 import { ObjectsHistory } from './pages/history/objects'
 import { AdmissionsHistory } from './pages/history/admissions'
-import {useLogout} from './hooks/logout';
-import {useClearCookieQuery} from './__data__/service/auth.api';
 
 export const App: React.FC = (): JSX.Element => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
   const refreshabilityCheck = useRefreshabilityCheck()
-  const clearCookie = useClearCookieQuery()
-  // const navigate = useNavigate();
-  // const logout = useLogout(navigate);
 
   function Header() {
     const location = useLocation()
@@ -45,38 +40,13 @@ export const App: React.FC = (): JSX.Element => {
     )
   }
 
-  // const clearCookie = () => {
-  //   if (data) {
-  //     logout();
-  //     console.log('logout')
-  //   }
-  //
-  //   if (error) {
-  //     console.error('Ошибка при очистке кук:', error);
-  //   }
-  // };
-
   useEffect(() => {
     refreshabilityCheck()
 
     return () => {
-      clearInterval(intervalId);
-    };
-  });
-
-  useEffect(() => {
-    window.addEventListener('beforeunload', () => {
-      console.log('coookiiiieeee')
-      clearCookie.data;
-    });
-
-    return () => {
-      window.removeEventListener('beforeunload', () => {
-        console.log('cookie')
-        clearCookie.data;
-      });
-    };
-  }, [clearCookie]);
+      clearInterval(intervalId)
+    }
+  })
 
   return (
     <>

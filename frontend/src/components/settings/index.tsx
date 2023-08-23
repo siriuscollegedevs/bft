@@ -16,7 +16,6 @@ import { useSelector } from 'react-redux'
 import { useChangeAccountPasswordMutation } from '../../__data__/service/account.api'
 import { CurrentAccountId } from '../../__data__/states/account'
 import { useLogout } from '../../hooks/logout'
-import {useNavigate} from 'react-router-dom';
 
 export const UserSettings = () => {
   const [showOldPassword, setShowOldPassword] = useState(false)
@@ -28,8 +27,7 @@ export const UserSettings = () => {
   const [oldPassword, setOldPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [repeatPassword, setRepeatPassword] = useState('')
-    const navigate = useNavigate()
-  const logout = useLogout(navigate)
+  const logout = useLogout()
 
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
   const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)

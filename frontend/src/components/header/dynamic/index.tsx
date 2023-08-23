@@ -25,7 +25,7 @@ export const DynamicHeader = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
-  const logout = useLogout(navigate)
+  const logout = useLogout()
 
   const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
