@@ -293,7 +293,7 @@ class ChangeStatusRecord(APIView):
         record = get_record(RecordId)
         if not record:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
-        serializer = serializers.ChangeStatusRequest(data=request.data)
+        serializer = serializers.ChangeStatusSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
             try:
