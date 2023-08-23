@@ -8,10 +8,11 @@ export const apiRecord = createApi({
   endpoints: builder => ({
     changeRecordStatusById: builder.mutation<void, { recordId: string; recordStatus: Status }>({
       query: ({ recordId, recordStatus }) => ({
-        url: `/record/change_status/${recordId}`,
+        url: `/request/record/change_status/${recordId}`,
         method: 'PUT',
         body: {
-          status: recordStatus.status
+          status: recordStatus.status,
+          reason: recordStatus.reason
         }
       })
     }),

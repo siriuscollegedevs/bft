@@ -88,6 +88,7 @@ export type ObjectHistory = {
 
 export type Status = {
   status: string
+  reason: string
 }
 
 export type Human = {

@@ -13,6 +13,11 @@ import {
 } from '../../__data__/service/object-account'
 import { useState } from 'react'
 import { DeleteDialog } from '../delete-dialog'
+import { ToRepayDialog } from '../to-repay-dialog'
+import { useUpdateAdmissionStatusMutation, useGetAllAdmissionsMutation } from '../../__data__/service/admission.api'
+import { useChangeRecordStatusByIdMutation } from '../../__data__/service/record.api'
+import { useSelector } from 'react-redux'
+import { Objects } from '../../types/api'
 
 export type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
 
@@ -61,6 +66,18 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
   const [deleteEmployeesMutation] = useDeleteAccountToObjectByIdMutation()
   const [isDeleteDialogOpen, setDeleteDialogOpen] = useState(false)
 
+  const [updateAdmissionStatus] = useUpdateAdmissionStatusMutation()
+  const [updateRecordStatus] = useChangeRecordStatusByIdMutation()
+
+  const currentAccountObjects = useSelector(
+    (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
+  )
+  const [admissionsMutation] = useGetAllAdmissionsMutation()
+  const idArray: string[] = currentAccountObjects.map(object => object.id)
+
+  const [isToRepayDialogOpen, setToRepayDialogOpen] = useState(false)
+  const [toRepayType, setToRepayType] = useState('')
+
   const { refetch: refetchAccountData } = useGetAllAccountsQuery()
   const { refetch: refetchObjectsData } = useGetAllObjectsQuery()
   const { refetch: refetchEmployeesData } = useGetAllAccountToObjectQuery()
@@ -74,13 +91,52 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
       ? location.pathname.replace('/search', '')
       : location.pathname
 
-    if (title === 'edit') {
-      navigate(`${newSearchPath}/${id}`)
-    } else if (title === 'trash') {
-      handleDelete()
-    } else if (title === 'history') {
-      navigate(`${newPath}/history/${id}`)
+    switch (title) {
+      case 'edit':
+        navigate(`${newSearchPath}/${id}`)
+        break
+      case 'trash':
+        handleDelete()
+        break
+      case 'history':
+        navigate(`${newPath}/history/${id}`)
+        break
+      case 'toRepay':
+        handleToRepay()
+        break
+
+      default:
+        break
     }
+  }
+
+  const openToRepayDialog = () => {
+    setToRepayDialogOpen(true)
+  }
+
+  const closeToRepayDialog = () => {
+    setToRepayDialogOpen(false)
+  }
+
+  const handleToRepay = () => {
+    openToRepayDialog()
+  }
+
+  const handleToRepayConfirmed = async () => {
+    if (location.pathname === '/admissions') {
+      setToRepayType('заявку')
+      await updateAdmissionStatus({ admissionId: id, admissionData: { status: 'closed', reason: '' } })
+      await admissionsMutation(idArray)
+    } else if (location.pathname.includes('/admissions')) {
+      setToRepayType('запись')
+      await updateRecordStatus({ recordId: id, recordStatus: { status: 'closed', reason: '' } })
+      // await admissionsMutation(idArray)
+    } else {
+      console.error('Unknown object type')
+      return
+    }
+
+    closeToRepayDialog()
   }
 
   const openDeleteDialog = () => {
@@ -150,6 +206,14 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
           closeDeleteDialog()
         }}
         onConfirm={handleDeleteConfirmed}
+      />
+      <ToRepayDialog
+        open={isToRepayDialogOpen}
+        onClose={() => {
+          closeToRepayDialog()
+        }}
+        onConfirm={handleToRepayConfirmed}
+        type={toRepayType}
       />
     </>
   )
