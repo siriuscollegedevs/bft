@@ -13,6 +13,7 @@ from rest_framework import serializers as ser
 from sirius.config import DB_ERROR
 from sirius_access.config import OBJECTID_ERROR_MSG
 import openpyxl
+from rest_framework.decorators import api_view
 
 
 def get_request(RequestId):
@@ -452,6 +453,7 @@ class ArchiveRequestExpandSearch(RequestExpandSearch):
     status = 'outdated'
 
 
+@api_view(('POST',))
 def excel(request):
     wb = openpyxl.load_workbook(request.FILES["excel_file"])
     worksheet = wb["Заявка"]
