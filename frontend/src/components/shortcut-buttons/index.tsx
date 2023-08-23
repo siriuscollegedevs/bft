@@ -11,13 +11,14 @@ import {
   useDeleteAccountToObjectByIdMutation,
   useGetAllAccountToObjectQuery
 } from '../../__data__/service/object-account'
-import { useState } from 'react'
+import { SetStateAction, useState } from 'react'
 import { DeleteDialog } from '../delete-dialog'
 import { ToRepayDialog } from '../to-repay-dialog'
 import { useUpdateAdmissionStatusMutation, useGetAllAdmissionsMutation } from '../../__data__/service/admission.api'
 import { useChangeRecordStatusByIdMutation } from '../../__data__/service/record.api'
 import { useSelector } from 'react-redux'
 import { Objects } from '../../types/api'
+import { CanceledDialogShortcutVersion } from '../canceled-dialog/shortcut-version'
 
 export type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
 
@@ -78,6 +79,11 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
   const [isToRepayDialogOpen, setToRepayDialogOpen] = useState(false)
   const [toRepayType, setToRepayType] = useState('')
 
+  const [isCancelDialogOpen, setCancelDialogOpen] = useState(false)
+  const [canceInputValue, setCanceInputValue] = useState('')
+  const [cancelError, setCancelError] = useState(false)
+  const [cancelType, setCancelType] = useState('')
+
   const { refetch: refetchAccountData } = useGetAllAccountsQuery()
   const { refetch: refetchObjectsData } = useGetAllObjectsQuery()
   const { refetch: refetchEmployeesData } = useGetAllAccountToObjectQuery()
@@ -104,9 +110,50 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
       case 'toRepay':
         handleToRepay()
         break
+      case 'cancel':
+        handleCancel()
+        break
 
       default:
         break
+    }
+  }
+
+  const openCancelDialog = () => {
+    setCancelDialogOpen(true)
+  }
+
+  const closeCancelDialog = () => {
+    setCancelDialogOpen(false)
+  }
+
+  const handleCancel = () => {
+    openCancelDialog()
+  }
+
+  const handleCancelInputChange = (event: { target: { value: SetStateAction<string> } }) => {
+    setCanceInputValue(event.target.value)
+    setCancelError(false)
+  }
+
+  const handleCancelConfirmed = async () => {
+    if (canceInputValue === '') {
+      setCancelError(true)
+    } else {
+      if (location.pathname === '/admissions') {
+        setCancelType('заявку')
+        await updateAdmissionStatus({ admissionId: id, admissionData: { status: 'canceled', reason: canceInputValue } })
+        await admissionsMutation(idArray)
+      } else if (location.pathname.includes('/admissions')) {
+        setCancelType('запись')
+        await updateRecordStatus({ recordId: id, recordStatus: { status: 'closed', reason: canceInputValue } })
+        // await admissionsMutation(idArray)
+      } else {
+        console.error('Unknown object type')
+        return
+      }
+
+      closeCancelDialog()
     }
   }
 
@@ -214,6 +261,16 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
         }}
         onConfirm={handleToRepayConfirmed}
         type={toRepayType}
+      />
+      <CanceledDialogShortcutVersion
+        open={isCancelDialogOpen}
+        onClose={() => {
+          closeCancelDialog()
+        }}
+        onChange={handleCancelInputChange}
+        error={cancelError}
+        onConfirm={handleCancelConfirmed}
+        type={cancelType}
       />
     </>
   )
