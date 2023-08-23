@@ -10,6 +10,7 @@ import { Objects, Admissions } from '../../../types/api'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { dateParser } from '../../../utils/date-parser'
+import { CustomCell } from '../../../styles/table'
 
 export type CurrentURL = '/objects' | '/admissions' | '/objects/archive'
 
@@ -34,7 +35,7 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
 
   return (
     <TableContainer sx={{ width: size.width, height: size.height }}>
-      <Table aria-label="simple table">
+      <Table aria-label="simple table" size="small">
         <TableBody>
           {data && (
             <>
@@ -42,9 +43,9 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
                 <TableRow key={'name' in row ? row.name : row.code}>
                   {objectsURL || objectsArchiveURL ? (
                     <>
-                      <TableCell align="left" sx={{ height: '47px', width: '200px' }}>
+                      <CustomCell align="left" sx={{ width: '200px' }}>
                         {'name' in row ? row.name : ''}
-                      </TableCell>
+                      </CustomCell>
                       <TableCell align="right">
                         <Box display="flex" alignItems="center" justifyContent="flex-end">
                           <ShortcutButtons buttonNames={buttonNames} id={row.id} />
@@ -53,30 +54,30 @@ export const Basic = ({ currentURL, buttonNames, size, data }: URL & ButtonNames
                     </>
                   ) : (
                     <>
-                      <TableCell
+                      <CustomCell
                         onClick={() => navigate(`/admissions/view/${row.id}`)}
                         style={{ cursor: 'pointer' }}
                         align="left"
-                        sx={{ height: '47px', width: '15%' }}
+                        sx={{ width: '15%' }}
                       >
                         {'timestamp' in row ? dateParser(row.timestamp) : ''}
-                      </TableCell>
-                      <TableCell
+                      </CustomCell>
+                      <CustomCell
                         onClick={() => navigate(`/admissions/view/${row.id}`)}
                         style={{ cursor: 'pointer' }}
                         align="left"
-                        sx={{ height: '47px', width: '15%' }}
+                        sx={{ width: '15%' }}
                       >
                         {'code' in row ? `#${row.code}` : ''}
-                      </TableCell>
-                      <TableCell
+                      </CustomCell>
+                      <CustomCell
                         onClick={() => navigate(`/admissions/view/${row.id}`)}
                         style={{ cursor: 'pointer' }}
                         align="left"
-                        sx={{ height: '47px', width: '100%' }}
+                        sx={{ width: '100%' }}
                       >
                         {'object_ids' in row ? getObjectNamesFromIds(row.object_ids).join(', ') : ''}
-                      </TableCell>
+                      </CustomCell>
                       <TableCell align="right">
                         <Box display="flex" alignItems="center" justifyContent="flex-end">
                           <ShortcutButtons buttonNames={buttonNames} id={row.id} />
