@@ -92,6 +92,14 @@ class CookieTokenRefreshView(jwt_views.TokenRefreshView):
                     httponly = settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
                     samesite = settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
                 )
+            response.set_cookie(
+                    key=settings.SIMPLE_JWT['AUTH_COOKIE_ACCESS'],
+                    value=response.data['access'],
+                    expires = settings.SIMPLE_JWT['ACCESS_TOKEN_LIFETIME'],
+                    secure = settings.SIMPLE_JWT['AUTH_COOKIE_SECURE'],
+                    httponly = settings.SIMPLE_JWT['AUTH_COOKIE_HTTP_ONLY'],
+                    samesite = settings.SIMPLE_JWT['AUTH_COOKIE_SAMESITE']
+                )
             del response.data['refresh']
         response['X-CSRFToken'] = request.COOKIES.get('csrftoken')
         return super().finalize_response(request, response, *args, **kwargs)
