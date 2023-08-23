@@ -1,12 +1,12 @@
 import { CircularProgress, FormControl } from '@mui/material'
-import { useState } from 'react'
-import { useLoginMutation } from '../../__data__/service/auth.api'
+import { useEffect, useState } from 'react'
+import { useClearCookieQuery, useLoginMutation, useLogoutMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { LoginButton, PasswordTextField, SignInContainer, SignInTextField, TitleTypography } from '../../styles/login'
-import { setAccessToken, setLoginData } from '../../__data__/states/auth'
+import { clearAuth, setAccessToken, setLoginData } from '../../__data__/states/auth'
 import { useDispatch } from 'react-redux'
-import { setAccountId } from '../../__data__/states/account'
-import { getCookie } from '../../utils/cookie-parser'
+import { clearAccount, setAccountId } from '../../__data__/states/account'
+import { deleteCookie, getCookie } from '../../utils/cookie-parser'
 import { useRefreshToken } from '../../hooks/refresh-token'
 import { AlertDialog } from './alert-dialog'
 
@@ -18,10 +18,17 @@ export const LoginForm = () => {
   const [loginMutation, { isLoading: loginLoading, isError: loginError, error: loginErrorStatus }] = useLoginMutation()
   const dispatch = useDispatch()
   const refresh = useRefreshToken()
+  const [logoutMutation] = useLogoutMutation()
+  const { refetch: clearCookieRefetch } = useClearCookieQuery()
 
   const handleLogin = async () => {
     try {
       setShowLoader(true)
+      dispatch(clearAccount())
+      dispatch(clearAuth())
+      deleteCookie('csrftoken')
+      await clearCookieRefetch()
+
       const response = await loginMutation({ username: login, password: password }).unwrap()
       dispatch(setAccountId({ id: response.account_id }))
 
@@ -49,6 +56,17 @@ export const LoginForm = () => {
       setShowLoader(false)
     }
   }
+
+  useEffect(() => {
+    if (loginErrorStatus && 'status' in loginErrorStatus) {
+      if (loginErrorStatus.status === 401 || loginErrorStatus.status === 403) {
+        logoutMutation()
+        dispatch(clearAuth())
+        deleteCookie('csrftoken')
+        clearCookieRefetch()
+      }
+    }
+  }, [loginErrorStatus])
 
   return (
     <SignInContainer

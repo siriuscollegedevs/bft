@@ -33,8 +33,11 @@ export const apiAuth = createApi({
         method: 'POST',
         credentials: 'include'
       })
+    }),
+    clearCookie: builder.query<void, void>({
+      query: () => '/auth/clear'
     })
   })
 })
 
-export const { useLoginMutation, useLogoutMutation, useRefreshMutation } = apiAuth
+export const { useLoginMutation, useLogoutMutation, useRefreshMutation, useClearCookieQuery } = apiAuth
