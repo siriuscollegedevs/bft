@@ -90,19 +90,26 @@ export const EmployeeAdvancedSearch = () => {
     }
   }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: SelectChangeEvent) => {
     setChecked(event.target.value)
   }
 
   const handleSubmit = () => {
-    if (!isAtLeastOneFieldFilled(employeeData)) {
+    const cleanedEmployeeData: AccountToObjectSearch = {
+      ...employeeData,
+      first_name: employeeData.first_name?.trim() || '',
+      last_name: employeeData.last_name?.trim() || '',
+      surname: employeeData.surname?.trim() || ''
+    }
+
+    if (!isAtLeastOneFieldFilled(cleanedEmployeeData)) {
       handleOpenDialog()
       return
     } else {
       if (checked === 'actual' || !checked) {
-        employeesMutation(employeeData)
+        employeesMutation(cleanedEmployeeData)
       } else if (checked === 'archive') {
-        employeesArchiveMutation(employeeData)
+        employeesArchiveMutation(cleanedEmployeeData)
       }
       setShowTable(true)
     }
@@ -128,9 +135,9 @@ export const EmployeeAdvancedSearch = () => {
     <>
       <SearchContainer>
         <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
-          {renderGridItem('Фамилия', 'last_name', false, handleInputChange)}
-          {renderGridItem('Имя', 'first_name', false, handleInputChange)}
-          {renderGridItem('Отчество', 'surname', false, handleInputChange)}
+          {renderGridItem('Фамилия', 'last_name', handleInputChange)}
+          {renderGridItem('Имя', 'first_name', handleInputChange)}
+          {renderGridItem('Отчество', 'surname', handleInputChange)}
 
           <Grid item xs={4} sm={4}>
             <CustomField label="Объекты" variant="filled" disabled />
@@ -156,7 +163,22 @@ export const EmployeeAdvancedSearch = () => {
             </FormControl>
           </Grid>
 
-          {renderGridItem('Тип', 'data', true, handleChange)}
+          <Grid item xs={4} sm={4}>
+            <CustomField label="Тип данных" variant="filled" disabled />
+          </Grid>
+          <Grid item xs={8} sm={6}>
+            <FormControl fullWidth focused variant="outlined">
+              <Select
+                value={checked}
+                onChange={handleChange}
+                displayEmpty
+                inputProps={{ 'aria-label': 'Without label' }}
+              >
+                <MenuItem value="">Актуальные</MenuItem>
+                <MenuItem value="archive">Архивные</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
         <CustomDefaultButton
           variant="contained"
