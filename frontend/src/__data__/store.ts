@@ -11,7 +11,8 @@ import {
   persistedAccountReducer,
   persistedAuthReducer,
   persistedFilterReducer,
-  persistedSearchReducer
+  persistedSearchReducer,
+  persistedadmissionTechnicalReducer
 } from './redux-persist'
 
 const rootReducer = combineReducers({
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
   currentAccount: persistedAccountReducer,
   filters: persistedFilterReducer,
   search: persistedSearchReducer,
+  admissionTechnical: persistedadmissionTechnicalReducer,
   [apiAuth.reducerPath]: apiAuth.reducer,
   [apiAccount.reducerPath]: apiAccount.reducer,
   [apiObject.reducerPath]: apiObject.reducer,

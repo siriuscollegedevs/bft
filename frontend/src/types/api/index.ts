@@ -1,4 +1,5 @@
 import { CurrentAccountId } from '../../__data__/states/account'
+import { AdmissionTechnical } from '../../__data__/states/admission-technical'
 import { AuthState } from '../../__data__/states/auth'
 import { FiltersState } from '../../__data__/states/filters'
 import { SearchState } from '../../__data__/states/search'
@@ -19,6 +20,14 @@ export type Account = {
   last_name: string
   username: string
   password: string
+}
+
+export type AccountExpandSearch = {
+  role: string
+  first_name: string
+  surname: string
+  last_name: string
+  username: string
 }
 
 export type ExpandSearchAdmissionsBody = {
@@ -108,6 +117,12 @@ export type Admissions = {
   object_ids: string[]
 }
 
+export type CreateAdmission = {
+  id: string
+  timestamp: string
+  code: number
+}
+
 export type AdmissionsHistory = {
   id: string
   timestamp: string
@@ -130,7 +145,24 @@ export type SearchOfAdmissions = {
   car_number: string
   car_brand: string
   car_model: string
-  object: string
+  objects: string[]
+  type: string
+  first_name: string
+  surname: string
+  last_name: string
+  from_date: string
+  to_date: string
+  note: string
+}
+
+export type SearchOfAdmissionsResponse = {
+  id: string
+  request_id: string
+  code: number
+  car_number: string
+  car_brand: string
+  car_model: string
+  objects: string[]
   type: string
   first_name: string
   surname: string
@@ -145,6 +177,7 @@ export type RootState = {
   auth: AuthState
   filters: FiltersState
   search: SearchState
+  admissionTechnical: AdmissionTechnical
 }
 
 export type ObjectInArray = {
@@ -159,6 +192,13 @@ export type AccountToObject = {
   surname?: string
   last_name: string
   username: string
+  objects: string[]
+}
+
+export type AccountToObjectSearch = {
+  first_name?: string
+  surname?: string
+  last_name: string
   objects: string[]
 }
 

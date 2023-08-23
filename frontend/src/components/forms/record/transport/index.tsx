@@ -10,10 +10,16 @@ import {
 } from '@mui/material'
 import { Box } from '@mui/system'
 import { useState, SetStateAction } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { RECORD_TYPE, RECORD_FIELDS } from '../../../../__data__/consts/record'
 import { CustomDefaultButton } from '../../../../styles/settings'
 import { useCreateCarRecordMutation } from '../../../../__data__/service/record.api'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  AdmissionTechnical,
+  setIdsOfCreatedAdmissions,
+  setIsCreateFlag
+} from '../../../../__data__/states/admission-technical'
 
 type FieldsState = {
   car_number: string
@@ -35,6 +41,12 @@ export const Transport = () => {
   const [showLoader, setShowLoader] = useState(false)
   const { id } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
+  const dispatch = useDispatch()
+  const isCreateFlag = useSelector(
+    (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.isCreateFlag
+  )
+  const admissionId = location.state?.id
   const [
     createTransportRecordMutation,
     { isLoading: createTransportRecordLoading, isError: createTransportRecordError }
@@ -94,7 +106,7 @@ export const Transport = () => {
 
     try {
       if (!hasEmptyField && id && fields.type) {
-        createTransportRecordMutation({
+        const mutationResponse = await createTransportRecordMutation({
           recordId: id,
           recordData: {
             car_brand: fields.car_brand,
@@ -106,8 +118,21 @@ export const Transport = () => {
             note: fields.note
           }
         })
-        if (!createTransportRecordError) {
-          navigate(`/admissions/view/${id}`)
+        if (
+          !createTransportRecordError &&
+          'data' in mutationResponse &&
+          mutationResponse.data &&
+          mutationResponse.data.id
+        ) {
+          if (isCreateFlag) {
+            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+            navigate(`/admissions/${admissionId}`, {
+              state: { create: true }
+            })
+          } else {
+            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+            navigate(-1)
+          }
         }
       }
     } catch (error) {
