@@ -119,5 +119,5 @@ class ClearCookie(APIView):
             res.delete_cookie('X-CSRFToken', samesite='None')
             res.delete_cookie('csrftoken', samesite='None')
             return res
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+        except Exception as ex:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'error': ex})
