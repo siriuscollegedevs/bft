@@ -20,7 +20,7 @@ export const TitleTypography = styled(Typography)`
 
 export const SignInTextField = styled(TextField)`
   width: 485px;
-  margin-bottom: 45px;
+  margin-bottom: 30px;
   color: white;
 `
 

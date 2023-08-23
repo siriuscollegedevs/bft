@@ -24,17 +24,7 @@ export const FormEditDirectories = () => {
 
   return (
     <>
-      <Container
-        fixed
-        sx={{
-          display: 'flex',
-          alignItem: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          mt: '75px',
-          mb: '75px'
-        }}
-      >
+      <Box sx={{ display: 'flex', mt: '16px', mr: '21px' }}>
         {location.pathname.startsWith(recordUrl) && (
           <>
             <Select
@@ -49,6 +39,18 @@ export const FormEditDirectories = () => {
             </Select>
           </>
         )}
+      </Box>
+      <Container
+        fixed
+        sx={{
+          display: 'flex',
+          alignItem: 'center',
+          justifyContent: 'center',
+          flexDirection: 'column',
+          mt: '75px',
+          mb: '75px'
+        }}
+      >
         <CustomFormControl color="primary">
           <CustomTypography variant="h6" sx={{ color: 'black', textAlign: 'center' }}>
             {location.pathname.startsWith(accountUrl) && 'Учетная запись'}

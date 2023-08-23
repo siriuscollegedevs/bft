@@ -80,7 +80,7 @@ export const Human = () => {
     let hasEmptyField = false
 
     for (const [key, value] of Object.entries(fields)) {
-      if (key !== 'note' && key !== 'type' && value.trim() === '') {
+      if (key !== 'note' && key !== 'type' && value.trim() === '' && key !== 'surname') {
         hasEmptyField = true
         setError(prevError => ({
           ...prevError,
@@ -169,9 +169,7 @@ export const Human = () => {
         focused
         variant="outlined"
         sx={{ m: 1, width: '85%' }}
-        required
         error={hasValidation && error.surname}
-        helperText={!fields.surname ? 'Это поле обязательно.' : ' '}
         value={fields.surname}
         onChange={e => handleFieldChange('surname', e.target.value)}
       />

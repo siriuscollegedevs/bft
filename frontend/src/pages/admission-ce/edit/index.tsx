@@ -94,7 +94,7 @@ export const AdmissionViewEdit = () => {
           justifyContent: 'center',
           flexDirection: 'column',
           width: '100%',
-          height: '70vh'
+          gap: '20px'
         }}
       >
         <Box
@@ -103,8 +103,7 @@ export const AdmissionViewEdit = () => {
             justifyContent: 'space-between',
             alignItems: 'center',
             width: '90%',
-            marginBottom: '30px',
-            marginTop: '8px'
+            marginTop: '-48px'
           }}
         >
           <Box>
@@ -129,12 +128,12 @@ export const AdmissionViewEdit = () => {
             </Button>
           </Box>
         </Box>
-        <Box sx={{ width: '90%', height: '100%', display: 'flex', justifyContent: 'center' }}>
+        <Box sx={{ width: '90%', height: '65vh', display: 'flex', justifyContent: 'center', mt: '15px' }}>
           {filteredTableData && filteredTableData.length > 0 ? (
             <SmartTable
               buttonNames={buttonNames}
               size={{
-                width: '90%',
+                width: '100%',
                 height: '100%'
               }}
               data={filteredTableData}
