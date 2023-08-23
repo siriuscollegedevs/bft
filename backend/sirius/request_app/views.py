@@ -106,7 +106,7 @@ class PostRequest(APIView):
                     try:
                         req_code = get_max_code() + 1
                     except Exception:
-                        return Response(status=status.HTTP_400_BAD_REQUEST) # NOTE не удалось получить код
+                        return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE не удалось получить код
                 req_history = RequestHistory.objects.create(
                     request=req,
                     code=req_code,
@@ -207,7 +207,7 @@ class PostRecord(APIView):
                     record = Record.objects.create(status='active', request=req)
                     RecordHistory.objects.create(action='created', modified_by=get_user(
                         request), record=record, **serializer.validated_data)
-                    return Response(status=status.HTTP_201_CREATED, data={'id' : record.id})
+                    return Response(status=status.HTTP_201_CREATED, data={'id': record.id})
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
@@ -221,7 +221,13 @@ class CarRecord(PostRecord):
     record_type = 'car'
 
 
-class DeletePutRecord(APIView):
+class DeletePutGetRecord(APIView):
+
+    def get(self, _, RecordId):
+        record = get_record(RecordId)
+        if not record:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+        return Response(serializers.RecordSerializer(record.get_info()).data)
 
     @extend_schema(
         responses={
@@ -292,7 +298,7 @@ class ChangeStatusRecord(APIView):
         record = get_record(RecordId)
         if not record:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
-        serializer = serializers.ChangeStatusRequest(data=request.data)
+        serializer = serializers.ChangeStatusSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
             try:
@@ -409,7 +415,8 @@ class RequestExpandSearch(APIView):
             with transaction.atomic():
                 all_records = Record.objects.filter(status=self.status)
                 if not all_records:
-                    return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_RECORDS_FOUND_ERROR)  # NOTE записи не найдены
+                    # NOTE записи не найдены
+                    return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_RECORDS_FOUND_ERROR)
                 records = [record.get_last_version() for record in all_records]
                 records_history = list_to_queryset(RecordHistory, records).filter(**search_records)
                 if not records_history:
@@ -420,11 +427,12 @@ class RequestExpandSearch(APIView):
                     records = [
                         record for record in records if all(
                             map(
-                                lambda object_ins: RequestToObject.objects.filter(request=record.request, object=object_ins).exists(),
+                                lambda object_ins: RequestToObject.objects.filter(
+                                    request=record.request, object=object_ins).exists(),
                                 objects
                             )
                         )
-                ]
+                    ]
                 res = []
                 for record in records:
                     record_info = record.get_info()
@@ -432,8 +440,8 @@ class RequestExpandSearch(APIView):
                     record_info['request_id'] = record.request.id
                     record_info['objects'] = list(
                         map(
-                        lambda request_to_object: request_to_object.object.get_info().name,
-                        RequestToObject.objects.filter(request=record.request)
+                            lambda request_to_object: request_to_object.object.get_info().name,
+                            RequestToObject.objects.filter(request=record.request)
                         )
                     )
                     res.append(record_info)
@@ -443,7 +451,7 @@ class RequestExpandSearch(APIView):
                     return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_SEARCH_RECORDS_FOUND_ERROR)
                 return Response(serializers.RequestSearchSerializer(res, many=True).data)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) # NOTE ошибка транзакции
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR)  # NOTE ошибка транзакции
 
 
 class ActualRequestExpandSearch(RequestExpandSearch):
@@ -471,3 +479,12 @@ class DeleteRecords(APIView):
                 return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class RequestInfo(APIView):
+
+    def get(self, _, RequestId):
+        req = get_request(RequestId)
+        if not req:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
+        return Response(serializers.RequestSerializer(req.get_info()).data)
