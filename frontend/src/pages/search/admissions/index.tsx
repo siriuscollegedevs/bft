@@ -107,7 +107,7 @@ export const AdmissionsAdvancedSearch = () => {
     }
   }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: SelectChangeEvent) => {
     setChecked(event.target.value)
   }
 
@@ -123,14 +123,25 @@ export const AdmissionsAdvancedSearch = () => {
   }
 
   const handleSubmit = () => {
-    if (!isAtLeastOneFieldFilled(admissionData)) {
+    const cleanedAdmissionData: SearchOfAdmissions = {
+      ...admissionData,
+      car_number: admissionData.car_number.trim(),
+      car_brand: admissionData.car_brand.trim(),
+      car_model: admissionData.car_model.trim(),
+      first_name: admissionData.first_name.trim(),
+      surname: admissionData.surname.trim(),
+      last_name: admissionData.last_name.trim(),
+      note: admissionData.note.trim()
+    }
+
+    if (!isAtLeastOneFieldFilled(cleanedAdmissionData)) {
       handleOpenDialog()
       return
     } else {
       if (checked === 'actual' || !checked) {
-        admissionsMutation(admissionData)
+        admissionsMutation(cleanedAdmissionData)
       } else if (checked === 'archive') {
-        admissionsArchiveMutation(admissionData)
+        admissionsArchiveMutation(cleanedAdmissionData)
       }
       setShowTable(true)
     }
@@ -168,13 +179,13 @@ export const AdmissionsAdvancedSearch = () => {
     <>
       <SearchContainer>
         <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
-          {renderGridItem('Фамилия', 'last_name', false, handleInputChange)}
-          {renderGridItem('Имя', 'first_name', false, handleInputChange)}
-          {renderGridItem('Отчество', 'surname', false, handleInputChange)}
+          {renderGridItem('Фамилия', 'last_name', handleInputChange)}
+          {renderGridItem('Имя', 'first_name', handleInputChange)}
+          {renderGridItem('Отчество', 'surname', handleInputChange)}
 
-          {renderGridItem('Марка', 'car_brand', false, handleInputChange)}
-          {renderGridItem('Модель', 'car_model', false, handleInputChange)}
-          {renderGridItem('Гос.номер', 'car_number', false, handleInputChange)}
+          {renderGridItem('Марка', 'car_brand', handleInputChange)}
+          {renderGridItem('Модель', 'car_model', handleInputChange)}
+          {renderGridItem('Гос.номер', 'car_number', handleInputChange)}
 
           <Grid item xs={4} sm={4}>
             <CustomField label="Тип" variant="filled" disabled />
@@ -253,8 +264,23 @@ export const AdmissionsAdvancedSearch = () => {
             />
           </Grid>
 
-          {renderGridItem('Примечание', 'note', false, handleInputChange)}
-          {renderGridItem('Тип', 'data', true, handleChange)}
+          {renderGridItem('Примечание', 'note', handleInputChange)}
+          <Grid item xs={4} sm={4}>
+            <CustomField label="Тип данных" variant="filled" disabled />
+          </Grid>
+          <Grid item xs={8} sm={6}>
+            <FormControl fullWidth focused variant="outlined">
+              <Select
+                value={checked}
+                onChange={handleChange}
+                displayEmpty
+                inputProps={{ 'aria-label': 'Without label' }}
+              >
+                <MenuItem value="">Актуальные</MenuItem>
+                <MenuItem value="archive">Архивные</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
         <CustomDefaultButton
           variant="contained"

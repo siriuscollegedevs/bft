@@ -84,15 +84,16 @@ export const BasicModal = ({ open, handleClose, selectedRow, prewRow }: ModalPro
                     return (
                       <React.Fragment key={key}>
                         {selectedRow.action === 'canceled' && key === 'note' && (
-                            <StyledListEntries isDifferent={shouldHighlight}>
-                              {getKeyTranslation(key)}: {formatValue(prewValue, key)}
-                            </StyledListEntries>
-                        )}
-                        {(prewRow.action === 'modified' || prewRow.action === 'created') && selectedRow.action !== 'canceled' &&(
                           <StyledListEntries isDifferent={shouldHighlight}>
                             {getKeyTranslation(key)}: {formatValue(prewValue, key)}
                           </StyledListEntries>
                         )}
+                        {(prewRow.action === 'modified' || prewRow.action === 'created') &&
+                          selectedRow.action !== 'canceled' && (
+                            <StyledListEntries isDifferent={shouldHighlight}>
+                              {getKeyTranslation(key)}: {formatValue(prewValue, key)}
+                            </StyledListEntries>
+                          )}
                       </React.Fragment>
                     )
                   })}
@@ -120,7 +121,7 @@ export const BasicModal = ({ open, handleClose, selectedRow, prewRow }: ModalPro
                             {getKeyTranslation(key)}: {formatValue(value, key)}
                           </StyledListEntries>
                         )}
-                        {(selectedRow.action === 'modified') && (
+                        {selectedRow.action === 'modified' && (
                           <StyledListEntries isDifferent={shouldHighlight}>
                             {getKeyTranslation(key)}: {formatValue(value, key)}
                           </StyledListEntries>
