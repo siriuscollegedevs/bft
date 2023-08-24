@@ -8,10 +8,11 @@ export const apiRecord = createApi({
   endpoints: builder => ({
     changeRecordStatusById: builder.mutation<void, { recordId: string; recordStatus: Status }>({
       query: ({ recordId, recordStatus }) => ({
-        url: `/record/change_status/${recordId}`,
+        url: `/request/record/change_status/${recordId}`,
         method: 'PUT',
         body: {
-          status: recordStatus.status
+          status: recordStatus.status,
+          reason: recordStatus.reason
         }
       })
     }),
@@ -22,7 +23,7 @@ export const apiRecord = createApi({
       })
     }),
     getRecordHistoryById: builder.query<AdmissionsHistory[], string>({
-      query: (recordId: string) => `/record/history/${recordId}`
+      query: recordId => `/request/record/history/${recordId}`
     }),
     updateHumanRecordById: builder.mutation<void, { recordId: string; recordData: Human }>({
       query: ({ recordId, recordData }) => ({
@@ -39,7 +40,7 @@ export const apiRecord = createApi({
         }
       })
     }),
-    createHumanRecord: builder.mutation<void, { recordId: string; recordData: Human }>({
+    createHumanRecord: builder.mutation<{ id: string }, { recordId: string; recordData: Human }>({
       query: ({ recordId, recordData }) => ({
         url: `/request/record/human/${recordId}`,
         method: 'POST',
@@ -69,7 +70,7 @@ export const apiRecord = createApi({
         }
       })
     }),
-    createCarRecord: builder.mutation<void, { recordId: string; recordData: Car }>({
+    createCarRecord: builder.mutation<{ id: string }, { recordId: string; recordData: Car }>({
       query: ({ recordId, recordData }) => ({
         url: `/request/record/car/${recordId}`,
         method: 'POST',
@@ -83,6 +84,15 @@ export const apiRecord = createApi({
           note: recordData.note
         }
       })
+    }),
+    deleteMultipleRecords: builder.mutation<void, string[]>({
+      query: recordIds => ({
+        url: '/request/records',
+        method: 'DELETE',
+        body: {
+          ids: recordIds
+        }
+      })
     })
   })
 })
@@ -94,5 +104,6 @@ export const {
   useUpdateHumanRecordByIdMutation,
   useCreateHumanRecordMutation,
   useUpdateCarRecordByIdMutation,
-  useCreateCarRecordMutation
+  useCreateCarRecordMutation,
+  useDeleteMultipleRecordsMutation
 } = apiRecord

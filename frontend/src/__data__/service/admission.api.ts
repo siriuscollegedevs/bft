@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Admissions, AdmissionsHistory, SearchOfAdmissions } from '../../types/api'
+import { Admissions, AdmissionsHistory, CreateAdmission, SearchOfAdmissions } from '../../types/api'
 import { baseQuery } from '../utils'
 
 export const apiAdmissions = createApi({
@@ -29,10 +29,11 @@ export const apiAdmissions = createApi({
         credentials: 'include'
       })
     }),
-    createAdmissions: builder.mutation<Admissions, void>({
-      query: () => ({
-        url: '/request',
-        method: 'POST'
+    createAdmissions: builder.mutation<CreateAdmission, string[]>({
+      query: objectsIds => ({
+        url: '/request/create',
+        method: 'POST',
+        body: { object_ids: objectsIds }
       })
     }),
     updateAdmissionStatus: builder.mutation<
@@ -52,7 +53,7 @@ export const apiAdmissions = createApi({
       })
     }),
     getAdmissionsHistoryById: builder.query<AdmissionsHistory[], string>({
-      query: admissionsId => `/request/history/${admissionsId}`
+      query: admissionsId => `/request/records/archive/${admissionsId}`
     }),
     getRecordOfAdmissions: builder.query<AdmissionsHistory[], string>({
       query: admissionsId => `/request/${admissionsId}`
@@ -63,7 +64,7 @@ export const apiAdmissions = createApi({
         method: 'DELETE'
       })
     }),
-    admissionsSearch: builder.mutation<Admissions[], SearchOfAdmissions>({
+    admissionsSearch: builder.mutation<SearchOfAdmissions[], SearchOfAdmissions>({
       query: admissionsData => ({
         url: '/request/expand_search',
         method: 'POST',
@@ -71,7 +72,7 @@ export const apiAdmissions = createApi({
           car_number: admissionsData.car_number,
           car_brand: admissionsData.car_brand,
           car_model: admissionsData.car_model,
-          object: admissionsData.object,
+          objects: admissionsData.objects,
           type: admissionsData.type,
           first_name: admissionsData.first_name,
           surname: admissionsData.surname,
@@ -81,6 +82,28 @@ export const apiAdmissions = createApi({
           note: admissionsData.note
         }
       })
+    }),
+    admissionsArchiveSearch: builder.mutation<SearchOfAdmissions[], SearchOfAdmissions>({
+      query: admissionsData => ({
+        url: '/request/expand_search/archive',
+        method: 'POST',
+        body: {
+          car_number: admissionsData.car_number,
+          car_brand: admissionsData.car_brand,
+          car_model: admissionsData.car_model,
+          objects: admissionsData.objects,
+          type: admissionsData.type,
+          first_name: admissionsData.first_name,
+          surname: admissionsData.surname,
+          last_name: admissionsData.last_name,
+          from_date: admissionsData.from_date,
+          to_date: admissionsData.to_date,
+          note: admissionsData.note
+        }
+      })
+    }),
+    getAdmissionById: builder.query<Admissions, string>({
+      query: admissionId => `/request/information/${admissionId}`
     })
   })
 })
@@ -93,5 +116,7 @@ export const {
   useGetAdmissionsHistoryByIdQuery,
   useGetRecordOfAdmissionsQuery,
   useDeleteAdmissionsByIdMutation,
-  useAdmissionsSearchMutation
+  useAdmissionsSearchMutation,
+  useAdmissionsArchiveSearchMutation,
+  useGetAdmissionByIdQuery
 } = apiAdmissions

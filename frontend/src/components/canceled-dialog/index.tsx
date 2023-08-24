@@ -1,6 +1,7 @@
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, TextField, DialogActions } from '@mui/material'
 import { SetStateAction, useState } from 'react'
 import { useUpdateAdmissionStatusMutation } from '../../__data__/service/admission.api'
+import { useNavigate } from 'react-router-dom'
 
 type CanceledDialogProps = {
   admissionId: string
@@ -11,6 +12,7 @@ export const CanceledDialog = ({ admissionId }: CanceledDialogProps) => {
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState(false)
   const [updateStatus] = useUpdateAdmissionStatusMutation()
+  const navigate = useNavigate()
 
   const handleInputChange = (event: { target: { value: SetStateAction<string> } }) => {
     setInputValue(event.target.value)
@@ -31,7 +33,7 @@ export const CanceledDialog = ({ admissionId }: CanceledDialogProps) => {
     } else {
       updateStatus({ admissionId: admissionId, admissionData: { status: 'canceled', reason: 'inputValue' } })
       setOpen(false)
-      console.log('Значение:', inputValue)
+      navigate('/admissions')
     }
   }
 

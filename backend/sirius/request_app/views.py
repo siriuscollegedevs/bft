@@ -6,7 +6,7 @@ from rest_framework import status
 from django.db import transaction
 from rest_framework.views import APIView
 from . import serializers
-from sirius.general_functions import get_user, list_to_queryset
+from sirius.general_functions import get_user, list_to_queryset, get_max_code
 from .config import *
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
@@ -60,7 +60,8 @@ class GetRequests(APIView):
                 if line.request.id in request_ids:
                     continue
                 request_ids.add(line.request.id)
-                res.append(line.request.get_info())
+                if line.request.status == self.status:
+                    res.append(line.request.get_info())
         return Response(serializers.RequestSerializer(res, many=True).data)
 
 
@@ -76,42 +77,53 @@ class PostRequest(APIView):
 
     @extend_schema(
         responses={
-            status.HTTP_200_OK: inline_serializer(
-                name='post_request_res',
-                fields={'id': ser.UUIDField()}
-            ),
+            status.HTTP_200_OK: serializers.PostRequestSerializer(),
             status.HTTP_400_BAD_REQUEST: None,
             status.HTTP_401_UNAUTHORIZED: None
         },
         request=inline_serializer(
             name='post_request_req',
             fields={
-                'code': ser.CharField(),
                 'object_ids': ser.ListField(child=ser.UUIDField())
             }
         )
     )
     def post(self, request):
-        serializer = serializers.RequestSerializer(data=request.data)
-        if serializer.is_valid():
-            try:
-                with transaction.atomic():
-                    req = Request.objects.create(status='active')
-                    for obj_id in serializer.validated_data['object_ids']:
-                        RequestToObject.objects.create(
-                            object=Object.objects.get(id=obj_id),
-                            request=req
-                        )
-                    RequestHistory.objects.create(
-                        request=req,
-                        code=code,
-                        action='created',
-                        modified_by=get_user(request)
+        object_ids = request.data.get('object_ids', [])
+        if not object_ids:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_OBJECTS_GIVEN_ERROR)
+        try:
+            with transaction.atomic():
+                req = Request.objects.create(status='active')
+                for object_id in object_ids:
+                    try:
+                        object = Object.objects.get(id=object_id)
+                    except Exception:
+                        return Response(status=status.HTTP_400_BAD_REQUEST, data=OBJECTID_ERROR_MSG)
+                    RequestToObject.objects.create(
+                        object=object,
+                        request=req
                     )
-                    return Response(serializers.RequestSerializer({'id': req.id}).data)
-            except Exception:
-                return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+                    try:
+                        req_code = get_max_code() + 1
+                    except Exception:
+                        return Response(status=status.HTTP_400_BAD_REQUEST)  # NOTE не удалось получить код
+                req_history = RequestHistory.objects.create(
+                    request=req,
+                    code=req_code,
+                    action='created',
+                    modified_by=get_user(request)
+                )
+                return Response(
+                    serializers.PostRequestSerializer(
+                        {
+                            'id': req.id,
+                            'code': req_code,
+                            'timestamp': req_history.timestamp.date()
+                        }
+                    ).data)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 class RequestApiView(APIView):
@@ -142,7 +154,7 @@ class RequestApiView(APIView):
         }
     )
     def delete(self, request, RequestId):
-        req = self.get_request(RequestId)
+        req = get_request(RequestId)
         if not req:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
         try:
@@ -150,7 +162,7 @@ class RequestApiView(APIView):
                 req.make_outdated(user=get_user(request), action='deleted')
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class ChangeStatusRequest(APIView):
@@ -196,7 +208,7 @@ class PostRecord(APIView):
                     record = Record.objects.create(status='active', request=req)
                     RecordHistory.objects.create(action='created', modified_by=get_user(
                         request), record=record, **serializer.validated_data)
-                    return Response(status=status.HTTP_201_CREATED)
+                    return Response(status=status.HTTP_201_CREATED, data={'id': record.id})
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=serializer.errors)
@@ -210,7 +222,13 @@ class CarRecord(PostRecord):
     record_type = 'car'
 
 
-class DeletePutRecord(APIView):
+class DeletePutGetRecord(APIView):
+
+    def get(self, _, RecordId):
+        record = get_record(RecordId)
+        if not record:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+        return Response(serializers.RecordSerializer(record.get_info()).data)
 
     @extend_schema(
         responses={
@@ -281,7 +299,7 @@ class ChangeStatusRecord(APIView):
         record = get_record(RecordId)
         if not record:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
-        serializer = serializers.ChangeStatusRequest(data=request.data)
+        serializer = serializers.ChangeStatusSerializer(data=request.data)
         if serializer.is_valid():
             data = serializer.validated_data
             try:
@@ -375,10 +393,12 @@ class RequestExpandSearch(APIView):
         record_type = ''
         for key, item in request.data.items():
             if not record_type:
-                if key in HUMAN_RECORD_KEYS and item:
+                if key in HUMAN_RECORD_KEYS and item and isinstance(item, str):
+                    item = item.capitalize()
                     record_type = 'human'
                     search_records[key] = item
-                elif key in CAR_RECORD_KEYS and item:
+                elif key in CAR_RECORD_KEYS and item and isinstance(item, str):
+                    item = item.upper()
                     record_type = 'car'
                     search_records[key] = item
                 elif key in GENERAL_RECORD_KEYS and item:
@@ -396,7 +416,8 @@ class RequestExpandSearch(APIView):
             with transaction.atomic():
                 all_records = Record.objects.filter(status=self.status)
                 if not all_records:
-                    return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_RECORDS_FOUND_ERROR)  # NOTE записи не найдены
+                    # NOTE записи не найдены
+                    return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_RECORDS_FOUND_ERROR)
                 records = [record.get_last_version() for record in all_records]
                 records_history = list_to_queryset(RecordHistory, records).filter(**search_records)
                 if not records_history:
@@ -407,19 +428,21 @@ class RequestExpandSearch(APIView):
                     records = [
                         record for record in records if all(
                             map(
-                                lambda object_ins: RequestToObject.objects.filter(request=record.request, object=object_ins).exists(),
+                                lambda object_ins: RequestToObject.objects.filter(
+                                    request=record.request, object=object_ins).exists(),
                                 objects
                             )
                         )
-                ]
+                    ]
                 res = []
                 for record in records:
                     record_info = record.get_info()
+                    record_info['code'] = record.request.get_last_version().code
                     record_info['request_id'] = record.request.id
                     record_info['objects'] = list(
                         map(
-                        lambda request_to_object: request_to_object.object.get_info().name,
-                        RequestToObject.objects.filter(request=record.request)
+                            lambda request_to_object: request_to_object.object.get_info().name,
+                            RequestToObject.objects.filter(request=record.request)
                         )
                     )
                     res.append(record_info)
@@ -429,11 +452,40 @@ class RequestExpandSearch(APIView):
                     return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_SEARCH_RECORDS_FOUND_ERROR)
                 return Response(serializers.RequestSearchSerializer(res, many=True).data)
         except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) # NOTE ошибка транзакции
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR)  # NOTE ошибка транзакции
 
 
 class ActualRequestExpandSearch(RequestExpandSearch):
     status = 'active'
 
+
 class ArchiveRequestExpandSearch(RequestExpandSearch):
     status = 'outdated'
+
+
+class DeleteRecords(APIView):
+
+    def delete(self, request):
+        record_ids = request.data.get('ids', None)
+        if record_ids is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+        try:
+            with transaction.atomic():
+                for record_id in record_ids:
+                    record = get_record(record_id)
+                    if not record:
+                        return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+                    record.make_outdated(user=get_user(request), action='deleted')
+
+                return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class RequestInfo(APIView):
+
+    def get(self, _, RequestId):
+        req = get_request(RequestId)
+        if not req:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
+        return Response(serializers.RequestSerializer(req.get_info()).data)
