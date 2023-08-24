@@ -496,7 +496,7 @@ class RequestInfo(APIView):
 @api_view(('POST',))
 def excel(request):
     wb = openpyxl.load_workbook(request.FILES["excel_file"])
-    worksheet = wb["Заявка"]
+    worksheet = wb[SHEET_NAME]
     try:
         req = Request.objects.get(id=request.POST['request_id'])
     except Exception:
@@ -508,10 +508,10 @@ def excel(request):
     try:
         with transaction.atomic():
             while True:
-                if worksheet['B' + start].value == 'Список автотранспортных средств':
+                if worksheet[FIELD_FOR_CHECK_LETTER + start].value == START_OF_CAR_RECORDS:
                     start = str(int(start) + 2)
                     break
-                if not worksheet['B' + start].value:
+                if not worksheet[FIELD_FOR_CHECK_LETTER + start].value:
                     start = str(int(start) + 1)
                     continue
                 record = Record.objects.create(status='active', request=req)
@@ -523,7 +523,7 @@ def excel(request):
                     request), record=record, type=type, **data, **dates)
                 start = str(int(start) + 1)
             while True:
-                if not worksheet['B' + start].value:
+                if not worksheet[FIELD_FOR_CHECK_LETTER + start].value or worksheet[FIELD_FOR_CHECK_LETTER + start].value == END_OF_CAR_RECORDS:
                     return Response(status=status.HTTP_200_OK)
                 record = Record.objects.create(status='active', request=req)
                 data = {"car_brand": worksheet[CAR_BRAND_FIELD_LETTER + start].value,

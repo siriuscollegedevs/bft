@@ -53,3 +53,8 @@ CAR_NOTE_FIELD_LETTER = "H"
 CAR_NUMBER_FIELD_LETTER = "E"
 
 START = '12'
+START_OF_CAR_RECORDS = 'Список автотранспортных средств'
+END_OF_CAR_RECORDS = 'Дополнительная информация:'
+
+SHEET_NAME = 'Заявка'
+FIELD_FOR_CHECK_LETTER = 'B'
