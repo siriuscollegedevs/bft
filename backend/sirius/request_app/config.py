@@ -40,7 +40,7 @@ HUMAN_RECORD_KEYS = ('first_name', 'last_name', 'surname')
 CAR_RECORD_KEYS = ('car_number', 'car_brand', 'car_model')
 GENERAL_RECORD_KEYS = ('type', 'from_date', 'to_date', 'note', 'objects')
 
-#EXCEL_PARSING
+# EXCEL_PARSING
 LAST_NAME_FIELD_LETTER = "B"
 SURNAME_FIELD_LETTER = "D"
 FIRST_NAME_FIELD_LETTER = "C"

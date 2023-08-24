@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from .models import Request, RequestHistory, Record, RecordHistory, RequestToObject
-from sirius_access.models import Object, Account
+from sirius_access.models import Object
 from sirius_access.config import NO_SEARCH_OBJECTS_FOUND_ERROR
 from rest_framework import status
 from django.db import transaction
@@ -502,7 +502,7 @@ def excel(request):
     except Exception:
         return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
     start = START
-    dates = {"to_date" : worksheet[TO_DATE_CELL].value.date(), "from_date" : worksheet[FROM_DATE_CELL].value.date()}
+    dates = {"to_date": worksheet[TO_DATE_CELL].value.date(), "from_date": worksheet[FROM_DATE_CELL].value.date()}
     type = "for_once" if dates["to_date"] == dates["from_date"] else "for_long_time"
 
     try:
