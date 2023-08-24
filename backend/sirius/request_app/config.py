@@ -52,7 +52,7 @@ CAR_BRAND_FIELD_LETTER = "B"
 CAR_NOTE_FIELD_LETTER = "H"
 CAR_NUMBER_FIELD_LETTER = "E"
 
-START = '12'
+START = '11'
 START_OF_CAR_RECORDS = 'Список автотранспортных средств'
 END_OF_CAR_RECORDS = 'Дополнительная информация:'
 
