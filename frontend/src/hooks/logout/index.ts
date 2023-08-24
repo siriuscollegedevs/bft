@@ -4,6 +4,7 @@ import { AuthState, clearAuth } from '../../__data__/states/auth'
 import { useLogoutMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { deleteCookie } from '../../utils/cookie-parser'
+import { clearAdmissionTechnical } from '../../__data__/states/admission-technical'
 
 export const useLogout = () => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
@@ -18,6 +19,7 @@ export const useLogout = () => {
       deleteCookie('csrftoken')
       dispatch(clearAccount())
       dispatch(clearAuth())
+      dispatch(clearAdmissionTechnical())
       navigate('/')
     } catch (error) {
       console.log(error)

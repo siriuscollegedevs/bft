@@ -24,9 +24,20 @@ export type SidebarProps = {
   isButton: boolean
 }
 
+export const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: 224,
+      width: 250
+    }
+  }
+}
+
 export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton }) => {
   const [objectName, setObjectName] = React.useState<string[]>([])
   const location = useLocation()
+  const isArchive = location.pathname.includes('/archive')
+  const searchPath = isArchive ? location.pathname.replace('/archive', '/search') : `${location.pathname}/search`
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const currentAccountId = useSelector((state: { currentAccount: CurrentAccountId }) => state.currentAccount.id)
@@ -69,15 +80,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
     navigate(createPath)
   }
 
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: 224,
-        width: 250
-      }
-    }
-  }
-
   const shouldHideSidebar = !isSearch && !isObjects && !isButton
 
   return (
@@ -105,7 +107,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
             }}
           >
             {isSearch && (
-              <SidebarButton variant="outlined" color="primary">
+              <SidebarButton variant="outlined" color="primary" onClick={() => navigate(searchPath)}>
                 Расширенный поиск
               </SidebarButton>
             )}
