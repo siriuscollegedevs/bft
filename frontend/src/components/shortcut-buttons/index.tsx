@@ -89,9 +89,7 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
   const { refetch: refetchEmployeesData } = useGetAllAccountToObjectQuery()
 
   const handleButtonClick = (title: ButtonName) => {
-    const newPath = location.pathname.includes('/archive')
-      ? location.pathname.replace('/archive', '')
-      : location.pathname
+    let newPath = location.pathname.includes('/archive') ? location.pathname.replace('/archive', '') : location.pathname
 
     const newSearchPath = location.pathname.includes('/search')
       ? location.pathname.replace('/search', '')
@@ -105,6 +103,7 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
         handleDelete()
         break
       case 'history':
+        newPath = newPath.includes('/search') ? newPath.replace('/search', '') : newPath
         navigate(`${newPath}/history/${id}`)
         break
       case 'toRepay':

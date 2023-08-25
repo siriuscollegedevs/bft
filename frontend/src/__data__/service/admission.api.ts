@@ -101,6 +101,9 @@ export const apiAdmissions = createApi({
           note: admissionsData.note
         }
       })
+    }),
+    getAdmissionById: builder.query<Admissions, string>({
+      query: admissionId => `/request/information/${admissionId}`
     })
   })
 })
@@ -114,5 +117,6 @@ export const {
   useGetRecordOfAdmissionsQuery,
   useDeleteAdmissionsByIdMutation,
   useAdmissionsSearchMutation,
-  useAdmissionsArchiveSearchMutation
+  useAdmissionsArchiveSearchMutation,
+  useGetAdmissionByIdQuery
 } = apiAdmissions

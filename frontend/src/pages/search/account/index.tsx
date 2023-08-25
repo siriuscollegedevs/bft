@@ -1,4 +1,4 @@
-import { Grid, TextField } from '@mui/material'
+import { FormControl, Grid, TextField } from '@mui/material'
 import { CustomDefaultButton } from '../../../styles/settings'
 import { CustomField } from '../../../styles/search'
 import React, { useMemo, useState } from 'react'
@@ -15,6 +15,7 @@ import { SearchTableContent } from '../../../components/search/search-table'
 import { SearchContainer } from '../../../components/search/search-container'
 import { sortData } from '../../../utils/sorting'
 import { SearchDialog } from '../../../components/search-dialog'
+import Select, { SelectChangeEvent } from '@mui/material/Select'
 
 export const AccountAdvancedSearch = () => {
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
@@ -54,7 +55,7 @@ export const AccountAdvancedSearch = () => {
     }))
   }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: SelectChangeEvent) => {
     setChecked(event.target.value)
   }
 
@@ -69,14 +70,24 @@ export const AccountAdvancedSearch = () => {
   }
 
   const handleSubmit = () => {
-    if (!isAtLeastOneFieldFilled(accountData)) {
+    const cleanedAccountData: AccountExpandSearch = { ...accountData }
+
+    for (const key in cleanedAccountData) {
+      if (typeof cleanedAccountData[key as keyof AccountExpandSearch] === 'string') {
+        cleanedAccountData[key as keyof AccountExpandSearch] = (
+          cleanedAccountData[key as keyof AccountExpandSearch] as string
+        ).trim()
+      }
+    }
+
+    if (!isAtLeastOneFieldFilled(cleanedAccountData)) {
       handleOpenDialog()
       return
     } else {
       if (checked === 'actual' || !checked) {
-        accountsMutation(accountData)
+        accountsMutation(cleanedAccountData)
       } else if (checked === 'archive') {
-        accountsArchiveMutation(accountData)
+        accountsArchiveMutation(cleanedAccountData)
       }
       setShowTable(true)
     }
@@ -102,9 +113,9 @@ export const AccountAdvancedSearch = () => {
     <>
       <SearchContainer>
         <Grid container spacing={2} sx={{ justifyContent: 'center' }}>
-          {renderGridItem('Фамилия', 'last_name', false, handleInputChange)}
-          {renderGridItem('Имя', 'first_name', false, handleInputChange)}
-          {renderGridItem('Отчество', 'surname', false, handleInputChange)}
+          {renderGridItem('Фамилия', 'last_name', handleInputChange)}
+          {renderGridItem('Имя', 'first_name', handleInputChange)}
+          {renderGridItem('Отчество', 'surname', handleInputChange)}
 
           <Grid item xs={4} sm={4}>
             <CustomField label="Тип учетной записи" variant="filled" disabled />
@@ -119,8 +130,24 @@ export const AccountAdvancedSearch = () => {
             </TextField>
           </Grid>
 
-          {renderGridItem('Логин', 'username', false, handleInputChange)}
-          {renderGridItem('Тип', 'data', true, handleChange)}
+          {renderGridItem('Логин', 'username', handleInputChange)}
+
+          <Grid item xs={4} sm={4}>
+            <CustomField label="Тип данных" variant="filled" disabled />
+          </Grid>
+          <Grid item xs={8} sm={6}>
+            <FormControl fullWidth focused variant="outlined">
+              <Select
+                value={checked}
+                onChange={handleChange}
+                displayEmpty
+                inputProps={{ 'aria-label': 'Without label' }}
+              >
+                <MenuItem value="">Актуальные</MenuItem>
+                <MenuItem value={'archive'}>Архивные</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
         <CustomDefaultButton
           variant="contained"
