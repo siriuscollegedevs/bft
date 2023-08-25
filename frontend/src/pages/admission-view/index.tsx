@@ -111,23 +111,21 @@ export const AdmissionViewPage = () => {
             </Button>
           </Box>
         </Box>
-        {filteredTableData ? (
-          filteredTableData.length > 0 ? (
-            <SmartTable
-              buttonNames={[]}
-              size={{
-                width: '90%',
-                height: '100%'
-              }}
-              data={filteredTableData}
-            />
-          ) : (
-            <Box sx={{ width: '90%', height: '100%' }}>
+        {filteredTableData && filteredTableData.length > 0 ? (
+          <SmartTable
+            buttonNames={[]}
+            size={{
+              width: '90%',
+              height: '100%'
+            }}
+            data={filteredTableData}
+          />
+        ) : (
+          search.searchFilter.length > 0 && (
+            <Box sx={{ width: '100%' }}>
               <p>Ничего не найдено, проверьте введенные данные.</p>
             </Box>
           )
-        ) : (
-          <></>
         )}
       </Box>
     </>

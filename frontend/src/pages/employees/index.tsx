@@ -86,23 +86,21 @@ export const EmployeesPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {filteredTableData ? (
-              filteredTableData.length > 0 ? (
-                <SmartTable
-                  buttonNames={buttonNames}
-                  size={{
-                    width: '100%',
-                    height: '100%'
-                  }}
-                  data={dataFilters(filteredTableData)}
-                />
-              ) : (
+            {filteredTableData && filteredTableData.length > 0 ? (
+              <SmartTable
+                buttonNames={buttonNames}
+                size={{
+                  width: '100%',
+                  height: '100%'
+                }}
+                data={dataFilters(filteredTableData)}
+              />
+            ) : (
+              search.searchFilter.length > 0 && (
                 <Box sx={{ width: '100%' }}>
                   <p>Ничего не найдено, проверьте введенные данные.</p>
                 </Box>
               )
-            ) : (
-              <></>
             )}
             <Sidebar {...sidebarProps} />
           </>
