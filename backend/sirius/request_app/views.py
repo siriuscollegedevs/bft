@@ -143,7 +143,7 @@ class RequestApiView(APIView):
         req = get_request(RequestId)
         if not req:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
-        res = [record.get_info() for record in Record.objects.filter(request=req, status='active')]
+        res = [record.get_info() for record in Record.objects.filter(request=req, status=req.status)]
         return Response(serializers.RecordSerializer(res, many=True, fields=REQUEST_GET_FIELDS).data)
 
     @extend_schema(
