@@ -120,9 +120,6 @@ export const AdmissionViewEdit = () => {
             </Button>
           </Box>
           <Box>
-            <Button variant="contained" sx={{ marginRight: '14px' }}>
-              Импортировать excel
-            </Button>
             <Button variant="contained" disabled={historyAdmissionData ? historyAdmissionData.length === 0 : true}>
               Архив
             </Button>

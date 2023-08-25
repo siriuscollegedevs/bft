@@ -9,7 +9,8 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  SelectChangeEvent
+  SelectChangeEvent,
+  Typography
 } from '@mui/material'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -59,9 +60,16 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
               marginBottom: '4%'
             }}
           >
-            Выберите объекты, для которых хотите создать заявку. Учтите, что в будущем этот выбор изменить нельзя.
+            <Typography variant="body1">
+              Выберите объекты, для которых хотите создать заявку. Учтите, что в будущем этот выбор изменить нельзя.
+            </Typography>
           </DialogContentText>
-          <FormControl fullWidth>
+          <FormControl
+            fullWidth
+            sx={{
+              marginBottom: '4%'
+            }}
+          >
             <InputLabel id="object-label-id">Объекты</InputLabel>
             <Select
               labelId="object-label-id"
@@ -77,12 +85,31 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
               ))}
             </Select>
           </FormControl>
+          <DialogContentText
+            sx={{
+              marginBottom: '4%'
+            }}
+          >
+            <Typography variant="body1" align="center">
+              или
+            </Typography>
+          </DialogContentText>
+          <FormControl
+            fullWidth
+            sx={{
+              marginBottom: '2%'
+            }}
+          >
+            <Button variant="contained" sx={{ height: '46px' }} disabled={hasSelected}>
+              Импортировать excel
+            </Button>
+          </FormControl>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleBack} variant="outlined">
+          <Button onClick={handleBack} variant="contained">
             Отмена
           </Button>
-          <Button onClick={handleNext} variant="outlined" disabled={!hasSelected}>
+          <Button onClick={handleNext} variant="contained" disabled={!hasSelected}>
             Продолжить
           </Button>
         </DialogActions>
