@@ -230,7 +230,7 @@ class DeletePutGetRecord(APIView):
         record = get_record(RecordId)
         if not record:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
-        return Response(serializers.RecordSerializer(record.get_info()).data)
+        return Response(serializers.RecordSerializer(record.get_info(), fields=REQUEST_GET_FIELDS).data)
 
     @extend_schema(
         responses={
