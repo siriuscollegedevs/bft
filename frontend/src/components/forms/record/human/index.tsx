@@ -20,6 +20,7 @@ import {
   setIdsOfCreatedAdmissions,
   setIsCreateFlag
 } from '../../../../__data__/states/admission-technical'
+import { AdmissionRecord } from '../../../../types/api'
 
 type FieldsState = {
   lastName: string
