@@ -778,6 +778,8 @@ def archive_deletion(logger):
 def print_smth(logger):
     logger.info('--------------')
 
+from django.conf import settings
+from os import path
 
 def indexView(request):
-    return HttpResponse(open("static/index.html").read())
+    return HttpResponse(open(path.join(settings.BASE_DIR, "static/index.html")).read())

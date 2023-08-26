@@ -11,12 +11,14 @@ RUN npm ci
 RUN npm run build
 
 FROM python:3.10.13
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 WORKDIR /backend
-COPY /backend/sirius/ ./
+COPY /backend/sirius/ ./sirius/
 COPY /backend/requirements.txt .
 RUN pip install -r requirements.txt
 
-COPY --from=build_frontend /frontend/build/static ./static
-COPY --from=build_frontend /frontend/build/index.html ./static
+COPY --from=build_frontend /frontend/build/static ./sirius/static
+COPY --from=build_frontend /frontend/build/index.html ./sirius/static
 
-CMD [ "python", "manage.py", "runserver" ]
+CMD ["sh", "-c", "python ./sirius/manage.py migrate && python ./sirius/manage.py runserver 0.0.0.0:8000"]
