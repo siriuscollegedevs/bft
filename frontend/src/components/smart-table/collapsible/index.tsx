@@ -48,7 +48,7 @@ export const Collapsible = ({
             #{groupId}
           </CustomTypography>
           <Paper elevation={1}>
-            <Table>
+            <Table size="small">
               <TableBody>
                 {groupedData[groupId].map(item => (
                   <>
@@ -63,7 +63,7 @@ export const Collapsible = ({
     </>
   ) : (
     <TableContainer sx={{ width: size.width, height: size.height }}>
-      <Table aria-label="collapsible table">
+      <Table aria-label="collapsible table" size="small">
         <TableBody>
           {data && (
             <>

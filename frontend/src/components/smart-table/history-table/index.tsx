@@ -1,6 +1,5 @@
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
 import TableContainer from '@mui/material/TableContainer'
 import TableRow from '@mui/material/TableRow'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
@@ -12,6 +11,7 @@ import { AccountHistory, AdmissionsHistory, ObjectHistory } from '../../../types
 import { dateParser } from '../../../utils/date-parser'
 import { getActionTranslation } from '../../../__data__/consts/history'
 import { useState } from 'react'
+import { CustomCell } from '../../../styles/table'
 
 export type CommonHistoryData = AccountHistory | ObjectHistory | AdmissionsHistory
 
@@ -33,7 +33,7 @@ export const HistoryTable = ({ size, data }: { size: Size } & any) => {
   return (
     <>
       <TableContainer sx={{ width: size.width, height: size.height }}>
-        <Table aria-label="simple table">
+        <Table aria-label="simple table" size="small">
           <TableBody>
             {data && (
               <>
@@ -44,12 +44,12 @@ export const HistoryTable = ({ size, data }: { size: Size } & any) => {
                       '&:last-child td, &:last-child th': { border: 0 }
                     }}
                   >
-                    <TableCell component="th" scope="row" align="left" sx={{ width: '20%' }}>
+                    <CustomCell component="th" scope="row" align="left" sx={{ width: '20%' }}>
                       {dateParser(row.timestamp)}
-                    </TableCell>
-                    <TableCell align="left" sx={{ width: '25%' }}>
+                    </CustomCell>
+                    <CustomCell align="left" sx={{ width: '25%' }}>
                       {row.modified_by}
-                    </TableCell>
+                    </CustomCell>
                     {row.action === 'canceled' || row.action === 'modified' ? (
                       <StyledTableCell align="center" color={getRowColor(row.action)}>
                         {getActionTranslation(row.action)}

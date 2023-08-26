@@ -155,7 +155,7 @@ export const AdmissionsAdvancedSearch = () => {
       const sortedPeople = sortData(people, 'last_name')
       const sortedCars = sortData(cars, 'car_brand')
 
-      return [...sortedPeople, ...sortedCars]
+      return [...sortedCars, ...sortedPeople]
     } else {
       return []
     }
@@ -169,7 +169,7 @@ export const AdmissionsAdvancedSearch = () => {
       const sortedPeople = sortData(people, 'last_name')
       const sortedCars = sortData(cars, 'car_brand')
 
-      return [...sortedPeople, ...sortedCars]
+      return [...sortedCars, ...sortedPeople]
     } else {
       return []
     }
