@@ -9,17 +9,13 @@ import {
   CircularProgress
 } from '@mui/material'
 import { CustomDefaultButton } from '../../../../styles/settings'
-import { SetStateAction, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 import { RECORD_FIELDS, RECORD_TYPE } from '../../../../__data__/consts/record'
 import { Box } from '@mui/system'
-import { useCreateHumanRecordMutation } from '../../../../__data__/service/record.api'
+import { useCreateHumanRecordMutation, useGetRecordByIdQuery } from '../../../../__data__/service/record.api'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  AdmissionTechnical,
-  setIdsOfCreatedAdmissions,
-  setIsCreateFlag
-} from '../../../../__data__/states/admission-technical'
+import { AdmissionTechnical, setIdsOfCreatedAdmissions } from '../../../../__data__/states/admission-technical'
 import { AdmissionRecord } from '../../../../types/api'
 
 type FieldsState = {
@@ -37,10 +33,11 @@ export const Human = () => {
     surname: false
   })
   const [hasValidation, setHasValidation] = useState(false)
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
   const [showLoader, setShowLoader] = useState(false)
-  const { id } = useParams()
+  const { id } = useParams<string>()
+  const { data: recordData } = useGetRecordByIdQuery(id ?? '')
+  const [startDate, setStartDate] = useState(recordData?.from_date || new Date().toISOString().split('T')[0])
+  const [endDate, setEndDate] = useState(recordData?.to_date || new Date().toISOString().split('T')[0])
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
@@ -57,6 +54,18 @@ export const Human = () => {
     type: RECORD_TYPE.for_once,
     note: ''
   })
+
+  useEffect(() => {
+    if (location.state?.edit) {
+      setFields({
+        lastName: recordData?.last_name as string,
+        firstName: recordData?.first_name as string,
+        surname: recordData?.surname === null ? '' : (recordData?.surname as string),
+        type: recordData?.type === Object.keys(RECORD_TYPE)[0] ? RECORD_TYPE.for_long_time : RECORD_TYPE.for_once,
+        note: recordData?.note === null ? '' : (recordData?.note as string)
+      })
+    }
+  }, [recordData])
 
   const handleStartDateChange = (event: { target: { value: SetStateAction<string> } }) => {
     setStartDate(event.target.value)
