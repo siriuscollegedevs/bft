@@ -25,7 +25,7 @@ export const apiRecord = createApi({
     getRecordHistoryById: builder.query<AdmissionsHistory[], string>({
       query: recordId => `/request/record/history/${recordId}`
     }),
-    updateHumanRecordById: builder.mutation<void, { recordId: string; recordData: UpdateRecord }>({
+    updateRecordById: builder.mutation<void, { recordId: string; recordData: UpdateRecord }>({
       query: ({ recordId, recordData }) => ({
         url: `/request/record/${recordId}`,
         method: 'PUT',
@@ -53,21 +53,6 @@ export const apiRecord = createApi({
           first_name: recordData.first_name,
           surname: recordData.surname,
           last_name: recordData.last_name,
-          from_date: recordData.from_date,
-          to_date: recordData.to_date,
-          note: recordData.note
-        }
-      })
-    }),
-    updateCarRecordById: builder.mutation<void, { recordId: string; recordData: Car }>({
-      query: ({ recordId, recordData }) => ({
-        url: `/record/car/${recordId}`,
-        method: 'PUT',
-        body: {
-          type: recordData.type,
-          car_number: recordData.car_number,
-          car_brand: recordData.car_brand,
-          car_model: recordData.car_model,
           from_date: recordData.from_date,
           to_date: recordData.to_date,
           note: recordData.note
@@ -108,9 +93,8 @@ export const {
   useChangeRecordStatusByIdMutation,
   useDeleteRecordByIdMutation,
   useGetRecordHistoryByIdQuery,
-  useUpdateHumanRecordByIdMutation,
+  useUpdateRecordByIdMutation,
   useCreateHumanRecordMutation,
-  useUpdateCarRecordByIdMutation,
   useCreateCarRecordMutation,
   useDeleteMultipleRecordsMutation,
   useGetRecordByIdQuery

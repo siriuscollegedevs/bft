@@ -15,12 +15,11 @@ import { Box } from '@mui/system'
 import {
   useCreateHumanRecordMutation,
   useGetRecordByIdQuery,
-  useUpdateHumanRecordByIdMutation
+  useUpdateRecordByIdMutation
 } from '../../../../__data__/service/record.api'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { AdmissionTechnical, setIdsOfCreatedAdmissions } from '../../../../__data__/states/admission-technical'
-import { AdmissionRecord } from '../../../../types/api'
 
 type FieldsState = {
   lastName: string
@@ -53,7 +52,7 @@ export const Human = () => {
   const [createHumanRecordMutation, { isLoading: createHumanRecordLoading, isError: createHumanRecordError }] =
     useCreateHumanRecordMutation()
   const [updateHumanRecordMutation, { isLoading: updateHumanRecordLoading, isError: updateHumanRecordError }] =
-    useUpdateHumanRecordByIdMutation()
+    useUpdateRecordByIdMutation()
   const [fields, setFields] = useState<FieldsState>({
     lastName: '',
     firstName: '',
