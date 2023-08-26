@@ -127,6 +127,20 @@ export type Car = {
   note: string
 }
 
+export type UpdateRecord = {
+  car_number: string
+  car_brand: string
+  car_model: string
+  object: string
+  type: string
+  first_name: string
+  surname: string
+  last_name: string
+  from_date: string
+  to_date: string
+  note: string
+}
+
 export type Admissions = {
   id: string
   timestamp: string

@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Status, Human, Car, AdmissionsHistory, AdmissionRecord } from '../../types/api'
+import { Status, Human, Car, AdmissionsHistory, AdmissionRecord, UpdateRecord } from '../../types/api'
 import { baseQuery } from '../utils'
 
 export const apiRecord = createApi({
@@ -25,15 +25,19 @@ export const apiRecord = createApi({
     getRecordHistoryById: builder.query<AdmissionsHistory[], string>({
       query: recordId => `/request/record/history/${recordId}`
     }),
-    updateHumanRecordById: builder.mutation<void, { recordId: string; recordData: Human }>({
+    updateHumanRecordById: builder.mutation<void, { recordId: string; recordData: UpdateRecord }>({
       query: ({ recordId, recordData }) => ({
-        url: `/record/human/${recordId}`,
+        url: `/request/record/${recordId}`,
         method: 'PUT',
         body: {
+          car_number: recordData.car_number,
+          car_brand: recordData.car_brand,
+          car_model: recordData.car_model,
+          object: recordData.object,
+          type: recordData.type,
           first_name: recordData.first_name,
           surname: recordData.surname,
           last_name: recordData.last_name,
-          type: recordData.type,
           from_date: recordData.from_date,
           to_date: recordData.to_date,
           note: recordData.note

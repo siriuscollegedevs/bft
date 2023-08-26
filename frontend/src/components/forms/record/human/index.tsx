@@ -12,7 +12,11 @@ import { CustomDefaultButton } from '../../../../styles/settings'
 import { SetStateAction, useEffect, useState } from 'react'
 import { RECORD_FIELDS, RECORD_TYPE } from '../../../../__data__/consts/record'
 import { Box } from '@mui/system'
-import { useCreateHumanRecordMutation, useGetRecordByIdQuery } from '../../../../__data__/service/record.api'
+import {
+  useCreateHumanRecordMutation,
+  useGetRecordByIdQuery,
+  useUpdateHumanRecordByIdMutation
+} from '../../../../__data__/service/record.api'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { AdmissionTechnical, setIdsOfCreatedAdmissions } from '../../../../__data__/states/admission-technical'
@@ -41,12 +45,15 @@ export const Human = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
+  const isEditFlag = location.state?.edit
   const isCreateFlag = useSelector(
     (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.isCreateFlag
   )
   const admissionId = location.state?.id
   const [createHumanRecordMutation, { isLoading: createHumanRecordLoading, isError: createHumanRecordError }] =
     useCreateHumanRecordMutation()
+  const [updateHumanRecordMutation, { isLoading: updateHumanRecordLoading, isError: updateHumanRecordError }] =
+    useUpdateHumanRecordByIdMutation()
   const [fields, setFields] = useState<FieldsState>({
     lastName: '',
     firstName: '',
@@ -56,7 +63,7 @@ export const Human = () => {
   })
 
   useEffect(() => {
-    if (location.state?.edit) {
+    if (isEditFlag) {
       setFields({
         lastName: recordData?.last_name as string,
         firstName: recordData?.first_name as string,
@@ -114,32 +121,55 @@ export const Human = () => {
 
     try {
       if (!hasEmptyField && id && fields.type) {
-        const mutationResponse = await createHumanRecordMutation({
-          recordId: id,
-          recordData: {
-            first_name: fields.firstName,
-            surname: fields.surname,
-            last_name: fields.lastName,
-            type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
-            from_date: startDate,
-            to_date: endDate,
-            note: fields.note
-          }
-        })
-        if (
-          !createHumanRecordError &&
-          'data' in mutationResponse &&
-          mutationResponse.data &&
-          mutationResponse.data.id
-        ) {
-          if (isCreateFlag) {
-            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
-            navigate(`/admissions/${admissionId}`, {
-              state: { create: true }
-            })
-          } else {
-            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+        let mutationResponse
+        if (isEditFlag) {
+          mutationResponse = await updateHumanRecordMutation({
+            recordId: id,
+            recordData: {
+              car_number: '',
+              car_brand: '',
+              car_model: '',
+              object: '',
+              type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
+              first_name: fields.firstName,
+              surname: fields.surname,
+              last_name: fields.lastName,
+              from_date: startDate,
+              to_date: endDate,
+              note: fields.note
+            }
+          })
+          if (!updateHumanRecordError) {
             navigate(-1)
+          }
+        } else {
+          mutationResponse = await createHumanRecordMutation({
+            recordId: id,
+            recordData: {
+              first_name: fields.firstName,
+              surname: fields.surname,
+              last_name: fields.lastName,
+              type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
+              from_date: startDate,
+              to_date: endDate,
+              note: fields.note
+            }
+          })
+          if (
+            !createHumanRecordError &&
+            'data' in mutationResponse &&
+            mutationResponse.data &&
+            mutationResponse.data.id
+          ) {
+            if (isCreateFlag) {
+              dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+              navigate(`/admissions/${admissionId}`, {
+                state: { create: true }
+              })
+            } else {
+              dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+              navigate(-1)
+            }
           }
         }
       }
