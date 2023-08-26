@@ -125,10 +125,9 @@ export const Human = () => {
           mutationResponse = await updateHumanRecordMutation({
             recordId: id,
             recordData: {
-              car_number: '',
-              car_brand: '',
-              car_model: '',
-              object: '',
+              car_number: null,
+              car_brand: null,
+              car_model: null,
               type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
               first_name: fields.firstName,
               surname: fields.surname,

@@ -33,7 +33,6 @@ export const apiRecord = createApi({
           car_number: recordData.car_number,
           car_brand: recordData.car_brand,
           car_model: recordData.car_model,
-          object: recordData.object,
           type: recordData.type,
           first_name: recordData.first_name,
           surname: recordData.surname,

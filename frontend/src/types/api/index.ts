@@ -128,17 +128,16 @@ export type Car = {
 }
 
 export type UpdateRecord = {
-  car_number: string
-  car_brand: string
-  car_model: string
-  object: string
+  car_number: string | null
+  car_brand: string | null
+  car_model: string | null
   type: string
-  first_name: string
-  surname: string
-  last_name: string
+  first_name: string | null
+  surname: string | null
+  last_name: string | null
   from_date: string
   to_date: string
-  note: string
+  note: string | null
 }
 
 export type Admissions = {
