@@ -3,6 +3,7 @@ from django.db import migrations, models
 import django.db.models.deletion
 import sirius_access.models
 import uuid
+from django.utils import timezone
 
 
 class Migration(migrations.Migration):
@@ -42,7 +43,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('version', models.IntegerField(default=0, validators=[sirius_access.models.is_positive])),
                 ('name', models.CharField(max_length=50)),
-                ('timestamp', models.DateTimeField(auto_now_add=True)),
+                ('timestamp', models.DateTimeField(default=timezone.now)),
                 ('action', models.CharField(choices=[('deleted', 'Удален'), ('modified', 'Изменен'), ('created', 'Создан')], max_length=10)),
                 ('modified_by', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sirius_access.account')),
                 ('object', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sirius_access.object')),
@@ -55,10 +56,10 @@ class Migration(migrations.Migration):
             name='AccountHistory',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('timestamp', models.DateTimeField(auto_now_add=True)),
-                ('first_name', models.CharField(blank=True, max_length=20, null=True)),
-                ('last_name', models.CharField(max_length=20)),
-                ('surname', models.CharField(blank=True, max_length=20, null=True)),
+                ('timestamp', models.DateTimeField(default=timezone.now)),
+                ('first_name', models.CharField(blank=True, max_length=60, null=True)),
+                ('last_name', models.CharField(max_length=60)),
+                ('surname', models.CharField(blank=True, max_length=60, null=True)),
                 ('action', models.CharField(choices=[('deleted', 'Удален'), ('modified', 'Изменен'), ('created', 'Создан'), ('password_changed', 'Изменен пароль')], max_length=16)),
                 ('account', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='modified', to='sirius_access.account')),
                 ('modified_by', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='modifier', to='sirius_access.account')),

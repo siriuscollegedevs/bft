@@ -4,6 +4,8 @@ from sirius_access.models import Object, Account
 from sirius_access.config import NO_SEARCH_OBJECTS_FOUND_ERROR
 from rest_framework import status
 from django.db import transaction
+from django.utils import timezone
+from datetime import timedelta
 from rest_framework.views import APIView
 from . import serializers
 from sirius.general_functions import get_user, list_to_queryset, get_max_code
@@ -489,3 +491,81 @@ class RequestInfo(APIView):
         if not req:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
         return Response(serializers.RequestSerializer(req.get_info()).data)
+
+
+class DeleteRecords(APIView):
+
+    def delete(self, request):
+        record_ids = request.data.get('ids', None)
+        if record_ids is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+        try:
+            with transaction.atomic():
+                for record_id in record_ids:
+                    record = get_record(record_id)
+                    if not record:
+                        return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
+                    record.make_outdated(user=get_user(request), action='deleted')
+
+                return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class RequestInfo(APIView):
+
+    def get(self, _, RequestId):
+        req = get_request(RequestId)
+        if not req:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
+        return Response(serializers.RequestSerializer(req.get_info()).data)
+
+
+# ARCHIVE SCHEDULER
+from django_apscheduler import util
+
+
+@util.close_old_connections
+def check_outdated_records(logger):
+    try:
+        for record in Record.objects.filter(status='active'):
+            last_record = record.get_last_version()
+            if last_record.to_date < timezone.now().date():
+                record.make_outdated(system, 'outdated')
+    except Exception as ex:
+        logger.error('Error while checking outdated records: {error}'.format(error=ex))
+    try:
+        for request in Request.objects.filter(status='active'):
+            if not Record.objects.filter(request=request, status='active').exists():
+                request.make_outdated(system, 'outdated')
+    except Exception as ex:
+        logger.error('Error while checking outdated requests: {error}'.format(error=ex))
+
+@util.close_old_connections
+def delete_archive_records(logger):
+    # RECORDS
+    try:
+        RecordHistory.objects.filter(timestamp_lte=timezone.now() - timedelta(30)).delete()
+        logger.info('Deleting records history')
+    except Exception as ex:
+        logger.error('Error while deleting records history: {error}'.format(error=ex))
+    try:
+        for record in Record.objects.filter(status='outdated'):
+            if not RecordHistory.objects.filter(record=record).exists():
+                record.delete()
+        logger.info('Deleting archive records')
+    except Exception as ex:
+        logger.error('Error while deleting archive records: {error}'.format(error=ex))
+
+    # REQUESTS
+    try:
+        RequestHistory.objects.filter(timestamp_lte=timezone.now() - timedelta(30)).delete()
+    except Exception as ex:
+        logger.error('Error while deleting requests history: {error}'.format(error=ex))
+    try:
+        for request in Request.objects.filter(status='outdated'):
+            if not RequestHistory.objects.filter(request=request).exists():
+                request.delete()
+        logger.info('Deleting archive requests')
+    except Exception as ex:
+        pass

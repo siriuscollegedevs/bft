@@ -1,4 +1,4 @@
-from os import getenv
+from os import getenv, path
 from dotenv import load_dotenv
 from pathlib import Path
 from datetime import timedelta
@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'request_app',
     'drf_spectacular',
     'sslserver',
+    'django_apscheduler',
 ]
 
 MIDDLEWARE = [
@@ -176,6 +177,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 
 STATIC_URL = 'static/'
+#STATIC_ROOT = path.join(BASE_DIR,'static/')
+STATICFILES_DIRS = [path.join(BASE_DIR, 'static')]
 
 # Default primary key field type
 

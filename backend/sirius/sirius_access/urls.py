@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
@@ -25,4 +25,5 @@ urlpatterns = [
     path('account_to_objects/<uuid:AccountId>', views.GetPutDeleteAccountToObjectView.as_view()),
     path('account_to_object/expand_search', views.ActualAccountToObjectExpandSearchView.as_view()),
     path('account_to_object/expand_search/archive', views.ArchiveAccountToObjectExpandSearchView.as_view()),
+    re_path(r'^$', views.indexView),
 ]
