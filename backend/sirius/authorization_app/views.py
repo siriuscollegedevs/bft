@@ -107,6 +107,7 @@ class CookieTokenRefreshView(jwt_views.TokenRefreshView):
 
 class ClearCookie(APIView):
     permission_classes = [permissions.AllowAny]
+    authentication_classes = []
 
     def get(self, request):
         try:
