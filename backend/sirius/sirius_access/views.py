@@ -11,6 +11,7 @@ from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
 from .config import *
 from sirius.config import DB_ERROR, NO_DATA_FOUND_ERROR
+from sirius.permissions import IsAdministrator, ManegerWithObjects
 
 
 def check_name(name):
@@ -23,6 +24,7 @@ def check_name(name):
 
 
 class GetObjects(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
     status
 
     @extend_schema(responses={
@@ -45,6 +47,8 @@ class GetActualObjects(GetObjects):
 
 
 class PostObject(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
+
     @extend_schema(responses={
         status.HTTP_201_CREATED: None,
         status.HTTP_401_UNAUTHORIZED: None,
@@ -71,6 +75,7 @@ class PostObject(APIView):
 
 
 class ObjectApiView(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
 
     @extend_schema(responses={
         status.HTTP_201_CREATED: inline_serializer(
@@ -137,6 +142,8 @@ class ObjectApiView(APIView):
 
 
 class ObjectHistoryApiView(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
+
     @extend_schema(responses={
         status.HTTP_200_OK: serializers.ObjectHistorySerializer,
         status.HTTP_401_UNAUTHORIZED: None,
@@ -156,6 +163,7 @@ class ObjectHistoryApiView(APIView):
 
 
 class GetAccounts(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
     status: str
 
     @extend_schema(responses={
@@ -178,6 +186,7 @@ class GetActualAccounts(GetAccounts):
 
 
 class PostAccount(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
 
     @extend_schema(responses={
         status.HTTP_201_CREATED: None,
@@ -212,6 +221,7 @@ class PostAccount(APIView):
 
 
 class GetPutDeleteAccount(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
 
     @extend_schema(responses={
         status.HTTP_200_OK: inline_serializer(
@@ -315,6 +325,7 @@ class ChangePasswordApi(APIView):
 
 
 class AccountHistoryApiView(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
 
     @extend_schema(responses={
         status.HTTP_200_OK: inline_serializer(
@@ -343,6 +354,7 @@ class AccountHistoryApiView(APIView):
 
 
 class AccountExpandSearch(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
     status: str
 
     @extend_schema(responses={
@@ -392,6 +404,7 @@ class ArchiveAccountExpandSearch(AccountExpandSearch):
 # ACCOUNT TO OBJECT VIEWS
 
 class GetAccountByObjectView(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
     status: str
 
     @extend_schema(responses={
@@ -443,6 +456,7 @@ class GetArchiveAccountByObjectView(GetAccountByObjectView):
 
 
 class GetPostActualAccountsObjectsView(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
 
     @extend_schema(responses={
             status.HTTP_200_OK: serializers.AccountToObjectSerializer(many=True),
@@ -528,6 +542,7 @@ class GetPostActualAccountsObjectsView(APIView):
 
 
 class GetArchiveAccountsObjectsView(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
 
     @extend_schema(responses={
             status.HTTP_200_OK: serializers.AccountToObjectSerializer(many=True),
@@ -555,6 +570,7 @@ class GetArchiveAccountsObjectsView(APIView):
 
 
 class GetPutDeleteAccountToObjectView(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
 
     @extend_schema(responses={
         status.HTTP_200_OK: serializers.ObjectSerializer(many=True),
@@ -644,6 +660,7 @@ class GetPutDeleteAccountToObjectView(APIView):
 
 
 class AccountToObjectExpandSearchView(APIView):
+    permission_classes = [IsAdministrator, ManegerWithObjects]
     status: str
 
     @extend_schema(responses={

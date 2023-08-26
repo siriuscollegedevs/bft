@@ -12,6 +12,7 @@ from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
 from sirius.config import DB_ERROR
 from sirius_access.config import OBJECTID_ERROR_MSG
+from sirius.permissions import IsManeger, IsSpecialist
 
 
 def get_request(RequestId):
@@ -29,6 +30,7 @@ def get_record(RecordId):
 
 
 class GetRequests(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
     status: str
 
     @extend_schema(
@@ -74,6 +76,7 @@ class GetArchiveRequests(GetRequests):
 
 
 class PostRequest(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
 
     @extend_schema(
         responses={
@@ -127,6 +130,7 @@ class PostRequest(APIView):
 
 
 class RequestApiView(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
 
     @extend_schema(
         responses={
@@ -166,6 +170,7 @@ class RequestApiView(APIView):
 
 
 class ChangeStatusRequest(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
 
     @extend_schema(
         responses={
@@ -194,6 +199,7 @@ class ChangeStatusRequest(APIView):
 
 
 class PostRecord(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
     record_type: str
 
     def post(self, request, RequestId):
@@ -223,6 +229,7 @@ class CarRecord(PostRecord):
 
 
 class DeletePutGetRecord(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
 
     def get(self, _, RecordId):
         record = get_record(RecordId)
@@ -285,6 +292,7 @@ class DeletePutGetRecord(APIView):
 
 
 class ChangeStatusRecord(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
 
     @extend_schema(
         responses={
@@ -312,6 +320,8 @@ class ChangeStatusRecord(APIView):
 
 
 class RecordHistoryView(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
+
     @extend_schema(
         responses={
             status.HTTP_200_OK: inline_serializer(
@@ -346,6 +356,8 @@ class RecordHistoryView(APIView):
 
 
 class RecordArchive(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
+
     @extend_schema(
         responses={
             status.HTTP_200_OK: serializers.RecordSerializer(many=True, fields=REQUEST_GET_FIELDS),
@@ -362,6 +374,7 @@ class RecordArchive(APIView):
 
 
 class RequestExpandSearch(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
     status: str
 
     @extend_schema(
@@ -462,6 +475,7 @@ class ArchiveRequestExpandSearch(RequestExpandSearch):
 
 
 class DeleteRecords(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
 
     def delete(self, request):
         record_ids = request.data.get('ids', None)
@@ -481,6 +495,7 @@ class DeleteRecords(APIView):
 
 
 class RequestInfo(APIView):
+    permission_classes = [IsSpecialist, IsManeger]
 
     def get(self, _, RequestId):
         req = get_request(RequestId)
