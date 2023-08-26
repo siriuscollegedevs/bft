@@ -26,7 +26,7 @@ class RecordSerializer(UUIDMixin, serializers.Serializer):
     type = serializers.CharField()
     first_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
     surname = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
-    last_name = serializers.CharField(max_length=NAMES_LEN, required=False)
+    last_name = serializers.CharField(max_length=NAMES_LEN, required=False, allow_blank=True)
     car_number = serializers.CharField(required=False, allow_blank=True)
     car_brand = serializers.CharField(required=False, allow_blank=True)
     car_model = serializers.CharField(required=False, allow_blank=True)
