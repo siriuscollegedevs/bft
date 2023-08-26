@@ -9,18 +9,17 @@ import {
   CircularProgress
 } from '@mui/material'
 import { Box } from '@mui/system'
-import { useState, SetStateAction } from 'react'
+import { useState, SetStateAction, useEffect } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { RECORD_TYPE, RECORD_FIELDS } from '../../../../__data__/consts/record'
 import { CustomDefaultButton } from '../../../../styles/settings'
-import { useCreateCarRecordMutation } from '../../../../__data__/service/record.api'
-import { useDispatch, useSelector } from 'react-redux'
 import {
-  AdmissionTechnical,
-  setIdsOfCreatedAdmissions,
-  setIsCreateFlag
-} from '../../../../__data__/states/admission-technical'
-import { AdmissionRecord } from '../../../../types/api'
+  useCreateCarRecordMutation,
+  useGetRecordByIdQuery,
+  useUpdateRecordByIdMutation
+} from '../../../../__data__/service/record.api'
+import { useDispatch, useSelector } from 'react-redux'
+import { AdmissionTechnical, setIdsOfCreatedAdmissions } from '../../../../__data__/states/admission-technical'
 
 type FieldsState = {
   car_number: string
@@ -36,14 +35,17 @@ export const Transport = () => {
     car_brand: false,
     car_model: false
   })
-  const [hasValidation, setHasValidation] = useState(false)
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
-  const [showLoader, setShowLoader] = useState(false)
   const { id } = useParams()
+  const { data: recordData } = useGetRecordByIdQuery(id ?? '')
+  const [hasValidation, setHasValidation] = useState(false)
+  const [startDate, setStartDate] = useState(recordData?.from_date || new Date().toISOString().split('T')[0])
+  const [endDate, setEndDate] = useState(recordData?.to_date || new Date().toISOString().split('T')[0])
+  const [showLoader, setShowLoader] = useState(false)
+
   const navigate = useNavigate()
   const location = useLocation()
   const dispatch = useDispatch()
+  const isEditFlag = location.state?.edit
   const isCreateFlag = useSelector(
     (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.isCreateFlag
   )
@@ -52,6 +54,10 @@ export const Transport = () => {
     createTransportRecordMutation,
     { isLoading: createTransportRecordLoading, isError: createTransportRecordError }
   ] = useCreateCarRecordMutation()
+  const [
+    updateTransportRecordMutation,
+    { isLoading: updateTransportRecordLoading, isError: updateTransportRecordError }
+  ] = useUpdateRecordByIdMutation()
   const [fields, setFields] = useState<FieldsState>({
     car_number: '',
     car_brand: '',
@@ -59,6 +65,18 @@ export const Transport = () => {
     type: RECORD_TYPE.for_once,
     note: ''
   })
+
+  useEffect(() => {
+    if (isEditFlag) {
+      setFields({
+        car_number: recordData?.car_number as string,
+        car_brand: recordData?.car_brand as string,
+        car_model: recordData?.car_model as string,
+        type: recordData?.type === Object.keys(RECORD_TYPE)[0] ? RECORD_TYPE.for_long_time : RECORD_TYPE.for_once,
+        note: recordData?.note === null ? '' : (recordData?.note as string)
+      })
+    }
+  }, [recordData])
 
   const handleStartDateChange = (event: { target: { value: SetStateAction<string> } }) => {
     setStartDate(event.target.value)
@@ -107,32 +125,55 @@ export const Transport = () => {
 
     try {
       if (!hasEmptyField && id && fields.type) {
-        const mutationResponse = await createTransportRecordMutation({
-          recordId: id,
-          recordData: {
-            car_brand: fields.car_brand,
-            car_model: fields.car_model,
-            car_number: fields.car_number,
-            type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
-            from_date: startDate,
-            to_date: endDate,
-            note: fields.note
-          }
-        })
-        if (
-          !createTransportRecordError &&
-          'data' in mutationResponse &&
-          mutationResponse.data &&
-          mutationResponse.data.id
-        ) {
-          if (isCreateFlag) {
-            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
-            navigate(`/admissions/${admissionId}`, {
-              state: { create: true }
-            })
-          } else {
-            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+        let mutationResponse
+        if (isEditFlag) {
+          mutationResponse = await updateTransportRecordMutation({
+            recordId: id,
+            recordData: {
+              car_number: fields.car_number,
+              car_brand: fields.car_brand,
+              car_model: fields.car_model,
+              object: '',
+              type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
+              first_name: '',
+              surname: '',
+              last_name: '',
+              from_date: startDate,
+              to_date: endDate,
+              note: fields.note
+            }
+          })
+          if (!updateTransportRecordError) {
             navigate(-1)
+          }
+        } else {
+          mutationResponse = await createTransportRecordMutation({
+            recordId: id,
+            recordData: {
+              car_brand: fields.car_brand,
+              car_model: fields.car_model,
+              car_number: fields.car_number,
+              type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
+              from_date: startDate,
+              to_date: endDate,
+              note: fields.note
+            }
+          })
+          if (
+            !createTransportRecordError &&
+            'data' in mutationResponse &&
+            mutationResponse.data &&
+            mutationResponse.data.id
+          ) {
+            if (isCreateFlag) {
+              dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+              navigate(`/admissions/${admissionId}`, {
+                state: { create: true }
+              })
+            } else {
+              dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+              navigate(-1)
+            }
           }
         }
       }
@@ -241,7 +282,11 @@ export const Transport = () => {
         onClick={handleSubmit}
         disabled={createTransportRecordLoading || showLoader}
       >
-        {createTransportRecordLoading || showLoader ? <CircularProgress size={20} color="inherit" /> : 'Сохранить'}
+        {createTransportRecordLoading || updateTransportRecordLoading || showLoader ? (
+          <CircularProgress size={20} color="inherit" />
+        ) : (
+          'Сохранить'
+        )}
       </CustomDefaultButton>
     </>
   )

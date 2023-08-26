@@ -275,7 +275,11 @@ export const Human = () => {
         onClick={handleSubmit}
         disabled={createHumanRecordLoading || showLoader}
       >
-        {createHumanRecordLoading || showLoader ? <CircularProgress size={20} color="inherit" /> : 'Сохранить'}
+        {createHumanRecordLoading || updateHumanRecordLoading || showLoader ? (
+          <CircularProgress size={20} color="inherit" />
+        ) : (
+          'Сохранить'
+        )}
       </CustomDefaultButton>
     </>
   )
