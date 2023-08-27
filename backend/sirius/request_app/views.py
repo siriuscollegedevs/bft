@@ -532,10 +532,12 @@ def excel(request):
                 start = str(int(start) + 1)
             while True:
                 if not worksheet[FIELD_FOR_CHECK_LETTER + start].value or worksheet[FIELD_FOR_CHECK_LETTER + start].value == END_OF_CAR_RECORDS:
-                    return Response(status=status.HTTP_201_CREATED, data={'request_id' : req.id})
+                    return Response(status=status.HTTP_201_CREATED, data={'request_id': req.id})
                 record = Record.objects.create(status='active', request=req)
+                note_field = worksheet[CAR_NOTE_FIELD_LETTER + start].value
+                note = note_field if note_field else ''
                 data = {"car_brand": worksheet[CAR_BRAND_FIELD_LETTER + start].value,
-                        "note": worksheet[CAR_NOTE_FIELD_LETTER + start].value,
+                        "note": note,
                         "car_number": worksheet[CAR_NUMBER_FIELD_LETTER + start].value}
                 RecordHistory.objects.create(action='created', modified_by=get_user(
                     request), record=record, type=type, **data, **dates)
