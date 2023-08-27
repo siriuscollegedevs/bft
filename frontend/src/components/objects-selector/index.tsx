@@ -33,6 +33,7 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
   const [uploadFile, { isError: uploadFileError, isLoading: uploadFileLoading }] = useCreateAdmissionVieExcelMutation()
+  const [uploading, setUploading] = useState(false)
 
   const handleBack = () => {
     setOpen(false)
@@ -52,8 +53,21 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
     setHasSelected(selectedObjects.length > 0)
   }
 
-  const hendlerExcel = () => {
-    
+  const hendlerExcel = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setUploading(true)
+      try {
+        const formData = new FormData()
+        formData.append('excel_file', file)
+        console.log(formData)
+        await uploadFile(formData)
+        setUploading(false)
+      } catch (error) {
+        console.error('Ошибка при загрузке файла:', error)
+        setUploading(false)
+      }
+    }
   }
 
   return (
@@ -106,8 +120,9 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
               marginBottom: '2%'
             }}
           >
-            <Button variant="contained" sx={{ height: '46px' }} disabled={hasSelected} onClick={() => ''}>
-              Импортировать excel
+            <Button variant="contained" component="label" sx={{ height: '46px' }} disabled={hasSelected}>
+              {uploading ? 'Загрузка...' : 'Импортировать excel'}
+              <input type="file" accept=".xlsx, .xls" hidden onChange={hendlerExcel} />
             </Button>
           </FormControl>
         </DialogContent>

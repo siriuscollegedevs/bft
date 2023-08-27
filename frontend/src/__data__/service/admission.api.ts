@@ -105,7 +105,7 @@ export const apiAdmissions = createApi({
     getAdmissionById: builder.query<Admissions, string>({
       query: admissionId => `/request/information/${admissionId}`
     }),
-    createAdmissionVieExcel: builder.mutation<void, File>({
+    createAdmissionVieExcel: builder.mutation<File, FormData>({
       query: file => ({
         url: '/request/excel',
         method: 'POST',
