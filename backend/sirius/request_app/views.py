@@ -493,35 +493,6 @@ class RequestInfo(APIView):
         return Response(serializers.RequestSerializer(req.get_info()).data)
 
 
-class DeleteRecords(APIView):
-
-    def delete(self, request):
-        record_ids = request.data.get('ids', None)
-        if record_ids is None:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
-        try:
-            with transaction.atomic():
-                for record_id in record_ids:
-                    record = get_record(record_id)
-                    if not record:
-                        return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
-                    record.make_outdated(user=get_user(request), action='deleted')
-
-                return Response(status=status.HTTP_204_NO_CONTENT)
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-class RequestInfo(APIView):
-
-    def get(self, _, RequestId):
-        req = get_request(RequestId)
-        if not req:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
-        return Response(serializers.RequestSerializer(req.get_info()).data)
-
-
-# ARCHIVE SCHEDULER
 from django_apscheduler import util
 
 
