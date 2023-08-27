@@ -134,9 +134,9 @@ export const Transport = () => {
               car_brand: fields.car_brand,
               car_model: fields.car_model,
               type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
-              first_name: null,
-              surname: null,
-              last_name: null,
+              first_name: '',
+              surname: '',
+              last_name: '',
               from_date: startDate,
               to_date: endDate,
               note: fields.note === '' ? null : fields.note
