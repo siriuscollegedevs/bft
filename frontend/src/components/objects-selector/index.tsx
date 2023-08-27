@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Objects } from '../../types/api'
 import { setShowObjectsSelector } from '../../__data__/states/admission-technical'
+import { useCreateAdmissionVieExcelMutation } from '../../__data__/service/admission.api'
 
 type ObjectsSelectorProps = {
   onSelectObject: (selected: Objects[]) => void
@@ -31,6 +32,7 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
   const currentAccountObjects = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
+  const [uploadFile, { isError: uploadFileError, isLoading: uploadFileLoading }] = useCreateAdmissionVieExcelMutation()
 
   const handleBack = () => {
     setOpen(false)
@@ -48,6 +50,10 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
     const selectedObjects = currentAccountObjects.filter(obj => selectedObjectNames.includes(obj.name))
     setSelectedObjects(selectedObjects)
     setHasSelected(selectedObjects.length > 0)
+  }
+
+  const hendlerExcel = () => {
+    
   }
 
   return (
@@ -100,7 +106,7 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
               marginBottom: '2%'
             }}
           >
-            <Button variant="contained" sx={{ height: '46px' }} disabled={hasSelected}>
+            <Button variant="contained" sx={{ height: '46px' }} disabled={hasSelected} onClick={() => ''}>
               Импортировать excel
             </Button>
           </FormControl>
