@@ -91,6 +91,22 @@ export type Status = {
   reason: string
 }
 
+export type AdmissionRecord = {
+  id: string
+  timestamp: string
+  action: string
+  car_number: string
+  car_brand: string
+  car_model: string
+  type: string
+  first_name: string
+  surname: string
+  last_name: string
+  from_date: string
+  to_date: string
+  note: string
+}
+
 export type Human = {
   first_name: string
   surname: string
@@ -106,6 +122,19 @@ export type Car = {
   car_number: string
   car_brand: string
   car_model: string
+  from_date: string
+  to_date: string
+  note: string
+}
+
+export type UpdateRecord = {
+  car_number: string
+  car_brand: string
+  car_model: string
+  type: string
+  first_name: string
+  surname: string
+  last_name: string
   from_date: string
   to_date: string
   note: string

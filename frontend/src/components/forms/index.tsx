@@ -3,15 +3,29 @@ import { Container, Select, MenuItem, SelectChangeEvent } from '@mui/material'
 import { CustomFormControl } from '../../styles/settings'
 import { CustomTypography } from '../../styles/header'
 import Box from '@mui/material/Box'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormObject } from './object'
 import { FormEmployee } from './employee'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import { FormRecord } from './record'
+import { useGetRecordByIdQuery } from './../../__data__/service/record.api'
 
 export const FormEditDirectories = () => {
   const location = useLocation()
+
+  const { id } = useParams<string>()
+  const { data: recordData } = useGetRecordByIdQuery(id ?? '')
   const [gender, setGender] = useState('Человек')
+
+  useEffect(() => {
+    if (location.state?.edit) {
+      if (recordData?.first_name === '') {
+        setGender('Транспорт')
+      } else {
+        setGender('Человек')
+      }
+    }
+  }, [recordData])
 
   const handleChange = (event: SelectChangeEvent) => {
     setGender(event.target.value as string)
@@ -33,6 +47,7 @@ export const FormEditDirectories = () => {
               value={gender}
               onChange={handleChange}
               sx={{ marginLeft: 'auto', height: '20%' }}
+              disabled={location.state?.edit}
             >
               <MenuItem value={'Человек'}>Человек</MenuItem>
               <MenuItem value={'Транспорт'}>Транспорт</MenuItem>
