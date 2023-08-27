@@ -77,6 +77,7 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/admissions/:id" element={<AdmissionViewEdit />} />
             <Route path="/admissions/view/:id" element={<AdmissionViewPage />} />
             <Route path="/admissions/:id/record/create" element={<FormEditDirectories />} />
+            <Route path="/admissions/:id/record/edit" element={<FormEditDirectories />} />
             <Route path="/admissions/history/:id" element={<AdmissionsHistory />} />
             <Route path="/admissions/search" element={<AdmissionsAdvancedSearch />} />
 

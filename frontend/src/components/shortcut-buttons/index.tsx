@@ -97,7 +97,13 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
 
     switch (title) {
       case 'edit':
-        navigate(`${newSearchPath}/${id}`)
+        if (location.pathname.includes('/admissions/')) {
+          navigate(`/admissions/${id}/record/edit`, {
+            state: { edit: true }
+          })
+        } else {
+          navigate(`${newSearchPath}/${id}`)
+        }
         break
       case 'trash':
         handleDelete()
