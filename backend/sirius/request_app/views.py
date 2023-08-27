@@ -505,7 +505,8 @@ def excel(request):
     try:
         with transaction.atomic():
             req = Request.objects.create(status='active')
-            RequestHistory.objects.create(request=req, code=get_max_code() + 1, action='created', modified_by=get_user(request))
+            RequestHistory.objects.create(request=req, code=get_max_code() + 1,
+                                          action='created', modified_by=get_user(request))
             with connection.cursor() as cursor:
                 for obj_name in worksheet[OBJECTS_FIELD].value.split(','):
                     cursor.execute("with history as (select object_id, name, row_number() \
@@ -531,7 +532,7 @@ def excel(request):
                 start = str(int(start) + 1)
             while True:
                 if not worksheet[FIELD_FOR_CHECK_LETTER + start].value or worksheet[FIELD_FOR_CHECK_LETTER + start].value == END_OF_CAR_RECORDS:
-                    return Response(status=status.HTTP_200_OK)
+                    return Response(status=status.HTTP_201_CREATED, data={'request_id' : req.id})
                 record = Record.objects.create(status='active', request=req)
                 data = {"car_brand": worksheet[CAR_BRAND_FIELD_LETTER + start].value,
                         "note": worksheet[CAR_NOTE_FIELD_LETTER + start].value,
