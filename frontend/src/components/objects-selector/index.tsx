@@ -10,13 +10,15 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Typography
+  Typography,
+  CircularProgress,
+  Input
 } from '@mui/material'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Objects } from '../../types/api'
-import { setShowObjectsSelector } from '../../__data__/states/admission-technical'
+import { setIsCreateFlag, setShowObjectsSelector } from '../../__data__/states/admission-technical'
 import { useCreateAdmissionVieExcelMutation } from '../../__data__/service/admission.api'
 
 type ObjectsSelectorProps = {
@@ -34,6 +36,7 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
   )
   const [uploadFile, { isError: uploadFileError, isLoading: uploadFileLoading }] = useCreateAdmissionVieExcelMutation()
   const [uploading, setUploading] = useState(false)
+  const [uploadingError, setUploadingError] = useState(false)
 
   const handleBack = () => {
     setOpen(false)
@@ -61,8 +64,17 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
         const formData = new FormData()
         formData.append('excel_file', file)
         console.log(formData)
-        await uploadFile(formData)
+        const uploadFileRespons = await uploadFile(formData)
         setUploading(false)
+        if ('data' in uploadFileRespons && !uploadFileError) {
+          setUploadingError(false)
+          dispatch(setIsCreateFlag(true))
+          navigate(`/admissions/${uploadFileRespons.data?.request_id}`, {
+            state: { create: true }
+          })
+        } else {
+          setUploadingError(true)
+        }
       } catch (error) {
         console.error('Ошибка при загрузке файла:', error)
         setUploading(false)
@@ -120,8 +132,14 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
               marginBottom: '2%'
             }}
           >
-            <Button variant="contained" component="label" sx={{ height: '46px' }} disabled={hasSelected}>
-              {uploading ? 'Загрузка...' : 'Импортировать excel'}
+            <Button
+              variant="contained"
+              component="label"
+              sx={{ height: '46px' }}
+              disabled={hasSelected}
+              color={uploadingError ? 'error' : 'primary'}
+            >
+              {uploading || uploadFileLoading ? <CircularProgress size={20} color="inherit" /> : 'Импортировать excel'}
               <input type="file" accept=".xlsx, .xls" hidden onChange={hendlerExcel} />
             </Button>
           </FormControl>
