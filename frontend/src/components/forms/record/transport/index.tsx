@@ -139,7 +139,7 @@ export const Transport = () => {
               last_name: '',
               from_date: startDate,
               to_date: endDate,
-              note: fields.note === '' ? null : fields.note
+              note: fields.note === '' ? '' : fields.note
             }
           })
           if (!updateTransportRecordError) {

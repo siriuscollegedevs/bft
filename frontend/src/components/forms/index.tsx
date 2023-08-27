@@ -19,7 +19,7 @@ export const FormEditDirectories = () => {
 
   useEffect(() => {
     if (location.state?.edit) {
-      if (recordData?.first_name === null) {
+      if (recordData?.first_name === '') {
         setGender('Транспорт')
       } else {
         setGender('Человек')

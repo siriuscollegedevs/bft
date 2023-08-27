@@ -92,19 +92,19 @@ export type Status = {
 }
 
 export type AdmissionRecord = {
-  id: string | null
-  timestamp: string | null
-  action: string | null
-  car_number: string | null
-  car_brand: string | null
-  car_model: string | null
+  id: string
+  timestamp: string
+  action: string
+  car_number: string
+  car_brand: string
+  car_model: string
   type: string
-  first_name: string | null
-  surname: string | null
-  last_name: string | null
+  first_name: string
+  surname: string
+  last_name: string
   from_date: string
   to_date: string
-  note: string | null
+  note: string
 }
 
 export type Human = {
@@ -128,16 +128,16 @@ export type Car = {
 }
 
 export type UpdateRecord = {
-  car_number: string | null
-  car_brand: string | null
-  car_model: string | null
+  car_number: string
+  car_brand: string
+  car_model: string
   type: string
-  first_name: string | null
-  surname: string | null
-  last_name: string | null
+  first_name: string
+  surname: string
+  last_name: string
   from_date: string
   to_date: string
-  note: string | null
+  note: string
 }
 
 export type Admissions = {
