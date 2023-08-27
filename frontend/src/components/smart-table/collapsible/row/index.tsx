@@ -17,7 +17,7 @@ import {
   SearchOfAdmissionsResponse
 } from '../../../../types/api'
 import { ACCOUNT_ROLES } from '../../../../__data__/consts/account-roles'
-import { CustomCollapseCell } from '../../../../styles/table'
+import { CustomCell, CustomCollapseCell, CustomCollapseCellAdmissions, CustomRow } from '../../../../styles/table'
 import { useSelector } from 'react-redux'
 import { dateParser } from '../../../../utils/date-parser'
 
@@ -54,33 +54,33 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
         </TableCell>
         {(itsAcccount({ currentURL }) || itsAccountsArchive({ currentURL })) && 'role' in row && (
           <>
-            <TableCell align="left" sx={{ height: '47px', width: '40%' }}>
+            <CustomCell align="left" sx={{ width: '40%' }}>
               {row.last_name} {row.first_name} {row.surname}
-            </TableCell>
-            <TableCell align="left">{ACCOUNT_ROLES[row?.role as keyof typeof ACCOUNT_ROLES].ru}</TableCell>
-            <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+            </CustomCell>
+            <CustomCell align="left">{ACCOUNT_ROLES[row?.role as keyof typeof ACCOUNT_ROLES].ru}</CustomCell>
+            <CustomCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
               <Box display="flex" alignItems="center" justifyContent="flex-end">
                 <ShortcutButtons buttonNames={buttonNames} id={row.id} />
               </Box>
-            </TableCell>
+            </CustomCell>
           </>
         )}
         {(itsEmployees({ currentURL }) || itsEmployeesArchive({ currentURL })) && 'objects' in row && (
           <>
-            <TableCell align="left" sx={{ height: '47px', width: '100%' }}>
+            <CustomCell align="left" sx={{ width: '100%' }}>
               {row.last_name} {row.first_name} {row.surname}
-            </TableCell>
-            <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+            </CustomCell>
+            <CustomCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
               <Box display="flex" alignItems="center" justifyContent="flex-end">
                 <ShortcutButtons buttonNames={buttonNames} id={row.id} />
               </Box>
-            </TableCell>
+            </CustomCell>
           </>
         )}
         {itsAdmissions({ currentURL }) && 'type' in row && (
           <>
-            <TableCell align="left" padding={'checkbox'}>
-              {row.last_name !== null ? (
+            <CustomCell align="left" padding={'checkbox'}>
+              {row.last_name !== '' ? (
                 <>
                   <HumanIcon style={{ height: '42px', width: '42px' }} />
                 </>
@@ -89,23 +89,19 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                   <CarIcon style={{ height: '42px', width: '42px' }} />
                 </>
               )}
-            </TableCell>
+            </CustomCell>
             {currentAccountRole === 'security_officer' ? (
-              row.last_name !== null ? (
-                <TableCell align="left" sx={{ height: '47px' }}>
-                  {row.last_name + ' ' + row.first_name}
-                </TableCell>
+              row.last_name !== '' ? (
+                <CustomCell align="left">{row.last_name + ' ' + row.first_name}</CustomCell>
               ) : (
-                <TableCell align="left" sx={{ height: '47px' }}>
-                  {row.car_brand + ' ' + row.car_model + ' ' + row.car_number}
-                </TableCell>
+                <CustomCell align="left">{row.car_brand + ' ' + row.car_model + ' ' + row.car_number}</CustomCell>
               )
             ) : (
-              <TableCell align="left" sx={{ height: '47px' }}>
-                {row.last_name !== null
+              <CustomCell align="left">
+                {row.last_name !== ''
                   ? row.last_name + ' ' + row.first_name + ' ' + row.surname
                   : row.car_brand + ' ' + row.car_model + ' ' + row.car_number}
-              </TableCell>
+              </CustomCell>
             )}
             {itsAdmissionsView({ currentURL }) ? (
               <>
@@ -113,11 +109,11 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
               </>
             ) : (
               <>
-                <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+                <CustomCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
                   <Box display="flex" alignItems="center" justifyContent="flex-end">
                     <ShortcutButtons buttonNames={buttonNames} id={row.id} />
                   </Box>
-                </TableCell>
+                </CustomCell>
               </>
             )}
           </>
@@ -130,26 +126,26 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
               <Table size="small">
                 <TableBody>
                   {(itsAcccount({ currentURL }) || itsAccountsArchive({ currentURL })) && 'role' in row && (
-                    <TableRow key={row.id} sx={{ height: '47px' }}>
+                    <CustomRow key={row.id}>
                       <CustomCollapseCell align="left">{row.username}</CustomCollapseCell>
-                    </TableRow>
+                    </CustomRow>
                   )}
                   {(itsEmployees({ currentURL }) || itsEmployeesArchive({ currentURL })) && 'objects' in row && (
-                    <TableRow sx={{ height: '47px' }}>
-                      <CustomCollapseCell align="left" sx={{ padding: '6px 0 6px 54px' }}>
+                    <CustomRow>
+                      <CustomCollapseCell align="left" sx={{ padding: '10px 0 10px 67px' }}>
                         {Array.isArray(row.objects) && row.objects.map(valueRow => valueRow).join(', ')}
                       </CustomCollapseCell>
-                    </TableRow>
+                    </CustomRow>
                   )}
                   {itsAdmissions({ currentURL }) && 'type' in row && (
                     <>
-                      <TableRow>
-                        <TableCell align="left" padding={'checkbox'} sx={{ height: '47px' }}>
+                      <CustomRow>
+                        <CustomCollapseCellAdmissions align="left">
                           {getObjectValueByKey(row.type, RECORD_TYPE)}
-                        </TableCell>
-                        {row.from_date !== null && row.type === 'for_long_time' ? (
+                        </CustomCollapseCellAdmissions>
+                        {row.from_date !== '' && row.type === 'for_long_time' ? (
                           <>
-                            <TableCell align="left" sx={{ width: '200px' }}>
+                            <CustomCollapseCellAdmissions align="left" sx={{ width: '200px' }}>
                               {RECORD_FIELDS.from_date +
                                 ' ' +
                                 dateParser(row.from_date) +
@@ -157,30 +153,32 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                                 RECORD_FIELDS.to_date +
                                 ' ' +
                                 dateParser(row.to_date)}
-                            </TableCell>
+                            </CustomCollapseCellAdmissions>
                           </>
                         ) : (
                           <>
                             <>
-                              <TableCell align="left" sx={{ width: '200px', height: '47px' }}>
+                              <CustomCollapseCellAdmissions align="left" sx={{ width: '200px' }}>
                                 {RECORD_FIELDS.to_date + ' ' + dateParser(row.to_date)}
-                              </TableCell>
+                              </CustomCollapseCellAdmissions>
                             </>
                           </>
                         )}
-                        {row.note === null ? (
-                          <TableCell align="left">{'Примечание: '}</TableCell>
+                        {row.note === '' ? (
+                          <CustomCollapseCellAdmissions align="left">{'Примечание: '}</CustomCollapseCellAdmissions>
                         ) : (
-                          <TableCell align="left">{'Примечание: ' + row.note}</TableCell>
+                          <CustomCollapseCellAdmissions align="left">
+                            {'Примечание: ' + row.note}
+                          </CustomCollapseCellAdmissions>
                         )}
                         {!itsAdmissionsView({ currentURL }) && (
-                          <TableCell align="right">
+                          <CustomCell align="right">
                             <Box display="flex" alignItems="center" justifyContent="flex-end">
                               <ShortcutButtons buttonNames={['history']} id={row.id} />
                             </Box>
-                          </TableCell>
+                          </CustomCell>
                         )}
-                      </TableRow>
+                      </CustomRow>
                     </>
                   )}
                 </TableBody>

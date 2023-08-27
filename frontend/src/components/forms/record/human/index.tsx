@@ -9,17 +9,17 @@ import {
   CircularProgress
 } from '@mui/material'
 import { CustomDefaultButton } from '../../../../styles/settings'
-import { SetStateAction, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 import { RECORD_FIELDS, RECORD_TYPE } from '../../../../__data__/consts/record'
 import { Box } from '@mui/system'
-import { useCreateHumanRecordMutation } from '../../../../__data__/service/record.api'
+import {
+  useCreateHumanRecordMutation,
+  useGetRecordByIdQuery,
+  useUpdateRecordByIdMutation
+} from '../../../../__data__/service/record.api'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
-import {
-  AdmissionTechnical,
-  setIdsOfCreatedAdmissions,
-  setIsCreateFlag
-} from '../../../../__data__/states/admission-technical'
+import { AdmissionTechnical, setIdsOfCreatedAdmissions } from '../../../../__data__/states/admission-technical'
 
 type FieldsState = {
   lastName: string
@@ -36,19 +36,23 @@ export const Human = () => {
     surname: false
   })
   const [hasValidation, setHasValidation] = useState(false)
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
-  const [endDate, setEndDate] = useState(new Date().toISOString().split('T')[0])
   const [showLoader, setShowLoader] = useState(false)
-  const { id } = useParams()
+  const { id } = useParams<string>()
+  const { data: recordData } = useGetRecordByIdQuery(id ?? '')
+  const [startDate, setStartDate] = useState(recordData?.from_date || new Date().toISOString().split('T')[0])
+  const [endDate, setEndDate] = useState(recordData?.to_date || new Date().toISOString().split('T')[0])
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const location = useLocation()
+  const isEditFlag = location.state?.edit
   const isCreateFlag = useSelector(
     (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.isCreateFlag
   )
   const admissionId = location.state?.id
   const [createHumanRecordMutation, { isLoading: createHumanRecordLoading, isError: createHumanRecordError }] =
     useCreateHumanRecordMutation()
+  const [updateHumanRecordMutation, { isLoading: updateHumanRecordLoading, isError: updateHumanRecordError }] =
+    useUpdateRecordByIdMutation()
   const [fields, setFields] = useState<FieldsState>({
     lastName: '',
     firstName: '',
@@ -56,6 +60,18 @@ export const Human = () => {
     type: RECORD_TYPE.for_once,
     note: ''
   })
+
+  useEffect(() => {
+    if (isEditFlag) {
+      setFields({
+        lastName: recordData?.last_name as string,
+        firstName: recordData?.first_name as string,
+        surname: recordData?.surname === null ? '' : (recordData?.surname as string),
+        type: recordData?.type === Object.keys(RECORD_TYPE)[0] ? RECORD_TYPE.for_long_time : RECORD_TYPE.for_once,
+        note: recordData?.note === null ? '' : (recordData?.note as string)
+      })
+    }
+  }, [recordData])
 
   const handleStartDateChange = (event: { target: { value: SetStateAction<string> } }) => {
     setStartDate(event.target.value)
@@ -104,32 +120,54 @@ export const Human = () => {
 
     try {
       if (!hasEmptyField && id && fields.type) {
-        const mutationResponse = await createHumanRecordMutation({
-          recordId: id,
-          recordData: {
-            first_name: fields.firstName,
-            surname: fields.surname,
-            last_name: fields.lastName,
-            type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
-            from_date: startDate,
-            to_date: endDate,
-            note: fields.note
-          }
-        })
-        if (
-          !createHumanRecordError &&
-          'data' in mutationResponse &&
-          mutationResponse.data &&
-          mutationResponse.data.id
-        ) {
-          if (isCreateFlag) {
-            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
-            navigate(`/admissions/${admissionId}`, {
-              state: { create: true }
-            })
-          } else {
-            dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+        let mutationResponse
+        if (isEditFlag) {
+          mutationResponse = await updateHumanRecordMutation({
+            recordId: id,
+            recordData: {
+              car_number: '',
+              car_brand: '',
+              car_model: '',
+              type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
+              first_name: fields.firstName,
+              surname: fields.surname,
+              last_name: fields.lastName,
+              from_date: startDate,
+              to_date: endDate,
+              note: fields.note === '' ? '' : fields.note
+            }
+          })
+          if (!updateHumanRecordError) {
             navigate(-1)
+          }
+        } else {
+          mutationResponse = await createHumanRecordMutation({
+            recordId: id,
+            recordData: {
+              first_name: fields.firstName,
+              surname: fields.surname,
+              last_name: fields.lastName,
+              type: fields.type === RECORD_TYPE.for_once ? 'for_once' : 'for_long_time',
+              from_date: startDate,
+              to_date: endDate,
+              note: fields.note
+            }
+          })
+          if (
+            !createHumanRecordError &&
+            'data' in mutationResponse &&
+            mutationResponse.data &&
+            mutationResponse.data.id
+          ) {
+            if (isCreateFlag) {
+              dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+              navigate(`/admissions/${admissionId}`, {
+                state: { create: true }
+              })
+            } else {
+              dispatch(setIdsOfCreatedAdmissions(mutationResponse.data.id))
+              navigate(-1)
+            }
           }
         }
       }
@@ -236,7 +274,11 @@ export const Human = () => {
         onClick={handleSubmit}
         disabled={createHumanRecordLoading || showLoader}
       >
-        {createHumanRecordLoading || showLoader ? <CircularProgress size={20} color="inherit" /> : 'Сохранить'}
+        {createHumanRecordLoading || updateHumanRecordLoading || showLoader ? (
+          <CircularProgress size={20} color="inherit" />
+        ) : (
+          'Сохранить'
+        )}
       </CustomDefaultButton>
     </>
   )

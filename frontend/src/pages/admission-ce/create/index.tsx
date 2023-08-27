@@ -77,9 +77,6 @@ export const AdmissionCreate = () => {
             </Button>
           </Box>
           <Box>
-            <Button variant="contained" sx={{ marginRight: '14px' }}>
-              Импортировать excel
-            </Button>
             <Button variant="contained" disabled>
               Архив
             </Button>
