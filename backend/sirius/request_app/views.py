@@ -14,6 +14,7 @@ from sirius.config import DB_ERROR
 from sirius_access.config import OBJECTID_ERROR_MSG
 import openpyxl
 from rest_framework.decorators import api_view
+from django.db import connection
 
 
 def get_request(RequestId):
@@ -497,16 +498,22 @@ class RequestInfo(APIView):
 def excel(request):
     wb = openpyxl.load_workbook(request.FILES["excel_file"])
     worksheet = wb[SHEET_NAME]
-    try:
-        req = Request.objects.get(id=request.POST['request_id'])
-    except Exception:
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
     start = START
     dates = {"to_date": worksheet[TO_DATE_CELL].value.date(), "from_date": worksheet[FROM_DATE_CELL].value.date()}
     type = "for_once" if dates["to_date"] == dates["from_date"] else "for_long_time"
 
     try:
         with transaction.atomic():
+            req = Request.objects.create(status='active')
+            RequestHistory.objects.create(request=req, code=get_max_code() + 1, action='created', modified_by=get_user(request))
+            with connection.cursor() as cursor:
+                for obj_name in worksheet[OBJECTS_FIELD].value.split(','):
+                    cursor.execute("with history as (select object_id, name, row_number() \
+                                        over (partition by object_id order by version desc) version_inverted from objects_history)\
+                                        select object_id from history where version_inverted = 1 and name = '{}';".format(obj_name.lstrip()))
+                    obj_id = cursor.fetchone()[0]
+                    RequestToObject.objects.create(object=Object.objects.get(id=obj_id), request=req)
+
             while True:
                 if worksheet[FIELD_FOR_CHECK_LETTER + start].value == START_OF_CAR_RECORDS:
                     start = str(int(start) + 2)
