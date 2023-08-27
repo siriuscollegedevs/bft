@@ -21,4 +21,4 @@ RUN pip install -r requirements.txt
 COPY --from=build_frontend /frontend/build/static ./sirius/static
 COPY --from=build_frontend /frontend/build/index.html ./sirius/static
 
-CMD ["sh", "-c", "python ./sirius/manage.py migrate && python ./sirius/manage.py runserver 0.0.0.0:8000"]
+CMD ["sh", "-c", "python ./sirius/manage.py collectstatic --noinput && python ./sirius/manage.py migrate && python ./sirius/manage.py runserver 0.0.0.0:8000"]
