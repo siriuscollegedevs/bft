@@ -19,6 +19,7 @@ import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
 import { useLogout } from '../../../hooks/logout'
 import { Account } from '../../../types/api'
 import { CurrentAccountId, setAccountData } from '../../../__data__/states/account'
+import { setDocumentTitleBasedOnRole } from '../../../utils/document-title'
 
 export const DynamicHeader = () => {
   const [activeButton, setActiveButton] = React.useState('')
@@ -53,6 +54,12 @@ export const DynamicHeader = () => {
       setActiveButton('')
     }
   }, [location.pathname])
+
+  useEffect(() => {
+    if (currentAccountRole in ACCOUNT_ROLES) {
+      setDocumentTitleBasedOnRole(currentAccountRole as keyof typeof ACCOUNT_ROLES)
+    }
+  }, [currentAccountRole])
 
   const handleButtonClick = (buttonName: string) => {
     setActiveButton(buttonName)
