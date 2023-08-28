@@ -10,7 +10,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('sirius_access', '0001_initial'),
-        ('sirius_access', '0003_generate_account_to_object'),
     ]
 
     operations = [
