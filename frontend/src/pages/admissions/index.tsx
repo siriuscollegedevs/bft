@@ -55,12 +55,6 @@ export const AdmissionsPage = () => {
   }, [admissionsData, admissionsArchiveData, filters, isArchivePage])
 
   useEffect(() => {
-    if ((isArchivePage && admissionsArchiveData) || (!isArchivePage && admissionsData)) {
-      setDataLoaded(true)
-    }
-  }, [isArchivePage, admissionsArchiveData, admissionsData])
-
-  useEffect(() => {
     if (idArray.length > 0 && !hasData) {
       if (!isArchivePage) {
         admissionsMutation(idArray)
