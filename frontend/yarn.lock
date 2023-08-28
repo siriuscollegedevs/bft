@@ -1331,7 +1331,7 @@
   "resolved" "https://registry.npmjs.org/@emotion/memoize/-/memoize-0.8.1.tgz"
   "version" "0.8.1"
 
-"@emotion/react@^11.0.0-rc.0", "@emotion/react@^11.11.1", "@emotion/react@^11.4.1", "@emotion/react@^11.5.0":
+"@emotion/react@^11.0.0-rc.0", "@emotion/react@^11.4.1", "@emotion/react@^11.5.0", "@emotion/react@11.11.1":
   "integrity" "sha512-5mlW1DquU5HaxjLkfkGN1GA/fvVGdyHURRiX/0FHl2cfIfRxSOfmxEH5YS43edp0OldZrZ+dkBKbngxcNCdZvA=="
   "resolved" "https://registry.npmjs.org/@emotion/react/-/react-11.11.1.tgz"
   "version" "11.11.1"
@@ -1361,7 +1361,7 @@
   "resolved" "https://registry.npmjs.org/@emotion/sheet/-/sheet-1.2.2.tgz"
   "version" "1.2.2"
 
-"@emotion/styled@^11.11.0", "@emotion/styled@^11.3.0":
+"@emotion/styled@^11.3.0", "@emotion/styled@11.11.0":
   "integrity" "sha512-hM5Nnvu9P3midq5aaXj4I+lnSfNi7Pmd4EWk1fOZ3pxookaQTNew6bp4JaCBYM4HVFZF9g7UjJmsUmC2JlxOng=="
   "resolved" "https://registry.npmjs.org/@emotion/styled/-/styled-11.11.0.tgz"
   "version" "11.11.0"
@@ -1435,7 +1435,7 @@
   "resolved" "https://registry.npmjs.org/@eslint/js/-/js-8.42.0.tgz"
   "version" "8.42.0"
 
-"@fontsource/roboto@^5.0.3":
+"@fontsource/roboto@5.0.3":
   "integrity" "sha512-jbZDFwEFARDlo8TqG7th/xjhuq87GYfFpFb+uxuy+0Ng1bhRVgBRWlLj8+WIKhCTOr+h4QXbjpybLWFLUirOwQ=="
   "resolved" "https://registry.npmjs.org/@fontsource/roboto/-/roboto-5.0.3.tgz"
   "version" "5.0.3"
@@ -1754,14 +1754,14 @@
   "resolved" "https://registry.npmjs.org/@mui/core-downloads-tracker/-/core-downloads-tracker-5.13.4.tgz"
   "version" "5.13.4"
 
-"@mui/icons-material@^5.11.16":
+"@mui/icons-material@5.11.16":
   "integrity" "sha512-oKkx9z9Kwg40NtcIajF9uOXhxiyTZrrm9nmIJ4UjkU2IdHpd4QVLbCc/5hZN/y0C6qzi2Zlxyr9TGddQx2vx2A=="
   "resolved" "https://registry.npmjs.org/@mui/icons-material/-/icons-material-5.11.16.tgz"
   "version" "5.11.16"
   dependencies:
     "@babel/runtime" "^7.21.0"
 
-"@mui/material@^5.0.0", "@mui/material@^5.13.5":
+"@mui/material@^5.0.0", "@mui/material@5.13.5":
   "integrity" "sha512-eMay+Ue1OYXOFMQA5Aau7qbAa/kWHLAyi0McsbPTWssCbGehqkF6CIdPsfVGw6tlO+xPee1hUitphHJNL3xpOQ=="
   "resolved" "https://registry.npmjs.org/@mui/material/-/material-5.13.5.tgz"
   "version" "5.13.5"
@@ -1788,7 +1788,7 @@
     "@mui/utils" "^5.13.1"
     "prop-types" "^15.8.1"
 
-"@mui/styled-engine-sc@^5.12.0":
+"@mui/styled-engine-sc@5.12.0":
   "integrity" "sha512-3MgYoY2YG5tx0E5oKqvCv94oL0ABVBr+qpcyvciXW/v0wzPG6bXvuZV80GHYlJfasgnnRa1AbRWf5a9FcX8v6g=="
   "resolved" "https://registry.npmjs.org/@mui/styled-engine-sc/-/styled-engine-sc-5.12.0.tgz"
   "version" "5.12.0"
@@ -1806,7 +1806,7 @@
     "csstype" "^3.1.2"
     "prop-types" "^15.8.1"
 
-"@mui/system@^5.13.5":
+"@mui/system@^5.13.5", "@mui/system@5.13.5":
   "integrity" "sha512-n0gzUxoZ2ZHZgnExkh2Htvo9uW2oakofgPRQrDoa/GQOWyRD0NH9MDszBwOb6AAoXZb+OV5TE7I4LeZ/dzgHYA=="
   "resolved" "https://registry.npmjs.org/@mui/system/-/system-5.13.5.tgz"
   "version" "5.13.5"
@@ -1884,7 +1884,7 @@
   "resolved" "https://registry.npmjs.org/@popperjs/core/-/core-2.11.8.tgz"
   "version" "2.11.8"
 
-"@reduxjs/toolkit@^1 || ^2.0.0-beta.0", "@reduxjs/toolkit@^1.9.5":
+"@reduxjs/toolkit@^1 || ^2.0.0-beta.0", "@reduxjs/toolkit@1.9.5":
   "integrity" "sha512-Rt97jHmfTeaxL4swLRNPD/zV4OxTes4la07Xc4hetpUW/vc75t5m1ANyxG6ymnEQ2FsLQsoMlYB2vV1sO3m8tQ=="
   "resolved" "https://registry.npmjs.org/@reduxjs/toolkit/-/toolkit-1.9.5.tgz"
   "version" "1.9.5"
@@ -2360,7 +2360,7 @@
   "resolved" "https://registry.npmjs.org/@types/range-parser/-/range-parser-1.2.4.tgz"
   "version" "1.2.4"
 
-"@types/react-datepicker@^4.15.0":
+"@types/react-datepicker@4.15.0":
   "integrity" "sha512-kr10s8ex4+MmCJmzdhA9kfmoMQBmsW5uDYDlH+8f/PgStrp7rRaz23Y/cvTiMgvESVq8ujDh4SOo6jlSwEw13g=="
   "resolved" "https://registry.npmjs.org/@types/react-datepicker/-/react-datepicker-4.15.0.tgz"
   "version" "4.15.0"
@@ -2457,7 +2457,7 @@
   "resolved" "https://registry.npmjs.org/@types/stack-utils/-/stack-utils-2.0.1.tgz"
   "version" "2.0.1"
 
-"@types/styled-components@^5.1.14", "@types/styled-components@^5.1.26":
+"@types/styled-components@^5.1.14", "@types/styled-components@5.1.26":
   "integrity" "sha512-KuKJ9Z6xb93uJiIyxo/+ksS7yLjS1KzG6iv5i78dhVg/X3u5t1H7juRWqVmodIdz6wGVaIApo1u01kmFRdJHVw=="
   "resolved" "https://registry.npmjs.org/@types/styled-components/-/styled-components-5.1.26.tgz"
   "version" "5.1.26"
@@ -4530,7 +4530,7 @@
     "lodash" "^4.17.21"
     "string-natural-compare" "^3.0.1"
 
-"eslint-plugin-import@^2.25.3", "eslint-plugin-import@^2.27.5":
+"eslint-plugin-import@^2.25.3", "eslint-plugin-import@2.27.5":
   "integrity" "sha512-LmEt3GVofgiGuiE+ORpnvP+kAm3h6MLZJ4Q5HCyHADofsb4VzXFsRiWj3c0OFiV+3DWFh0qg3v9gcPlfc3zRow=="
   "resolved" "https://registry.npmjs.org/eslint-plugin-import/-/eslint-plugin-import-2.27.5.tgz"
   "version" "2.27.5"
@@ -7969,7 +7969,7 @@
     "regenerator-runtime" "^0.13.9"
     "whatwg-fetch" "^3.6.2"
 
-"react-datepicker@^4.16.0":
+"react-datepicker@4.16.0":
   "integrity" "sha512-hNQ0PAg/LQoVbDUO/RWAdm/RYmPhN3cz7LuQ3hqbs24OSp69QCiKOJRrQ4jk1gv1jNR5oYu8SjjgfDh8q6Q1yw=="
   "resolved" "https://registry.npmjs.org/react-datepicker/-/react-datepicker-4.16.0.tgz"
   "version" "4.16.0"
@@ -8067,7 +8067,7 @@
     "react-fast-compare" "^3.0.1"
     "warning" "^4.0.2"
 
-"react-redux@^7.2.1 || ^8.0.2", "react-redux@^8.1.0":
+"react-redux@^7.2.1 || ^8.0.2", "react-redux@8.1.0":
   "integrity" "sha512-CtHZzAOxi7GQvTph4dVLWwZHAWUjV2kMEQtk50OrN8z3gKxpWg3Tz7JfDw32N3Rpd7fh02z73cF6yZkK467gbQ=="
   "resolved" "https://registry.npmjs.org/react-redux/-/react-redux-8.1.0.tgz"
   "version" "8.1.0"
@@ -8978,7 +8978,7 @@
   "resolved" "https://registry.npmjs.org/style-loader/-/style-loader-3.3.3.tgz"
   "version" "3.3.3"
 
-"styled-components@^5.3.1", "styled-components@^5.3.11", "styled-components@>= 2":
+"styled-components@^5.3.1", "styled-components@>= 2", "styled-components@5.3.11":
   "integrity" "sha512-uuzIIfnVkagcVHv9nE0VPlHPSCmXIUGKfJ42LNjxCCTDTL5sgnJ8Z7GZBq0EnLYGln77tPpEpExt2+qa+cZqSw=="
   "resolved" "https://registry.npmjs.org/styled-components/-/styled-components-5.3.11.tgz"
   "version" "5.3.11"
