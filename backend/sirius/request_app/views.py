@@ -499,16 +499,23 @@ from django_apscheduler import util
 @util.close_old_connections
 def check_outdated_records(logger):
     try:
+        account = Account.objects.filter(role='administrator').first()
+    except Exception as ex:
+        logger.error('Error while retrieving admin account: {error}'.format(error=ex))
+    try:
         for record in Record.objects.filter(status='active'):
             last_record = record.get_last_version()
             if last_record.to_date < timezone.now().date():
-                record.make_outdated(system, 'outdated')
+                record.make_outdated(account, 'outdated')
     except Exception as ex:
         logger.error('Error while checking outdated records: {error}'.format(error=ex))
+    def ready(self):
+        from sirius import operator
+        operator.start()
     try:
         for request in Request.objects.filter(status='active'):
             if not Record.objects.filter(request=request, status='active').exists():
-                request.make_outdated(system, 'outdated')
+                request.make_outdated(account, 'outdated')
     except Exception as ex:
         logger.error('Error while checking outdated requests: {error}'.format(error=ex))
 
@@ -536,7 +543,8 @@ def delete_archive_records(logger):
     try:
         for request in Request.objects.filter(status='outdated'):
             if not RequestHistory.objects.filter(request=request).exists():
+                RequestToObject.objects.filter(request=request).delete()
                 request.delete()
         logger.info('Deleting archive requests')
     except Exception as ex:
-        pass
+        logger.error('Error while deleting archive requests: {error}'.format(error=ex))
