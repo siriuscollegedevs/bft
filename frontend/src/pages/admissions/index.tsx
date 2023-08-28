@@ -55,6 +55,12 @@ export const AdmissionsPage = () => {
   }, [admissionsData, admissionsArchiveData, filters, isArchivePage])
 
   useEffect(() => {
+    if ((isArchivePage && admissionsArchiveData) || (!isArchivePage && admissionsData)) {
+      setDataLoaded(true)
+    }
+  }, [isArchivePage, admissionsArchiveData, admissionsData])
+
+  useEffect(() => {
     if (idArray.length > 0 && !hasData) {
       if (!isArchivePage) {
         admissionsMutation(idArray)
@@ -92,7 +98,7 @@ export const AdmissionsPage = () => {
 
       <SideBarContainer>
         {admissionsLoading || isError || admissionsArchiveLoading || admissionsArchiveError ? (
-          <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
+            <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
             {filteredTableData && filteredTableData.length > 0 ? (
@@ -105,11 +111,13 @@ export const AdmissionsPage = () => {
                 data={filteredData(filteredTableData)}
               />
             ) : (
-              search.searchFilter.length > 0 && (
                 <Box sx={{ width: '100%' }}>
-                  <p>Ничего не найдено, проверьте введенные данные.</p>
+                  {search.searchFilter.length > 0 ? (
+                      <p>Ничего не найдено, проверьте введенные данные.</p>
+                  ) : (
+                      <p>Пока тут нет данных.</p>
+                  )}
                 </Box>
-              )
             )}
             <Sidebar isSearch={true} isObjects={true} isButton={true} />
           </>
