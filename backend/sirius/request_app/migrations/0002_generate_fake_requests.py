@@ -18,37 +18,37 @@ REQUESTS = [
 ]
 
 CAR_RECORDS = [
-    {'car_number': 'В642УР23', 'car_brand': 'Hyundai', 'car_model': 'Solaris', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10),},
+    {'car_number': 'В642УР23', 'car_brand': 'Hyundai', 'car_model': 'Solaris', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10), 'first_name' : '', 'last_name' : '', 'surname' : '', 'note' : ''},
 ] * 10
 
 CAR_RECORDS_HISTORY = [
-    {'car_number': 'О997МХ23', 'car_brand': 'Kia', 'car_model': 'Sorento', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10), 'note': 'Какое-то примечание'},
-    {'car_number': 'В437ОН123', 'car_brand': 'Geely', 'car_model': 'Coolray', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
-    {'car_number': 'А359АН23', 'car_brand': 'Exeed', 'car_model': 'LX', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание'},
-    {'car_number': 'М509ХР23', 'car_brand': 'Porsche', 'car_model': 'Cayenne', 'type': 'for_long_time', 'from_date': date(2023, 9, 12), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
-    {'car_number': 'Е789ЕЕ123', 'car_brand': 'Chery', 'car_model': 'Tiggo', 'type': 'for_once', 'to_date': date(2023, 9, 15), 'from_date': date(2023, 9, 15), 'note': 'Какое-то примечание'},
-    {'car_number': 'А083НУ23', 'car_brand': 'Geely', 'car_model': 'Coolray', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 23), 'note': 'Какое-то примечание'},
-    {'car_number': 'А359АН123', 'car_brand': 'Cadillac', 'car_model': 'Escalade', 'type': 'for_once', 'to_date': date(2023, 9, 13), 'from_date': date(2023, 9, 13), 'note': 'Какое-то примечание'},
-    {'car_number': 'М809МС23', 'car_brand': 'Chevrolet', 'car_model': 'Tahoe', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 13), 'note': 'Какое-то примечание'},
-    {'car_number': 'Р534НА123', 'car_brand': 'Chevrolet', 'car_model': 'Captiva', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание'},
-    {'car_number': 'К215ВВ23', 'car_brand': 'Ford', 'car_model': 'Focus', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
+    {'car_number': 'О997МХ23', 'car_brand': 'Kia', 'car_model': 'Sorento', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10), 'note': 'Какое-то примечание', 'first_name' : '', 'last_name' : '', 'surname' : ''},
+    {'car_number': 'В437ОН123', 'car_brand': 'Geely', 'car_model': 'Coolray', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание', 'first_name' : '', 'last_name' : '', 'surname' : ''},
+    {'car_number': 'А359АН23', 'car_brand': 'Exeed', 'car_model': 'LX', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание', 'first_name' : '', 'last_name' : '', 'surname' : ''},
+    {'car_number': 'М509ХР23', 'car_brand': 'Porsche', 'car_model': 'Cayenne', 'type': 'for_long_time', 'from_date': date(2023, 9, 12), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание', 'first_name' : '', 'last_name' : '', 'surname' : ''},
+    {'car_number': 'Е789ЕЕ123', 'car_brand': 'Chery', 'car_model': 'Tiggo', 'type': 'for_once', 'to_date': date(2023, 9, 15), 'from_date': date(2023, 9, 15), 'note': 'Какое-то примечание', 'first_name' : '', 'last_name' : '', 'surname' : ''},
+    {'car_number': 'А083НУ23', 'car_brand': 'Geely', 'car_model': 'Coolray', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 23), 'note': 'Какое-то примечание', 'first_name' : '', 'last_name' : '', 'surname' : ''},
+    {'car_number': 'А359АН123', 'car_brand': 'Cadillac', 'car_model': 'Escalade', 'type': 'for_once', 'to_date': date(2023, 9, 13), 'from_date': date(2023, 9, 13), 'note': 'Какое-то примечание', 'first_name' : '', 'last_name' : '', 'surname' : ''},
+    {'car_number': 'М809МС23', 'car_brand': 'Chevrolet', 'car_model': 'Tahoe', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 13), 'note': 'Какое-то примечание', 'first_name' : '', 'last_name' : '', 'surname' : ''},
+    {'car_number': 'Р534НА123', 'car_brand': 'Chevrolet', 'car_model': 'Captiva', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание', 'first_name' : '', 'last_name' : '', 'surname' : ''},
+    {'car_number': 'К215ВВ23', 'car_brand': 'Ford', 'car_model': 'Focus', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание', 'first_name' : '', 'last_name' : '', 'surname' : ''},
 ]
 
 HUMAN_RECORDS = [
-    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10)}
+    {'first_name': 'Иван', 'last_name': 'Иванов', 'surname': 'Иванович', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10), 'car_number': '', 'car_brand': '', 'car_model': '', 'note' : ''}
 ] * 10
 
 HUMAN_RECORDS_HISTORY = [
-    {'first_name': 'Андрей', 'last_name': 'Семенов', 'surname': 'Николаевич', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10), 'note': 'Какое-то примечание'},
-    {'first_name': 'Николай', 'last_name': 'Иванов', 'surname': 'Григорьевич', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
-    {'first_name': 'Арсений', 'last_name': 'Кутузов', 'surname': 'Иванович', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание'},
-    {'first_name': 'Фёдор', 'last_name': 'Баранов', 'surname': 'Глебович', 'type': 'for_long_time', 'from_date': date(2023, 9, 12), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
-    {'first_name': 'Татьяна', 'last_name': 'Куликова ', 'surname': 'Григорьевна', 'type': 'for_once', 'to_date': date(2023, 9, 15), 'from_date': date(2023, 9, 15), 'note': 'Какое-то примечание'},
-    {'first_name': 'Иван', 'last_name': 'Капустин', 'surname': 'Маркович', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 23), 'note': 'Какое-то примечание'},
-    {'first_name': 'Владимир', 'last_name': 'Лобанов', 'surname': 'Иванович', 'type': 'for_once', 'to_date': date(2023, 9, 13), 'from_date': date(2023, 9, 13), 'note': 'Какое-то примечание'},
-    {'first_name': 'Александр', 'last_name': 'Уткин', 'surname': 'Даниилович', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 13), 'note': 'Какое-то примечание'},
-    {'first_name': 'Виктория', 'last_name': 'Ефимова', 'surname': 'Ивановна', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание'},
-    {'first_name': 'Алексей', 'last_name': 'Сальников', 'surname': 'Вячеславович', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание'},
+    {'first_name': 'Андрей', 'last_name': 'Семенов', 'surname': 'Николаевич', 'type': 'for_once', 'to_date': date(2023, 9, 10), 'from_date': date(2023, 9, 10), 'note': 'Какое-то примечание', 'car_number': '', 'car_brand': '', 'car_model': ''},
+    {'first_name': 'Николай', 'last_name': 'Иванов', 'surname': 'Григорьевич', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание', 'car_number': '', 'car_brand': '', 'car_model': ''},
+    {'first_name': 'Арсений', 'last_name': 'Кутузов', 'surname': 'Иванович', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание', 'car_number': '', 'car_brand': '', 'car_model': ''},
+    {'first_name': 'Фёдор', 'last_name': 'Баранов', 'surname': 'Глебович', 'type': 'for_long_time', 'from_date': date(2023, 9, 12), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание', 'car_number': '', 'car_brand': '', 'car_model': ''},
+    {'first_name': 'Татьяна', 'last_name': 'Куликова ', 'surname': 'Григорьевна', 'type': 'for_once', 'to_date': date(2023, 9, 15), 'from_date': date(2023, 9, 15), 'note': 'Какое-то примечание', 'car_number': '', 'car_brand': '', 'car_model': ''},
+    {'first_name': 'Иван', 'last_name': 'Капустин', 'surname': 'Маркович', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 23), 'note': 'Какое-то примечание', 'car_number': '', 'car_brand': '', 'car_model': ''},
+    {'first_name': 'Владимир', 'last_name': 'Лобанов', 'surname': 'Иванович', 'type': 'for_once', 'to_date': date(2023, 9, 13), 'from_date': date(2023, 9, 13), 'note': 'Какое-то примечание', 'car_number': '', 'car_brand': '', 'car_model': ''},
+    {'first_name': 'Александр', 'last_name': 'Уткин', 'surname': 'Даниилович', 'type': 'for_long_time', 'from_date': date(2023, 9, 11), 'to_date': date(2023, 9, 13), 'note': 'Какое-то примечание', 'car_number': '', 'car_brand': '', 'car_model': ''},
+    {'first_name': 'Виктория', 'last_name': 'Ефимова', 'surname': 'Ивановна', 'type': 'for_once', 'to_date': date(2023, 9, 12), 'from_date': date(2023, 9, 12), 'note': 'Какое-то примечание', 'car_number': '', 'car_brand': '', 'car_model': ''},
+    {'first_name': 'Алексей', 'last_name': 'Сальников', 'surname': 'Вячеславович', 'type': 'for_long_time', 'from_date': date(2023, 9, 15), 'to_date': date(2023, 9, 20), 'note': 'Какое-то примечание', 'car_number': '', 'car_brand': '', 'car_model': ''},
 ]
 
 

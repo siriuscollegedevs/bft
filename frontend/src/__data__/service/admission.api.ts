@@ -104,6 +104,13 @@ export const apiAdmissions = createApi({
     }),
     getAdmissionById: builder.query<Admissions, string>({
       query: admissionId => `/request/information/${admissionId}`
+    }),
+    createAdmissionVieExcel: builder.mutation<{ request_id: string }, FormData>({
+      query: file => ({
+        url: '/request/excel',
+        method: 'POST',
+        body: file
+      })
     })
   })
 })
@@ -118,5 +125,6 @@ export const {
   useDeleteAdmissionsByIdMutation,
   useAdmissionsSearchMutation,
   useAdmissionsArchiveSearchMutation,
-  useGetAdmissionByIdQuery
+  useGetAdmissionByIdQuery,
+  useCreateAdmissionVieExcelMutation
 } = apiAdmissions

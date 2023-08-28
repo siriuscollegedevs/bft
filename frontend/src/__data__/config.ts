@@ -1,3 +1,3 @@
 export const config = {
-  baseAPI: 'http://localhost:49558/'
+  baseAPI: process.env.NODE_ENV === 'development' ? 'https://127.0.0.1:8000/' : '/'
 }

@@ -16,8 +16,8 @@ import { AdmissionsPage } from './pages/admissions'
 import { AdmissionViewPage } from './pages/admission-view'
 import { useRefreshabilityCheck } from './hooks/refreshability-check'
 import { useEffect } from 'react'
-import { useSelector } from 'react-redux'
-import { AuthState } from './__data__/states/auth'
+import { useDispatch, useSelector } from 'react-redux'
+import { AuthState, clearAuth } from './__data__/states/auth'
 import { AccountAdvancedSearch } from './pages/search/account'
 import { EmployeeAdvancedSearch } from './pages/search/employee'
 import { AdmissionsAdvancedSearch } from './pages/search/admissions'
@@ -30,6 +30,7 @@ import { AdmissionViewEdit } from './pages/admission-ce/edit'
 export const App: React.FC = (): JSX.Element => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
   const refreshabilityCheck = useRefreshabilityCheck()
+  const dispatch = useDispatch()
 
   function Header() {
     const location = useLocation()
@@ -50,8 +51,9 @@ export const App: React.FC = (): JSX.Element => {
 
     return () => {
       clearInterval(intervalId)
+      dispatch(clearAuth())
     }
-  })
+  }, [])
 
   return (
     <>
@@ -77,6 +79,7 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/admissions/:id" element={<AdmissionViewEdit />} />
             <Route path="/admissions/view/:id" element={<AdmissionViewPage />} />
             <Route path="/admissions/:id/record/create" element={<FormEditDirectories />} />
+            <Route path="/admissions/:id/record/edit" element={<FormEditDirectories />} />
             <Route path="/admissions/history/:id" element={<AdmissionsHistory />} />
             <Route path="/admissions/search" element={<AdmissionsAdvancedSearch />} />
 

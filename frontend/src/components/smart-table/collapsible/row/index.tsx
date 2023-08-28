@@ -80,7 +80,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
         {itsAdmissions({ currentURL }) && 'type' in row && (
           <>
             <CustomCell align="left" padding={'checkbox'}>
-              {row.last_name !== null ? (
+              {row.last_name !== '' ? (
                 <>
                   <HumanIcon style={{ height: '42px', width: '42px' }} />
                 </>
@@ -91,14 +91,14 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
               )}
             </CustomCell>
             {currentAccountRole === 'security_officer' ? (
-              row.last_name !== null ? (
+              row.last_name !== '' ? (
                 <CustomCell align="left">{row.last_name + ' ' + row.first_name}</CustomCell>
               ) : (
                 <CustomCell align="left">{row.car_brand + ' ' + row.car_model + ' ' + row.car_number}</CustomCell>
               )
             ) : (
               <CustomCell align="left">
-                {row.last_name !== null
+                {row.last_name !== ''
                   ? row.last_name + ' ' + row.first_name + ' ' + row.surname
                   : row.car_brand + ' ' + row.car_model + ' ' + row.car_number}
               </CustomCell>
@@ -143,7 +143,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                         <CustomCollapseCellAdmissions align="left">
                           {getObjectValueByKey(row.type, RECORD_TYPE)}
                         </CustomCollapseCellAdmissions>
-                        {row.from_date !== null && row.type === 'for_long_time' ? (
+                        {row.from_date !== '' && row.type === 'for_long_time' ? (
                           <>
                             <CustomCollapseCellAdmissions align="left" sx={{ width: '200px' }}>
                               {RECORD_FIELDS.from_date +
@@ -164,7 +164,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                             </>
                           </>
                         )}
-                        {row.note === null ? (
+                        {row.note === '' ? (
                           <CustomCollapseCellAdmissions align="left">{'Примечание: '}</CustomCollapseCellAdmissions>
                         ) : (
                           <CustomCollapseCellAdmissions align="left">

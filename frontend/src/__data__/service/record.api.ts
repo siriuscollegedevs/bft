@@ -1,5 +1,5 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
-import { Status, Human, Car, AdmissionsHistory } from '../../types/api'
+import { Status, Human, Car, AdmissionsHistory, AdmissionRecord, UpdateRecord } from '../../types/api'
 import { baseQuery } from '../utils'
 
 export const apiRecord = createApi({
@@ -25,15 +25,18 @@ export const apiRecord = createApi({
     getRecordHistoryById: builder.query<AdmissionsHistory[], string>({
       query: recordId => `/request/record/history/${recordId}`
     }),
-    updateHumanRecordById: builder.mutation<void, { recordId: string; recordData: Human }>({
+    updateRecordById: builder.mutation<void, { recordId: string; recordData: UpdateRecord }>({
       query: ({ recordId, recordData }) => ({
-        url: `/record/human/${recordId}`,
+        url: `/request/record/${recordId}`,
         method: 'PUT',
         body: {
+          car_number: recordData.car_number,
+          car_brand: recordData.car_brand,
+          car_model: recordData.car_model,
+          type: recordData.type,
           first_name: recordData.first_name,
           surname: recordData.surname,
           last_name: recordData.last_name,
-          type: recordData.type,
           from_date: recordData.from_date,
           to_date: recordData.to_date,
           note: recordData.note
@@ -49,21 +52,6 @@ export const apiRecord = createApi({
           first_name: recordData.first_name,
           surname: recordData.surname,
           last_name: recordData.last_name,
-          from_date: recordData.from_date,
-          to_date: recordData.to_date,
-          note: recordData.note
-        }
-      })
-    }),
-    updateCarRecordById: builder.mutation<void, { recordId: string; recordData: Car }>({
-      query: ({ recordId, recordData }) => ({
-        url: `/record/car/${recordId}`,
-        method: 'PUT',
-        body: {
-          type: recordData.type,
-          car_number: recordData.car_number,
-          car_brand: recordData.car_brand,
-          car_model: recordData.car_model,
           from_date: recordData.from_date,
           to_date: recordData.to_date,
           note: recordData.note
@@ -93,6 +81,9 @@ export const apiRecord = createApi({
           ids: recordIds
         }
       })
+    }),
+    getRecordById: builder.query<AdmissionRecord, string>({
+      query: recordId => `/request/record/${recordId}`
     })
   })
 })
@@ -101,9 +92,9 @@ export const {
   useChangeRecordStatusByIdMutation,
   useDeleteRecordByIdMutation,
   useGetRecordHistoryByIdQuery,
-  useUpdateHumanRecordByIdMutation,
+  useUpdateRecordByIdMutation,
   useCreateHumanRecordMutation,
-  useUpdateCarRecordByIdMutation,
   useCreateCarRecordMutation,
-  useDeleteMultipleRecordsMutation
+  useDeleteMultipleRecordsMutation,
+  useGetRecordByIdQuery
 } = apiRecord

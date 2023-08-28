@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from .models import Request, RequestHistory, Record, RecordHistory, RequestToObject
-from sirius_access.models import Object, Account
+from sirius_access.models import Object
 from sirius_access.config import NO_SEARCH_OBJECTS_FOUND_ERROR
 from rest_framework import status
 from django.db import transaction
@@ -14,6 +14,9 @@ from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
 from sirius.config import DB_ERROR
 from sirius_access.config import OBJECTID_ERROR_MSG
+import openpyxl
+from rest_framework.decorators import api_view
+from django.db import connection
 
 
 def get_request(RequestId):
@@ -145,7 +148,7 @@ class RequestApiView(APIView):
         req = get_request(RequestId)
         if not req:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
-        res = [record.get_info() for record in Record.objects.filter(request=req, status='active')]
+        res = [record.get_info() for record in Record.objects.filter(request=req, status=req.status)]
         return Response(serializers.RecordSerializer(res, many=True, fields=REQUEST_GET_FIELDS).data)
 
     @extend_schema(
@@ -230,7 +233,7 @@ class DeletePutGetRecord(APIView):
         record = get_record(RecordId)
         if not record:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=RECORDID_ERROR_MSG)
-        return Response(serializers.RecordSerializer(record.get_info()).data)
+        return Response(serializers.RecordSerializer(record.get_info(), fields=REQUEST_GET_FIELDS).data)
 
     @extend_schema(
         responses={
@@ -491,6 +494,58 @@ class RequestInfo(APIView):
         if not req:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=REQUESTID_ERROR_MSG)
         return Response(serializers.RequestSerializer(req.get_info()).data)
+
+
+@api_view(('POST',))
+def excel(request):
+    wb = openpyxl.load_workbook(request.FILES["excel_file"])
+    worksheet = wb[SHEET_NAME]
+    start = START
+    dates = {"to_date": worksheet[TO_DATE_CELL].value.date(), "from_date": worksheet[FROM_DATE_CELL].value.date()}
+    type = "for_once" if dates["to_date"] == dates["from_date"] else "for_long_time"
+
+    try:
+        with transaction.atomic():
+            req = Request.objects.create(status='active')
+            RequestHistory.objects.create(request=req, code=get_max_code() + 1,
+                                          action='created', modified_by=get_user(request))
+            with connection.cursor() as cursor:
+                for obj_name in worksheet[OBJECTS_FIELD].value.split(','):
+                    cursor.execute("with history as (select object_id, name, row_number() \
+                                        over (partition by object_id order by version desc) version_inverted from objects_history)\
+                                        select object_id from history where version_inverted = 1 and name = '{}';".format(obj_name.lstrip()))
+                    obj_id = cursor.fetchone()[0]
+                    RequestToObject.objects.create(object=Object.objects.get(id=obj_id), request=req)
+
+            while True:
+                if worksheet[FIELD_FOR_CHECK_LETTER + start].value == START_OF_CAR_RECORDS:
+                    start = str(int(start) + 2)
+                    break
+                if not worksheet[FIELD_FOR_CHECK_LETTER + start].value:
+                    start = str(int(start) + 1)
+                    continue
+                record = Record.objects.create(status='active', request=req)
+                data = {"last_name": worksheet[LAST_NAME_FIELD_LETTER + start].value,
+                        "first_name": worksheet[FIRST_NAME_FIELD_LETTER + start].value,
+                        "surname": worksheet[SURNAME_FIELD_LETTER + start].value
+                        }
+                RecordHistory.objects.create(action='created', modified_by=get_user(
+                    request), record=record, type=type, **data, **dates)
+                start = str(int(start) + 1)
+            while True:
+                if not worksheet[FIELD_FOR_CHECK_LETTER + start].value or worksheet[FIELD_FOR_CHECK_LETTER + start].value == END_OF_CAR_RECORDS:
+                    return Response(status=status.HTTP_201_CREATED, data={'request_id': req.id})
+                record = Record.objects.create(status='active', request=req)
+                note_field = worksheet[CAR_NOTE_FIELD_LETTER + start].value
+                note = note_field if note_field else ''
+                data = {"car_brand": worksheet[CAR_BRAND_FIELD_LETTER + start].value,
+                        "note": note,
+                        "car_number": worksheet[CAR_NUMBER_FIELD_LETTER + start].value}
+                RecordHistory.objects.create(action='created', modified_by=get_user(
+                    request), record=record, type=type, **data, **dates)
+                start = str(int(start) + 1)
+    except Exception:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
 from django_apscheduler import util
