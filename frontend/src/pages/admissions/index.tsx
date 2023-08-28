@@ -4,7 +4,7 @@ import { SmartTable } from '../../components/smart-table'
 import { SideBarContainer } from '../../styles/sidebar'
 import { useGetAllAdmissionsMutation, useGetAllArchiveAdmissionsMutation } from '../../__data__/service/admission.api'
 import CircularProgress from '@mui/material/CircularProgress'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Account, Admissions, Objects } from '../../types/api'
 import { useEffect, useMemo, useState } from 'react'
 import { FiltersState } from '../../__data__/states/filters'
@@ -15,8 +15,10 @@ import { dateParser } from '../../utils/date-parser'
 import { useLocation } from 'react-router-dom'
 import { getButtonNames } from '../../components/shortcut-buttons/button-names'
 import { ButtonName } from '../../components/shortcut-buttons'
+import { setAdmissionsArchive } from '../../__data__/states/admission-technical'
 
 export const AdmissionsPage = () => {
+  const dispatch = useDispatch()
   const [admissionsMutation, { data: admissionsData, isLoading: admissionsLoading, isError }] =
     useGetAllAdmissionsMutation()
   const currentAccountObjects = useSelector(
@@ -52,6 +54,10 @@ export const AdmissionsPage = () => {
 
   useEffect(() => {
     setData(isArchivePage ? admissionsArchiveData : admissionsData)
+    const admissionsArchive = admissionsArchiveData?.map((object: Admissions) => object.id)
+    if (admissionsArchive) {
+      dispatch(setAdmissionsArchive(admissionsArchive))
+    }
   }, [admissionsData, admissionsArchiveData, filters, isArchivePage])
 
   useEffect(() => {
@@ -92,7 +98,7 @@ export const AdmissionsPage = () => {
 
       <SideBarContainer>
         {admissionsLoading || isError || admissionsArchiveLoading || admissionsArchiveError ? (
-            <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
+          <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
             {filteredTableData && filteredTableData.length > 0 ? (
@@ -105,13 +111,13 @@ export const AdmissionsPage = () => {
                 data={filteredData(filteredTableData)}
               />
             ) : (
-                <Box sx={{ width: '100%' }}>
-                  {search.searchFilter.length > 0 ? (
-                      <p>Ничего не найдено, проверьте введенные данные.</p>
-                  ) : (
-                      <p>Пока тут нет данных.</p>
-                  )}
-                </Box>
+              <Box sx={{ width: '100%' }}>
+                {search.searchFilter.length > 0 ? (
+                  <p>Ничего не найдено, проверьте введенные данные.</p>
+                ) : (
+                  <p>Пока тут нет данных.</p>
+                )}
+              </Box>
             )}
             <Sidebar isSearch={true} isObjects={true} isButton={true} />
           </>

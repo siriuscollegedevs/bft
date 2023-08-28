@@ -18,10 +18,15 @@ import { SearchState } from '../../__data__/states/search'
 import { dateParser } from '../../utils/date-parser'
 import { RECORD_TYPE } from '../../__data__/consts/record'
 import { AdmissionsHistory } from '../../types/api'
+import { AdmissionTechnical } from '../../__data__/states/admission-technical'
 
 export const AdmissionViewPage = () => {
   const { id } = useParams<string>()
   const navigate = useNavigate()
+  const admissionsArchiveIds = useSelector(
+    (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.admissionsArchive
+  )
+  const isArchiveAdmission: boolean = admissionsArchiveIds.includes(id ?? '')
   const [updateStatus] = useUpdateAdmissionStatusMutation()
   const { data: RecordsOfAdmissionData, refetch: updateRecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(
     id ?? ''
@@ -109,16 +114,21 @@ export const AdmissionViewPage = () => {
           <Box>
             <Button
               variant={archive ? 'outlined' : 'contained'}
-              disabled={historyAdmissionData ? historyAdmissionData.length === 0 : true}
+              disabled={historyAdmissionData && !isArchiveAdmission ? historyAdmissionData.length === 0 : true}
               onClick={() => setArchive(!archive)}
               sx={{ marginRight: '14px' }}
             >
               Архив
             </Button>
-            <Button variant="contained" sx={{ marginRight: '14px' }} onClick={() => navigate(`/admissions/${id}`)}>
+            <Button
+              variant="contained"
+              sx={{ marginRight: '14px' }}
+              onClick={() => navigate(`/admissions/${id}`)}
+              disabled={isArchiveAdmission}
+            >
               Редактировать
             </Button>
-            {id && <CanceledDialog admissionId={id} />}
+            {id && <CanceledDialog admissionId={id} disButton={isArchiveAdmission} />}
             <Button
               variant="contained"
               sx={{ marginLeft: '14px' }}
@@ -127,6 +137,7 @@ export const AdmissionViewPage = () => {
                   updateStatus({ admissionId: id, admissionData: { status: 'closed', reason: '' } })
                 }
               }}
+              disabled={isArchiveAdmission}
             >
               Погасить
             </Button>

@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom'
 
 type CanceledDialogProps = {
   admissionId: string
+  disButton: boolean
 }
 
-export const CanceledDialog = ({ admissionId }: CanceledDialogProps) => {
+export const CanceledDialog = ({ admissionId, disButton }: CanceledDialogProps) => {
   const [open, setOpen] = useState(false)
   const [inputValue, setInputValue] = useState('')
   const [error, setError] = useState(false)
@@ -39,7 +40,7 @@ export const CanceledDialog = ({ admissionId }: CanceledDialogProps) => {
 
   return (
     <>
-      <Button variant="contained" onClick={handleClickOpen}>
+      <Button variant="contained" onClick={handleClickOpen} disabled={disButton}>
         Аннулировать
       </Button>
       <Dialog open={open} onClose={handleClose}>
