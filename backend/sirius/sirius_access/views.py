@@ -783,13 +783,13 @@ def delete_archive_objects(logger):
     except Exception as error:
         logger.error('Error while deleting archive objects: {error}'.format(error=error))
 
-@util.close_old_connections
-def delete_archive_account_to_object(logger):
-    logger.info('Started "delete_archive_account_to_object"')
-    try:
-        AccountToObject.objects.filter(status='outdated').delete()
-    except Exception as error:
-        logger.error('Error while deleting archive account_to_object: {error}'.format(error=error))
+# @util.close_old_connections
+# def delete_archive_account_to_object(logger):
+#     logger.info('Started "delete_archive_account_to_object"')
+#     try:
+#         AccountToObject.objects.filter(status='outdated').delete()
+#     except Exception as error:
+#         logger.error('Error while deleting archive account_to_object: {error}'.format(error=error))
 
 @util.close_old_connections
 def print_smth(logger):
