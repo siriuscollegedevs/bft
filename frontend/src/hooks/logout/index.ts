@@ -17,7 +17,6 @@ export const useLogout = () => {
     try {
       clearInterval(intervalId)
       logoutMutation()
-      deleteCookie('csrftoken')
       dispatch(clearAccount())
       dispatch(clearAuth())
       dispatch(clearAdmissionTechnical())
