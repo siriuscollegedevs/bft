@@ -14,7 +14,6 @@ import { useSelector, useDispatch } from 'react-redux'
 import { Account, Objects } from '../../types/api'
 import { CurrentAccountId, setAccountObjects } from '../../__data__/states/account'
 import { useGetAccountToObjectsQuery } from '../../__data__/service/object-account'
-import CircularProgress from '@mui/material/CircularProgress'
 import { setObjectNamesFilter } from '../../__data__/states/filters'
 import { useEffect } from 'react'
 
@@ -92,91 +91,85 @@ export const Sidebar: React.FC<SidebarProps> = ({ isSearch, isObjects, isButton 
         alignItems: 'center'
       }}
     >
-      {currentAccountObjectsLoading || currentAccountObjectsError ? (
-        <>
-          <CircularProgress size={'100px'} />
-        </>
-      ) : (
-        <>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '35px',
-              width: '100%'
-            }}
-          >
-            {isSearch && (
-              <SidebarButton variant="outlined" color="primary" onClick={() => navigate(searchPath)}>
-                Расширенный поиск
-              </SidebarButton>
-            )}
-            {isObjects && (
-              <>
-                {currentAccountRole === ACCOUNT_ROLES.security_officer.en ? (
-                  <SidebarButton
-                    variant="outlined"
-                    color="primary"
-                    disableRipple
-                    sx={{
-                      '&:hover': {
-                        backgroundColor: 'transparent',
-                        cursor: 'auto'
-                      }
-                    }}
-                  >
-                    {currentAccountObject[0]?.name}
-                  </SidebarButton>
-                ) : (
-                  <FormControl
-                    sx={{
-                      m: 0,
-                      height: '40px',
-                      width: '265px',
-                      '& .MuiInputBase-root': {
-                        '& fieldset': {
-                          borderWidth: '1.5px'
-                        },
-                        '&.Mui-focused fieldset': {
-                          borderWidth: '1.5px'
-                        }
-                      }
-                    }}
-                    focused
-                  >
-                    <InputLabel id="demo-multiple-checkbox-label">Выбор объекта(-ов)</InputLabel>
-                    <Select
-                      labelId="demo-multiple-checkbox-label"
-                      id="demo-multiple-checkbox"
-                      multiple
-                      value={objectName}
-                      onChange={handleChange}
-                      input={<OutlinedInput label="Выбор объекта(-ов)" />}
-                      renderValue={selected => selected.join(', ')}
-                      MenuProps={MenuProps}
-                      sx={{ height: '45px' }}
-                    >
-                      {currentAccountObjectsData?.map(object => (
-                        <MenuItem key={object.id} value={object.name}>
-                          <Checkbox checked={objectName.indexOf(object.name) > -1} />
-                          <ListItemText primary={object.name} />
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                )}
-              </>
-            )}
-          </Box>
-          {isButton && currentAccountRole !== ACCOUNT_ROLES.security_officer.en ? (
-            <SidebarButton variant="contained" color="primary" onClick={handleCreate}>
-              {location.pathname.startsWith('/admissions') ? 'Создать заявку' : 'Создать запись'}
+      <>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '35px',
+            width: '100%'
+          }}
+        >
+          {isSearch && (
+            <SidebarButton variant="outlined" color="primary" onClick={() => navigate(searchPath)}>
+              Расширенный поиск
             </SidebarButton>
-          ) : (
-            <></>
           )}
-        </>
-      )}
+          {isObjects && (
+            <>
+              {currentAccountRole === ACCOUNT_ROLES.security_officer.en ? (
+                <SidebarButton
+                  variant="outlined"
+                  color="primary"
+                  disableRipple
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      cursor: 'auto'
+                    }
+                  }}
+                >
+                  {currentAccountObject[0]?.name}
+                </SidebarButton>
+              ) : (
+                <FormControl
+                  sx={{
+                    m: 0,
+                    height: '40px',
+                    width: '265px',
+                    '& .MuiInputBase-root': {
+                      '& fieldset': {
+                        borderWidth: '1.5px'
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderWidth: '1.5px'
+                      }
+                    }
+                  }}
+                  focused
+                >
+                  <InputLabel id="demo-multiple-checkbox-label">Выбор объекта(-ов)</InputLabel>
+                  <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={objectName}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Выбор объекта(-ов)" />}
+                    renderValue={selected => selected.join(', ')}
+                    MenuProps={MenuProps}
+                    sx={{ height: '45px' }}
+                  >
+                    {currentAccountObjectsData?.map(object => (
+                      <MenuItem key={object.id} value={object.name}>
+                        <Checkbox checked={objectName.indexOf(object.name) > -1} />
+                        <ListItemText primary={object.name} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            </>
+          )}
+        </Box>
+        {isButton && currentAccountRole !== ACCOUNT_ROLES.security_officer.en ? (
+          <SidebarButton variant="contained" color="primary" onClick={handleCreate}>
+            {location.pathname.startsWith('/admissions') ? 'Создать заявку' : 'Создать запись'}
+          </SidebarButton>
+        ) : (
+          <></>
+        )}
+      </>
     </Box>
   )
 }
