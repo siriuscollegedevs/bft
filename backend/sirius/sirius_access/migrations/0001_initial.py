@@ -57,9 +57,9 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('timestamp', models.DateTimeField(default=timezone.now)),
-                ('first_name', models.CharField(blank=True, max_length=60, null=True)),
+                ('first_name', models.CharField(blank=True, max_length=60, null=True, default='')),
                 ('last_name', models.CharField(max_length=60)),
-                ('surname', models.CharField(blank=True, max_length=60, null=True)),
+                ('surname', models.CharField(blank=True, max_length=60, null=True, default='')),
                 ('action', models.CharField(choices=[('deleted', 'Удален'), ('modified', 'Изменен'), ('created', 'Создан'), ('password_changed', 'Изменен пароль')], max_length=16)),
                 ('account', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='modified', to='sirius_access.account')),
                 ('modified_by', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='modifier', to='sirius_access.account')),
