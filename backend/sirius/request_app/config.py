@@ -39,3 +39,23 @@ GET_RECORD_HISTORY_FIELDS = RECORD_GENERAL_FIELDS + ["action", "timestamp", "mod
 HUMAN_RECORD_KEYS = ('first_name', 'last_name', 'surname')
 CAR_RECORD_KEYS = ('car_number', 'car_brand', 'car_model')
 GENERAL_RECORD_KEYS = ('type', 'from_date', 'to_date', 'note', 'objects')
+
+# EXCEL_PARSING
+LAST_NAME_FIELD_LETTER = "B"
+SURNAME_FIELD_LETTER = "D"
+FIRST_NAME_FIELD_LETTER = "C"
+
+TO_DATE_CELL = "E5"
+FROM_DATE_CELL = "E4"
+
+CAR_BRAND_FIELD_LETTER = "B"
+CAR_NOTE_FIELD_LETTER = "H"
+CAR_NUMBER_FIELD_LETTER = "E"
+
+START = '12'
+START_OF_CAR_RECORDS = 'Список автотранспортных средств'
+END_OF_CAR_RECORDS = 'Дополнительная информация:'
+
+SHEET_NAME = 'Заявка'
+FIELD_FOR_CHECK_LETTER = 'B'
+OBJECTS_FIELD = 'E2'
