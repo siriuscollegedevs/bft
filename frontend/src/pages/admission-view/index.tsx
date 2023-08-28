@@ -107,13 +107,6 @@ export const AdmissionViewPage = () => {
             <SearchField />
           </Box>
           <Box>
-            {/* <Button
-              variant="contained"
-              sx={{ marginRight: '14px' }}
-              onClick={() => navigate(`/admissions/${id}/record/create`)}
-            >
-              Добавить запись
-            </Button> */}
             <Button
               variant={archive ? 'outlined' : 'contained'}
               disabled={historyAdmissionData ? historyAdmissionData.length === 0 : true}

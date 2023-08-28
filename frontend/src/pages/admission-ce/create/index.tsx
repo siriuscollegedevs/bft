@@ -55,32 +55,23 @@ export const AdmissionCreate = () => {
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'space-between',
             alignItems: 'center',
+            justifyContent: 'center',
             width: '90%',
-            marginBottom: '30px',
-            marginTop: '8px'
+            marginTop: '14px'
           }}
         >
-          <Box>
-            <Button
-              variant="contained"
-              sx={{ marginRight: '14px' }}
-              onClick={() => {
-                dispatch(setIsCreateFlag(true))
-                navigate(`/admissions/${createAdmissionData?.id}/record/create`, {
-                  state: { id: createAdmissionData?.id }
-                })
-              }}
-            >
-              Добавить запись
-            </Button>
-          </Box>
-          <Box>
-            <Button variant="contained" disabled>
-              Архив
-            </Button>
-          </Box>
+          <Button
+            variant="contained"
+            onClick={() => {
+              dispatch(setIsCreateFlag(true))
+              navigate(`/admissions/${createAdmissionData?.id}/record/create`, {
+                state: { id: createAdmissionData?.id }
+              })
+            }}
+          >
+            Добавить запись
+          </Button>
         </Box>
         <Box sx={{ width: '90%', height: '100%' }}>
           <EmptyAdmission />

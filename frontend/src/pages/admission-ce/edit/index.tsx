@@ -38,7 +38,6 @@ export const AdmissionViewEdit = () => {
   const isArchivePage = location.pathname.includes('/archive')
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
   const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole, 'admission')
-  const { data: historyAdmissionData, refetch: updateHistoryAdmissionData } = useGetAdmissionsHistoryByIdQuery(id ?? '')
   const [deleteAdmission] = useDeleteAdmissionsByIdMutation()
   const [deleteMultipleRecords] = useDeleteMultipleRecordsMutation()
   const search = useSelector((state: { search: SearchState }) => state.search)
@@ -49,7 +48,6 @@ export const AdmissionViewEdit = () => {
 
   useEffect(() => {
     updateRecordsOfAdmissionData()
-    updateHistoryAdmissionData()
   }, [id])
 
   const sortedData: AdmissionsHistory[] = useMemo(() => {
@@ -100,30 +98,22 @@ export const AdmissionViewEdit = () => {
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'space-between',
             alignItems: 'center',
+            justifyContent: 'center',
             width: '90%',
-            marginTop: '-48px'
+            marginTop: '14px'
           }}
         >
-          <Box>
-            <Button
-              variant="contained"
-              sx={{ marginRight: '14px' }}
-              onClick={() =>
-                navigate(`/admissions/${id}/record/create`, {
-                  state: { create: true, id: id }
-                })
-              }
-            >
-              Добавить запись
-            </Button>
-          </Box>
-          <Box>
-            <Button variant="contained" disabled={historyAdmissionData ? historyAdmissionData.length === 0 : true}>
-              Архив
-            </Button>
-          </Box>
+          <Button
+            variant="contained"
+            onClick={() =>
+              navigate(`/admissions/${id}/record/create`, {
+                state: { create: true, id: id }
+              })
+            }
+          >
+            Добавить запись
+          </Button>
         </Box>
         <Box sx={{ width: '90%', height: '65vh', display: 'flex', justifyContent: 'center', mt: '15px' }}>
           {filteredTableData && filteredTableData.length > 0 ? (
