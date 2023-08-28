@@ -78,7 +78,6 @@ export const AdmissionViewPage = () => {
         sx={{
           alignItems: 'center',
           display: 'flex',
-          justifyContent: 'center',
           flexDirection: 'column',
           width: '100%',
           height: '70vh'
@@ -93,7 +92,7 @@ export const AdmissionViewPage = () => {
             marginBottom: '30px'
           }}
         >
-          <Box>
+          <Box sx={{ height: '100%' }}>
             <SearchField />
           </Box>
           <Box>
@@ -132,7 +131,7 @@ export const AdmissionViewPage = () => {
           />
         ) : (
           search.searchFilter.length > 0 && (
-            <Box sx={{ width: '100%' }}>
+            <Box sx={{ width: '90%' }}>
               <p>Ничего не найдено, проверьте введенные данные.</p>
             </Box>
           )
