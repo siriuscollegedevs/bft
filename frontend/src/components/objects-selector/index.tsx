@@ -10,13 +10,16 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
-  Typography
+  Typography,
+  CircularProgress,
+  Input
 } from '@mui/material'
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { Objects } from '../../types/api'
-import { setShowObjectsSelector } from '../../__data__/states/admission-technical'
+import { setIsCreateFlag, setShowObjectsSelector } from '../../__data__/states/admission-technical'
+import { useCreateAdmissionVieExcelMutation } from '../../__data__/service/admission.api'
 
 type ObjectsSelectorProps = {
   onSelectObject: (selected: Objects[]) => void
@@ -31,6 +34,9 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
   const currentAccountObjects = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
+  const [uploadFile, { isError: uploadFileError, isLoading: uploadFileLoading }] = useCreateAdmissionVieExcelMutation()
+  const [uploading, setUploading] = useState(false)
+  const [uploadingError, setUploadingError] = useState(false)
 
   const handleBack = () => {
     setOpen(false)
@@ -48,6 +54,32 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
     const selectedObjects = currentAccountObjects.filter(obj => selectedObjectNames.includes(obj.name))
     setSelectedObjects(selectedObjects)
     setHasSelected(selectedObjects.length > 0)
+  }
+
+  const hendlerExcel = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setUploading(true)
+      try {
+        const formData = new FormData()
+        formData.append('excel_file', file)
+        console.log(formData)
+        const uploadFileRespons = await uploadFile(formData)
+        setUploading(false)
+        if ('data' in uploadFileRespons && !uploadFileError) {
+          setUploadingError(false)
+          dispatch(setIsCreateFlag(true))
+          navigate(`/admissions/${uploadFileRespons.data?.request_id}`, {
+            state: { create: true }
+          })
+        } else {
+          setUploadingError(true)
+        }
+      } catch (error) {
+        console.error('Ошибка при загрузке файла:', error)
+        setUploading(false)
+      }
+    }
   }
 
   return (
@@ -100,8 +132,15 @@ export const ObjectsSelector: React.FC<ObjectsSelectorProps> = ({ onSelectObject
               marginBottom: '2%'
             }}
           >
-            <Button variant="contained" sx={{ height: '46px' }} disabled={hasSelected}>
-              Импортировать excel
+            <Button
+              variant="contained"
+              component="label"
+              sx={{ height: '46px' }}
+              disabled={hasSelected}
+              color={uploadingError ? 'error' : 'primary'}
+            >
+              {uploading || uploadFileLoading ? <CircularProgress size={20} color="inherit" /> : 'Импортировать excel'}
+              <input type="file" accept=".xlsx, .xls" hidden onChange={hendlerExcel} />
             </Button>
           </FormControl>
         </DialogContent>
