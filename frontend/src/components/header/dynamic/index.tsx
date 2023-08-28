@@ -130,11 +130,13 @@ export const DynamicHeader = () => {
                 >
                   <SettingsIcon />
                 </CustomSettingsButton>
-                {currentAccountData?.last_name !== null && currentAccountData?.surname !== null ? (
-                  <CustomTypography>{`${currentAccountData?.first_name} ${currentAccountData?.last_name[0]}.${currentAccountData?.surname[0]}.`}</CustomTypography>
-                ) : (
-                  <CustomTypography>{`${currentAccountData?.first_name}`}</CustomTypography>
-                )}
+                <CustomTypography>
+                  {currentAccountData?.last_name && currentAccountData?.first_name && currentAccountData?.surname
+                    ? `${currentAccountData?.last_name}.${currentAccountData?.first_name[0]}.${currentAccountData?.surname[0]}.`
+                    : currentAccountData?.last_name && currentAccountData?.first_name
+                    ? `${currentAccountData?.last_name}.${currentAccountData?.first_name[0]}.`
+                    : currentAccountData?.last_name}
+                </CustomTypography>
               </>
             )}
             <CustomExitButton color="inherit" variant="contained" onClick={() => logout()}>

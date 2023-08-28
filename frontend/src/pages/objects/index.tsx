@@ -36,6 +36,7 @@ export const ObjectsPage = () => {
   const buttonNames: ButtonName[] = getButtonNames(isArchivePage, currentAccountRole, 'object')
   const sidebarProps = generateSidebarProps(currentAccountRole, 'object')
   const [tableData, setTableData] = useState(isArchivePage ? objectsArchiveData : objectsData)
+  const [dataLoaded, setDataLoaded] = useState(false)
 
   useEffect(() => {
     if (isArchivePage) {
@@ -46,6 +47,12 @@ export const ObjectsPage = () => {
       setTableData(objectsData)
     }
   }, [objectsData, objectsArchiveData, isArchivePage])
+
+  useEffect(() => {
+    if ((isArchivePage && objectsArchiveData) || (!isArchivePage && objectsData)) {
+      setDataLoaded(true)
+    }
+  }, [isArchivePage, objectsArchiveData, objectsData])
 
   const sortedRows = useMemo(() => {
     if (tableData) {
@@ -59,6 +66,8 @@ export const ObjectsPage = () => {
     item.name.toLowerCase().includes(search.searchFilter.toLowerCase())
   )
 
+  const hasData = filteredTableData && filteredTableData.length > 0
+
   return (
     <>
       <EntityTitle isSwitch={true} isSearchField={true} />
@@ -68,21 +77,27 @@ export const ObjectsPage = () => {
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
         ) : (
           <>
-            {filteredTableData && filteredTableData.length > 0 ? (
-              <SmartTable
-                buttonNames={buttonNames}
-                size={{
-                  width: '100%',
-                  height: '100%'
-                }}
-                data={filteredTableData}
-              />
-            ) : (
-              search.searchFilter.length > 0 && (
-                <Box sx={{ width: '100%' }}>
+            {dataLoaded && !hasData ? (
+              <Box sx={{ width: '100%' }}>
+                {search.searchFilter.length > 0 ? (
                   <p>Ничего не найдено, проверьте введенные данные.</p>
-                </Box>
-              )
+                ) : (
+                  <p>Пока тут нет данных.</p>
+                )}
+              </Box>
+            ) : (
+              <>
+                {hasData && (
+                  <SmartTable
+                    buttonNames={buttonNames}
+                    size={{
+                      width: '100%',
+                      height: '100%'
+                    }}
+                    data={filteredTableData}
+                  />
+                )}
+              </>
             )}
             <Sidebar {...sidebarProps} />
           </>
