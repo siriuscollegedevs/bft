@@ -28,7 +28,7 @@ urlpatterns = [
 ]
 
 PATHS = (
-    '',
+    r'^$',
     'settings',
     'navigation',
     'directories',
