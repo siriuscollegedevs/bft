@@ -6,11 +6,12 @@ import { SmartTable } from '../../components/smart-table'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   useGetAdmissionByIdQuery,
+  useGetAdmissionsHistoryByIdQuery,
   useGetRecordOfAdmissionsQuery,
   useUpdateAdmissionStatusMutation
 } from '../../__data__/service/admission.api'
 import { CanceledDialog } from '../../components/canceled-dialog'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { sortData } from '../../utils/sorting'
 import { useSelector } from 'react-redux'
 import { SearchState } from '../../__data__/states/search'
@@ -26,19 +27,29 @@ export const AdmissionViewPage = () => {
     id ?? ''
   )
   const { data: admissionData, refetch: updateAdmissionData } = useGetAdmissionByIdQuery(id ?? '')
+  const { data: historyAdmissionData, refetch: updateHistoryAdmissionData } = useGetAdmissionsHistoryByIdQuery(id ?? '')
 
   const search = useSelector((state: { search: SearchState }) => state.search)
   const splitSearchQuery = search.searchFilter.split(' ')
+  const [archive, setArchive] = useState(false)
+  const [data, setData] = useState<AdmissionsHistory[]>(RecordsOfAdmissionData ?? [])
+
+  useEffect(() => {
+    if (historyAdmissionData && RecordsOfAdmissionData) {
+      setData(archive ? historyAdmissionData : RecordsOfAdmissionData)
+    }
+  }, [historyAdmissionData, RecordsOfAdmissionData, archive])
 
   useEffect(() => {
     updateRecordsOfAdmissionData()
     updateAdmissionData()
+    updateHistoryAdmissionData()
   }, [id])
 
   const sortedData: AdmissionsHistory[] = useMemo(() => {
-    if (RecordsOfAdmissionData) {
-      const people = RecordsOfAdmissionData.filter(item => item.last_name !== null)
-      const cars = RecordsOfAdmissionData.filter(item => item.last_name === null)
+    if (data) {
+      const people = data.filter(item => item.last_name !== null)
+      const cars = data.filter(item => item.last_name === null)
 
       const sortedPeople = sortData(people, 'last_name')
       const sortedCars = sortData(cars, 'car_brand')
@@ -47,7 +58,7 @@ export const AdmissionViewPage = () => {
     } else {
       return []
     }
-  }, [RecordsOfAdmissionData])
+  }, [data])
 
   const filteredTableData: AdmissionsHistory[] = sortedData?.filter(item => {
     if (item !== null) {
@@ -96,12 +107,20 @@ export const AdmissionViewPage = () => {
             <SearchField />
           </Box>
           <Box>
-            <Button
+            {/* <Button
               variant="contained"
               sx={{ marginRight: '14px' }}
               onClick={() => navigate(`/admissions/${id}/record/create`)}
             >
               Добавить запись
+            </Button> */}
+            <Button
+              variant={archive ? 'outlined' : 'contained'}
+              disabled={historyAdmissionData ? historyAdmissionData.length === 0 : true}
+              onClick={() => setArchive(!archive)}
+              sx={{ marginRight: '14px' }}
+            >
+              Архив
             </Button>
             <Button variant="contained" sx={{ marginRight: '14px' }} onClick={() => navigate(`/admissions/${id}`)}>
               Редактировать
