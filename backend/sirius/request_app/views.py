@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from .models import Request, RequestHistory, Record, RecordHistory, RequestToObject
-from sirius_access.models import Object
+from sirius_access.models import Object, Account
 from sirius_access.config import NO_SEARCH_OBJECTS_FOUND_ERROR
 from rest_framework import status
 from django.db import transaction
@@ -564,9 +564,6 @@ def check_outdated_records(logger):
                 record.make_outdated(account, 'outdated')
     except Exception as ex:
         logger.error('Error while checking outdated records: {error}'.format(error=ex))
-    def ready(self):
-        from sirius import operator
-        operator.start()
     try:
         for request in Request.objects.filter(status='active'):
             if not Record.objects.filter(request=request, status='active').exists():
