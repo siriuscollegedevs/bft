@@ -3,18 +3,19 @@ import { config } from './config'
 import { RootState } from '../types/api'
 import { useSelector } from 'react-redux'
 import { AuthState } from './states/auth'
+import { getCookie } from '../utils/cookie-parser'
 
 export const baseQuery = fetchBaseQuery({
   baseUrl: config.baseAPI,
   credentials: 'include',
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.access
-    const csrf = (getState() as RootState).auth.csrf
+    const csrf = getCookie('csrftoken')
 
     if (token) {
       headers.set('Authorization', `Bearer ${token}`)
-      headers.set('X-CSRFToken', csrf as string)
     }
+    headers.set('X-CSRFToken', csrf as string)
 
     return headers
   }

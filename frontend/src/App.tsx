@@ -55,6 +55,10 @@ export const App: React.FC = (): JSX.Element => {
     }
   }, [])
 
+  useEffect(() => {
+    refreshabilityCheck()
+  })
+
   return (
     <>
       <ThemeProvider theme={Classic}>

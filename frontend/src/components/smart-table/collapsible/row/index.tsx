@@ -58,11 +58,11 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
               {row.last_name} {row.first_name} {row.surname}
             </CustomCell>
             <CustomCell align="left">{ACCOUNT_ROLES[row?.role as keyof typeof ACCOUNT_ROLES].ru}</CustomCell>
-            <CustomCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+            <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
               <Box display="flex" alignItems="center" justifyContent="flex-end">
                 <ShortcutButtons buttonNames={buttonNames} id={row.id} />
               </Box>
-            </CustomCell>
+            </TableCell>
           </>
         )}
         {(itsEmployees({ currentURL }) || itsEmployeesArchive({ currentURL })) && 'objects' in row && (
@@ -70,11 +70,11 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
             <CustomCell align="left" sx={{ width: '100%' }}>
               {row.last_name} {row.first_name} {row.surname}
             </CustomCell>
-            <CustomCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+            <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
               <Box display="flex" alignItems="center" justifyContent="flex-end">
                 <ShortcutButtons buttonNames={buttonNames} id={row.id} />
               </Box>
-            </CustomCell>
+            </TableCell>
           </>
         )}
         {itsAdmissions({ currentURL }) && 'type' in row && (
@@ -109,11 +109,11 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
               </>
             ) : (
               <>
-                <CustomCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
+                <TableCell align="right" sx={{ borderBottom: '1px solid rgba(224, 224, 224, 1)' }}>
                   <Box display="flex" alignItems="center" justifyContent="flex-end">
                     <ShortcutButtons buttonNames={buttonNames} id={row.id} />
                   </Box>
-                </CustomCell>
+                </TableCell>
               </>
             )}
           </>
@@ -140,7 +140,7 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                   {itsAdmissions({ currentURL }) && 'type' in row && (
                     <>
                       <CustomRow>
-                        <CustomCollapseCellAdmissions align="left">
+                        <CustomCollapseCellAdmissions align="left" padding={'checkbox'}>
                           {getObjectValueByKey(row.type, RECORD_TYPE)}
                         </CustomCollapseCellAdmissions>
                         {row.from_date !== '' && row.type === 'for_long_time' ? (
@@ -172,11 +172,11 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                           </CustomCollapseCellAdmissions>
                         )}
                         {!itsAdmissionsView({ currentURL }) && (
-                          <CustomCell align="right">
+                          <TableCell align="right">
                             <Box display="flex" alignItems="center" justifyContent="flex-end">
                               <ShortcutButtons buttonNames={['history']} id={row.id} />
                             </Box>
-                          </CustomCell>
+                          </TableCell>
                         )}
                       </CustomRow>
                     </>

@@ -25,9 +25,15 @@ export const SearchField = () => {
         type="search"
         placeholder="Поиск..."
         onChange={handleSearchChange}
+        sx={{
+          height: '100%',
+          '& .MuiInputBase-root.MuiInput-root': {
+            height: '100%'
+          }
+        }}
         InputProps={{
           startAdornment: (
-            <InputAdornment position="start">
+            <InputAdornment position="start" sx={{ height: '100%' }}>
               <SearchOutlinedIcon />
             </InputAdornment>
           )
