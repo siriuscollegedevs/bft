@@ -5,12 +5,14 @@ import { useRefreshToken } from '../refresh-token'
 export const useRefreshabilityCheck = () => {
   const updateProcess = useSelector((state: { auth: AuthState }) => state.auth.updateProcess)
   const accessTokenUpdateInterval = useSelector((state: { auth: AuthState }) => state.auth.accessTokenUpdateInterval)
+  const login = useSelector((state: { auth: AuthState }) => state.auth.login)
+
   const refresh = useRefreshToken()
   const dispatch = useDispatch()
 
   const refreshabilityCheck = async () => {
     try {
-      if (!updateProcess && accessTokenUpdateInterval !== 0) {
+      if (!updateProcess && accessTokenUpdateInterval !== 0 && login) {
         const refreshAndDispatch = async () => {
           const newToken = await refresh()
           if (newToken) {

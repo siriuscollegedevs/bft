@@ -7,6 +7,7 @@ export type AuthState = {
   csrf: string
   updateProcess: boolean
   intervalId: number | NodeJS.Timeout
+  login: boolean
 }
 
 const initialState: AuthState = {
@@ -14,7 +15,8 @@ const initialState: AuthState = {
   accessTokenUpdateInterval: 0,
   csrf: '',
   updateProcess: false,
-  intervalId: '' || 0
+  intervalId: '' || 0,
+  login: false
 }
 
 const authSlice = createSlice({

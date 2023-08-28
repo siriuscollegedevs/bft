@@ -45,7 +45,8 @@ export const LoginForm = () => {
           accessTokenUpdateInterval: response.access_exp,
           csrf: getCookie('csrftoken'),
           updateProcess: true,
-          intervalId: intervalId
+          intervalId: intervalId,
+          login: true
         })
       )
 
