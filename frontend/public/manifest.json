@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "bft",
+  "name": "BFT",
   "icons": [
     {
       "src": "favicon.ico",
