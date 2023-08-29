@@ -110,7 +110,11 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
         break
       case 'history':
         newPath = newPath.includes('/search') ? newPath.replace('/search', '') : newPath
-        navigate(`${newPath}/history/${id}`)
+        if (location.pathname.includes('/admissions/')) {
+          navigate(`/admissions/history/${id}`)
+        } else {
+          navigate(`${newPath}/history/${id}`)
+        }
         break
       case 'toRepay':
         handleToRepay()
