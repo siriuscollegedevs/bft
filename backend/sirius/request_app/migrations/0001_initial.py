@@ -48,7 +48,7 @@ class Migration(migrations.Migration):
             name='RequestHistory',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('timestamp', models.DateTimeField(default=timezone.now)),
+                ('timestamp', models.DateTimeField(auto_now_add=True)),
                 ('code', models.IntegerField(editable=False)),
                 ('action', models.CharField(choices=[('deleted', 'Удалена'), ('canceled', 'Аннулирована'), ('outdated', 'Истек срок действия'), ('modified', 'Изменена'), ('created', 'Создана'), ('closed', 'Погашена')], max_length=10)),
                 ('modified_by', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sirius_access.account')),
@@ -62,7 +62,7 @@ class Migration(migrations.Migration):
             name='RecordHistory',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('timestamp', models.DateTimeField(default=timezone.now)),
+                ('timestamp', models.DateTimeField(auto_now_add=True)),
                 ('action', models.CharField(choices=[('deleted', 'Удалена'), ('canceled', 'Аннулирована'), ('outdated', 'Истек срок действия'), ('modified', 'Изменена'), ('created', 'Создана'), ('closed', 'Погашена')], max_length=10)),
                 ('car_number', models.CharField(blank=True, max_length=60, null=True, default='')),
                 ('car_brand', models.CharField(blank=True, max_length=60, null=True, default='')),

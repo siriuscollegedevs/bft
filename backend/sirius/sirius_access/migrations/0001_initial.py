@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
                 ('version', models.IntegerField(default=0, validators=[sirius_access.models.is_positive])),
                 ('name', models.CharField(max_length=50)),
-                ('timestamp', models.DateTimeField(default=timezone.now)),
+                ('timestamp', models.DateTimeField(auto_now_add=True)),
                 ('action', models.CharField(choices=[('deleted', 'Удален'), ('modified', 'Изменен'), ('created', 'Создан')], max_length=10)),
                 ('modified_by', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sirius_access.account')),
                 ('object', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, to='sirius_access.object')),
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
             name='AccountHistory',
             fields=[
                 ('id', models.UUIDField(default=uuid.uuid4, editable=False, primary_key=True, serialize=False)),
-                ('timestamp', models.DateTimeField(default=timezone.now)),
+                ('timestamp', models.DateTimeField(auto_now_add=True)),
                 ('first_name', models.CharField(blank=True, max_length=60, null=True, default='')),
                 ('last_name', models.CharField(max_length=60)),
                 ('surname', models.CharField(blank=True, max_length=60, null=True, default='')),
