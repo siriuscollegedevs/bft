@@ -6,15 +6,12 @@ from rest_framework.views import APIView
 from django.http import HttpResponse
 from . import serializers
 from django.db.models import F
-from django.utils import timezone
-from datetime import timedelta
 from sirius.general_functions import get_user, check_administrator, list_to_queryset
 from django.contrib.auth.models import User
 from drf_spectacular.utils import extend_schema, inline_serializer
 from rest_framework import serializers as ser
 from .config import *
 from sirius.config import DB_ERROR, NO_DATA_FOUND_ERROR
-#from request_app.models import RecordHistory, RequestHistory
 
 
 def check_name(name):
@@ -744,56 +741,6 @@ class ActualAccountToObjectExpandSearchView(AccountToObjectExpandSearchView):
 class ArchiveAccountToObjectExpandSearchView(AccountToObjectExpandSearchView):
     status = 'outdated'
 
-
-# ARCHIVE SCHEDULER
-from django_apscheduler import util
-
-
-@util.close_old_connections
-def delete_archive_accounts(logger):
-    logger.info('Started "delete_archive_accounts"')
-    try:
-        AccountHistory.objects.filter(timestamp__lte=timezone.now() - timedelta(365)).delete()
-    except Exception as error:
-        logger.error('Error while deleting accounts history: {error}'.format(error=error))
-    try:
-        for account in Account.objects.filter(status='outdated'):
-            if not (
-                AccountHistory.objects.filter(account=account).exists() or
-                AccountToObject.objects.filter(account=account).exists()
-            ):
-                account.delete()
-    except Exception as error:
-        logger.error('Error while deleting archive accounts: {error}'.format(error=error))
-
-@util.close_old_connections
-def delete_archive_objects(logger):
-    logger.info('Started "delete_archive_objects"')
-    try:
-        ObjectHistory.objects.filter(timestamp__lte=timezone.now() - timedelta(365)).delete()
-    except Exception as error:
-        logger.error('Error while deleting objects history: {error}'.format(error=error))
-    try:
-        for object_ins in Object.objects.filter(status='outdated'):
-            if not (
-                ObjectHistory.objects.filter(object=object_ins).exists() or
-                AccountToObject.objects.filter(object=object_ins).exists()
-            ):
-                object_ins.delete()
-    except Exception as error:
-        logger.error('Error while deleting archive objects: {error}'.format(error=error))
-
-# @util.close_old_connections
-# def delete_archive_account_to_object(logger):
-#     logger.info('Started "delete_archive_account_to_object"')
-#     try:
-#         AccountToObject.objects.filter(status='outdated').delete()
-#     except Exception as error:
-#         logger.error('Error while deleting archive account_to_object: {error}'.format(error=error))
-
-@util.close_old_connections
-def print_smth(logger):
-    logger.info('--------------')
 
 from django.conf import settings
 from os import path
