@@ -171,13 +171,11 @@ export const Row = ({ row, buttonNames, currentURL }: { row: CommonData } & Butt
                             {'Примечание: ' + row.note}
                           </CustomCollapseCellAdmissions>
                         )}
-                        {!itsAdmissionsView({ currentURL }) && (
-                          <TableCell align="right">
-                            <Box display="flex" alignItems="center" justifyContent="flex-end">
-                              <ShortcutButtons buttonNames={['history']} id={row.id} />
-                            </Box>
-                          </TableCell>
-                        )}
+                        <TableCell align="right">
+                          <Box display="flex" alignItems="center" justifyContent="flex-end">
+                            <ShortcutButtons buttonNames={['history']} id={row.id} />
+                          </Box>
+                        </TableCell>
                       </CustomRow>
                     </>
                   )}
