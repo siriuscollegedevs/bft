@@ -75,7 +75,7 @@ class ObjectHistory(UUIDMixin, models.Model):
 
 
 class AccountHistory(UUIDMixin, models.Model):
-    timestamp = models.DateTimeField(dauto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
     account = models.ForeignKey(Account, on_delete=models.CASCADE, related_name='modified')
     first_name = models.CharField(max_length=NAMES_LEN, null=True, blank=True, default='')
     last_name = models.CharField(max_length=NAMES_LEN)
