@@ -6,5 +6,5 @@ class SiriusAccessConfig(AppConfig):
     name = 'sirius_access'
 
     def ready(self):
-        from sirius import operator
+        from jobs import operator
         operator.start()
