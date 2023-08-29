@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
@@ -26,3 +26,39 @@ urlpatterns = [
     path('account_to_object/expand_search', views.ActualAccountToObjectExpandSearchView.as_view()),
     path('account_to_object/expand_search/archive', views.ArchiveAccountToObjectExpandSearchView.as_view()),
 ]
+
+PATHS = (
+    r'^$',
+    'settings',
+    'navigation',
+    'directories',
+    'accounts',
+    'accounts/archive',
+    'accounts/create',
+    'accounts/:id',
+    'accounts/search',
+    'accounts/history/:id',
+    'objects',
+    'objects/archive',
+    'objects/create',
+    'objects/:id',
+    'objects/search',
+    'objects/history/:id',
+    'employees',
+    'employees/archive',
+    'employees/create',
+    'employees/:id',
+    'employees/search',
+    'employees/history/:id',
+    'admissions',
+    'admissions/archive',
+    'admissions/view/{:admission_id}',
+    'admissions/{:admission_id}',
+    'admissions/create',
+    'admissions/search',
+    'admissions/{:admission_id}/record/create',
+    'admissions/{:admission_id}/record/edit',
+    'admissions/history/{:admission_id}',
+)
+    
+urlpatterns += [re_path(path, views.indexView) for path in PATHS]

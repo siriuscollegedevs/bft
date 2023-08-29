@@ -1,6 +1,6 @@
 from rest_framework.response import Response
 from .models import Request, RequestHistory, Record, RecordHistory, RequestToObject
-from sirius_access.models import Object
+from sirius_access.models import Object, Account
 from sirius_access.config import NO_SEARCH_OBJECTS_FOUND_ERROR
 from rest_framework import status
 from django.db import transaction

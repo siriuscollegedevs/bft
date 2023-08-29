@@ -3,6 +3,7 @@ from .models import Object, ObjectHistory, Account, AccountHistory, AccountToObj
 from rest_framework import status
 from django.db import transaction
 from rest_framework.views import APIView
+from django.http import HttpResponse
 from . import serializers
 from django.db.models import F
 from sirius.general_functions import get_user, check_administrator, list_to_queryset
@@ -739,3 +740,10 @@ class ActualAccountToObjectExpandSearchView(AccountToObjectExpandSearchView):
 
 class ArchiveAccountToObjectExpandSearchView(AccountToObjectExpandSearchView):
     status = 'outdated'
+
+
+from django.conf import settings
+from os import path
+
+def indexView(request):
+    return HttpResponse(open(path.join(settings.BASE_DIR, "static/index.html")).read())

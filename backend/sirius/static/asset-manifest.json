@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.js": "/static/js/main.bce509ec.js",
+    "static/js/787.cda612ba.chunk.js": "/static/js/787.cda612ba.chunk.js",
+    "static/media/sirius-logo.svg": "/static/media/sirius-logo.6619160ede751049a24b8bc895937eb1.svg",
+    "static/media/settings.svg": "/static/media/settings.dff9ef2eb0def3be06f725dd74d065cc.svg",
+    "static/media/edit.svg": "/static/media/edit.46b33d9649dc421f6eb9508273e2aa1f.svg",
+    "static/media/toRepay.svg": "/static/media/toRepay.c1037bb842759d5f9f80f10ab98198f8.svg",
+    "static/media/cancel.svg": "/static/media/cancel.bc0f65e0324d1b1daedc63dbc00a18a4.svg",
+    "static/media/car.svg": "/static/media/car.b8531f7a71e194b478ca9823d77335a9.svg",
+    "static/media/trash.svg": "/static/media/trash.2f2b214417afd2fbaba2d11a40bc1220.svg",
+    "static/media/history.svg": "/static/media/history.56d149f3c584fe0a22d54ba4909d553d.svg",
+    "static/media/human.svg": "/static/media/human.88a09c3c4564d1abb68f41bfa73743f2.svg",
+    "index.html": "/index.html",
+    "static/media/arrow.svg": "/static/media/arrow.e3c14d713c4a53e7edf89e4ae6ee7ee3.svg",
+    "main.bce509ec.js.map": "/static/js/main.bce509ec.js.map",
+    "787.cda612ba.chunk.js.map": "/static/js/787.cda612ba.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.bce509ec.js"
+  ]
+}
