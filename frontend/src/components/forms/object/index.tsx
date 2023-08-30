@@ -29,6 +29,7 @@ export const FormObject = () => {
 
   useEffect(() => {
     if (isEditMode && objectsDataById) {
+      refetchObjectsDataById()
       setFieldObject(objectsDataById)
     }
   }, [isEditMode, objectsDataById])
@@ -44,16 +45,17 @@ export const FormObject = () => {
 
     if (fieldObject.name && noErrors) {
       if (isEditMode) {
-        updateObjectMutation({ objectId: id, objectData: fieldObject })
         refetchObjectsDataById()
+        updateObjectMutation({ objectId: id, objectData: fieldObject })
+      } else {
+        objectsMutation(fieldObject)
       }
-      objectsMutation(fieldObject)
     }
   }
 
   useEffect(() => {
     if (objectSuccess || updateSuccess) {
-      navigate(-1)
+      navigate('/objects')
     }
   }, [objectSuccess, updateSuccess, navigate])
 
