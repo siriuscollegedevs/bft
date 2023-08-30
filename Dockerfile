@@ -20,5 +20,10 @@ RUN pip install -r requirements.txt
 
 COPY --from=build_frontend /frontend/build/static ./sirius/static
 COPY --from=build_frontend /frontend/build/index.html ./sirius/static
+COPY --from=build_frontend /frontend/public/favicon.ico ./sirius/static
+COPY --from=build_frontend /frontend/public/logo192.png ./sirius/static
+COPY --from=build_frontend /frontend/public/logo512.png ./sirius/static
+COPY --from=build_frontend /frontend/public/manifest.json ./sirius/static
+COPY --from=build_frontend /frontend/public/robots.txt ./sirius/static
 
 CMD ["sh", "-c", "python ./sirius/manage.py collectstatic --noinput && python ./sirius/manage.py migrate && python ./sirius/manage.py runserver 0.0.0.0:8000"]
