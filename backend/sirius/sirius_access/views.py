@@ -24,7 +24,7 @@ def check_name(name):
 
 
 class GetObjects(APIView):
-    status
+    status: str
 
     @extend_schema(responses={
         status.HTTP_200_OK: serializers.ObjectSerializer(many=True),
@@ -32,8 +32,11 @@ class GetObjects(APIView):
     })
     def get(self, _):
         res = []
-        for obj in Object.objects.filter(status=self.status):
-            res.append({'id': obj.id, 'name': obj.get_info().name})
+        try:
+            for obj in Object.objects.filter(status=self.status):
+                res.append({'id': obj.id, 'name': obj.get_info().name})
+        except Exception as ex:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'error': ex})
         return Response(serializers.ObjectSerializer(res, many=True).data)
 
 
