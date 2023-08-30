@@ -7,10 +7,10 @@ export const apiObject = createApi({
   baseQuery,
   endpoints: builder => ({
     getAllObjects: builder.query<Objects[], void>({
-      query: () => '/objects'
+      query: () => '/objects/all'
     }),
     getAllArchiveObjects: builder.query<Objects[], void>({
-      query: () => '/objects/archive'
+      query: () => '/objects/all/archive'
     }),
     createObject: builder.mutation<void, soloObject>({
       query: (objectData: soloObject) => ({

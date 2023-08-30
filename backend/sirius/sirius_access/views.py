@@ -24,7 +24,7 @@ def check_name(name):
 
 
 class GetObjects(APIView):
-    status
+    status: str
 
     @extend_schema(responses={
         status.HTTP_200_OK: serializers.ObjectSerializer(many=True),
@@ -32,8 +32,11 @@ class GetObjects(APIView):
     })
     def get(self, _):
         res = []
-        for obj in Object.objects.filter(status=self.status):
-            res.append({'id': obj.id, 'name': obj.get_info().name})
+        try:
+            for obj in Object.objects.filter(status=self.status):
+                res.append({'id': obj.id, 'name': obj.get_info().name})
+        except Exception as ex:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data={'error': ex})
         return Response(serializers.ObjectSerializer(res, many=True).data)
 
 
@@ -64,7 +67,13 @@ class PostObject(APIView):
                 with transaction.atomic():
                     obj = Object.objects.create(status='active')
                     ObjectHistory.objects.create(
-                        object=obj, name=name, modified_by=get_user(request), action='created')
+                        object=obj,
+                        name=name,
+                        modified_by=get_user(request),
+                        action='created'
+                    )
+                    for account in Account.objects.filter(status='active', role='administrator'):
+                        AccountToObject.objects.create(account=account, object=obj)
                 return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -84,9 +93,9 @@ class ObjectApiView(APIView):
     def get(self, _, ObjectId):
         try:
             obj = Object.objects.get(id=ObjectId)
+            name = obj.get_info().name
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=OBJECTID_ERROR_MSG)
-        name = obj.get_info().name
         return Response(serializers.ObjectSerializer({'name': name}).data)
 
     @extend_schema(responses={
@@ -165,8 +174,11 @@ class GetAccounts(APIView):
     })
     def get(self, _):
         res = []
-        for account in Account.objects.filter(status=self.status):
-            res.append(account.get_last_version().to_dict())
+        try:
+            for account in Account.objects.filter(status=self.status):
+                res.append(account.get_last_version().to_dict())
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
         return Response(serializers.AccountSerializer(res, many=True, fields=GET_ACCOUNTS_FIELDS).data)
 
 
@@ -206,6 +218,9 @@ class PostAccount(APIView):
                         modified_by=get_user(request),
                         **account_history_data
                     )
+                    if data['role'] == 'administrator':
+                        for object_ins in Object.objects.filter(status='active'):
+                            AccountToObject.objects.create(account=new_account, object=object_ins, status='active')
                     return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
