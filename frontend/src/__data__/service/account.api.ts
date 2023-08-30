@@ -7,10 +7,10 @@ export const apiAccount = createApi({
   baseQuery,
   endpoints: builder => ({
     getAllAccounts: builder.query<Accounts[], void>({
-      query: () => '/accounts'
+      query: () => '/accounts/all'
     }),
     getAllArchiveAccounts: builder.query<Accounts[], void>({
-      query: () => '/accounts/archive'
+      query: () => '/accounts/all/archive'
     }),
     createAccount: builder.mutation<void, Account>({
       query: (accountData: Account) => ({
