@@ -73,7 +73,7 @@ class PostObject(APIView):
                         action='created'
                     )
                     for account in Account.objects.filter(status='active', role='administrator'):
-                        AccountToObject.objects.create(account=account, object=obj)
+                        AccountToObject.objects.create(account=account, object=obj, status='active')
                 return Response(status=status.HTTP_201_CREATED)
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
