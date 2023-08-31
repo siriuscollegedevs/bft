@@ -115,7 +115,7 @@ export const AdmissionViewEdit = () => {
             Добавить запись
           </Button>
         </Box>
-        <Box sx={{ width: '90%', height: '65vh', display: 'flex', justifyContent: 'center', mt: '15px' }}>
+        <Box sx={{ width: '90%', height: '59vh', display: 'flex', justifyContent: 'center', mt: '15px' }}>
           {filteredTableData && filteredTableData.length > 0 ? (
             <SmartTable
               buttonNames={buttonNames}
