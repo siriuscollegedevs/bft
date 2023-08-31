@@ -536,8 +536,9 @@ class GetPostActualAccountsObjectsView(APIView):
                             return Response(status=status.HTTP_400_BAD_REQUEST, data=error) ## NOTE аккаунт уже закреплен за данным объектом
                         if AccountToObject.objects.filter(object=object_ins, account=account).exists():
                             try:
-                                current_match = AccountToObject.objects.filter(object=object_ins, account=account)
+                                current_match = AccountToObject.objects.get(object=object_ins, account=account)
                                 current_match.status = 'active'
+                                current_match.save()
                             except Exception:
                                 return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка бд
                         else:

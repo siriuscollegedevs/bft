@@ -43,7 +43,7 @@ export const BasicModal = ({ open, handleClose, selectedRow, prewRow }: ModalPro
 
   if (selectedRow) {
     const { car_number, car_brand, car_model } = selectedRow as AdmissionsHistory
-    if (car_number === null || car_brand === null || car_model === null) {
+    if (car_number === '' || car_brand === '' || car_model === '') {
       desiredFields['/admissions/'] = ['last_name', 'first_name', 'surname', 'type', 'from_date', 'to_date', 'note']
     }
   }

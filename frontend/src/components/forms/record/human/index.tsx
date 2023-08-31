@@ -70,6 +70,8 @@ export const Human = () => {
         type: recordData?.type === Object.keys(RECORD_TYPE)[0] ? RECORD_TYPE.for_long_time : RECORD_TYPE.for_once,
         note: recordData?.note === null ? '' : (recordData?.note as string)
       })
+      setStartDate(recordData?.from_date || new Date().toISOString().split('T')[0]);
+      setEndDate(recordData?.to_date || new Date().toISOString().split('T')[0]);
     }
   }, [recordData])
 
