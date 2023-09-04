@@ -466,7 +466,8 @@ class GetArchiveAccountByObjectView(GetAccountByObjectView):
     status = 'outdated'
 
 
-class GetPostActualAccountsObjectsView(APIView):
+class GetAccountsObjectsView(APIView):
+    status: str
 
     @extend_schema(responses={
             status.HTTP_200_OK: serializers.AccountToObjectSerializer(many=True),
@@ -477,12 +478,15 @@ class GetPostActualAccountsObjectsView(APIView):
         res = []
         try:
             with transaction.atomic():
-                all_accounts = Account.objects.filter(status='active')
+                if self.status == 'active':
+                    all_accounts = Account.objects.filter(status='active')
+                else:
+                    all_accounts = Account.objects.all()
                 if all_accounts:
                     for account in all_accounts:
                         account_dict = account.get_last_version().to_dict()
                         account_dict['objects'] = []
-                        all_matches = AccountToObject.objects.filter(account=account, status='active')
+                        all_matches = AccountToObject.objects.filter(account=account, status=self.status)
                         if all_matches:
                             for record in all_matches:
                                 account_dict['objects'].append(record.object.get_info().name)
@@ -492,6 +496,44 @@ class GetPostActualAccountsObjectsView(APIView):
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка в транзакции
 
+
+class GetArchiveAccountsObjectsView(APIView):
+    status = 'outdated'
+
+
+class GetActualAccountsObjectsView(APIView):
+    status = 'active'
+
+
+class AccountToObjectView(APIView):
+
+    @extend_schema(responses={
+        status.HTTP_200_OK: serializers.ObjectSerializer(many=True),
+        status.HTTP_401_UNAUTHORIZED: None,
+        status.HTTP_400_BAD_REQUEST: None
+    })
+    def get(self, _, AccountId):
+        try:
+            account = Account.objects.get(id=AccountId)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_FOUND_ERROR) ## NOTE аккаунта с таким id не существует или id не верен
+        try:
+            with transaction.atomic():
+                res = []
+                all_records = AccountToObject.objects.filter(account=account, status='active')
+                if not all_records:
+                    return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_MATCHES_ERROR) ## NOTE за данным аккаунтом не найдено закреплений
+                for record in all_records:
+                    res.append(
+                        {
+                            "id": record.object.id,
+                            "name": record.object.get_info().name
+                        }
+                    )
+                return Response(serializers.ObjectSerializer(res, many=True).data)
+        except Exception:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
+    
     @extend_schema(responses={
         status.HTTP_201_CREATED: None,
         status.HTTP_401_UNAUTHORIZED: None,
@@ -500,26 +542,18 @@ class GetPostActualAccountsObjectsView(APIView):
         request=inline_serializer(
         name='account_to_object_create',
         fields={
-            'first_name': ser.CharField(),
-            'last_name': ser.CharField(),
-            'surname': ser.CharField(),
-            'ids': ser.ListField()
+            'object_ids': ser.ListField(child=ser.UUIDField())
         }))
-    def post(self, request):
+    def post(self, request, AccountId):
         serializer = serializers.AccountObjectSerializer(data=request.data)
         if serializer.is_valid():
-            data = serializer.validated_data
-            object_ids = data.pop('object_ids')
+            object_ids = serializer.validated_data.get('object_ids')
             try:
                 with transaction.atomic():
-                    account = AccountHistory.objects.filter(
-                        account__status='active',
-                        **data
-                    ).order_by('-timestamp').first()
                     try:
-                        account = account.account
+                        account = Account.objects.get(id=AccountId)
                     except Exception:
-                        return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_FOUND_ERROR) ## NOTE не удалось найти данный аккаунт среди активных
+                        return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_FOUND_ERROR) ## NOTE аккаунта с таким id не существует или id не верен
                     if account.role == 'security_officer':
                         if AccountToObject.objects.filter(account=account, status='active').exists():
                             return Response(status=status.HTTP_400_BAD_REQUEST, data=SECURITY_OFFICER_MATCH_ERROR) ## NOTE аккаунт типа Сотрудник охраны уже закреплен за 1 объектом
@@ -549,63 +583,6 @@ class GetPostActualAccountsObjectsView(APIView):
             except Exception:
                 return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
         return Response(status=status.HTTP_400_BAD_REQUEST, data=INVALID_DATA_GIVEN_ERROR) ## NOTE ошибка при сериализации
-
-
-class GetArchiveAccountsObjectsView(APIView):
-
-    @extend_schema(responses={
-            status.HTTP_200_OK: serializers.AccountToObjectSerializer(many=True),
-            status.HTTP_401_UNAUTHORIZED : None,
-            status.HTTP_400_BAD_REQUEST : None
-        })
-    def get(self, _):
-        res = []
-        try:
-            with transaction.atomic():
-                all_accounts = Account.objects.all()
-                if all_accounts:
-                    for account in all_accounts:
-                        account_dict = account.get_last_version().to_dict()
-                        account_dict['objects'] = []
-                        all_matches = AccountToObject.objects.filter(account=account, status='outdated')
-                        if all_matches:
-                            for record in all_matches:
-                                account_dict['objects'].append(record.object.get_info().name)
-                            res.append(account_dict)
-                    return Response(serializers.AccountToObjectSerializer(res, many=True).data)
-                return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_MATCHES_FOUND_ERROR) # NOTE архивные закрепления не найдены
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка в транзакции
-
-
-class GetPutDeleteAccountToObjectView(APIView):
-
-    @extend_schema(responses={
-        status.HTTP_200_OK: serializers.ObjectSerializer(many=True),
-        status.HTTP_401_UNAUTHORIZED: None,
-        status.HTTP_400_BAD_REQUEST: None
-    })
-    def get(self, _, AccountId):
-        try:
-            account = Account.objects.get(id=AccountId)
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_FOUND_ERROR) ## NOTE аккаунта с таким id не существует или id не верен
-        try:
-            with transaction.atomic():
-                res = []
-                all_records = AccountToObject.objects.filter(account=account, status='active')
-                if not all_records:
-                    return Response(status=status.HTTP_400_BAD_REQUEST, data=NO_ACCOUNT_MATCHES_ERROR) ## NOTE за данным аккаунтом не найдено закреплений
-                for record in all_records:
-                    res.append(
-                        {
-                            "id": record.object.id,
-                            "name": record.object.get_info().name
-                        }
-                    )
-                return Response(serializers.ObjectSerializer(res, many=True).data)
-        except Exception:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка транзакции
 
     @extend_schema(responses={
         status.HTTP_200_OK: None,
