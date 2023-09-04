@@ -18,6 +18,7 @@ urlpatterns = [
     path('account/expand_search', views.ActualAccountExpandSearch.as_view()),
     path('account/expand_search/archive', views.ArchiveAccountExpandSearch.as_view()),
     # ACCOUNT TO OBJECTS
+    path('account_to_objects', views.GetActualAccountsObjectsView.as_view()),
     path('account_to_objects/archive', views.GetArchiveAccountsObjectsView.as_view()),
     path('object/accounts', views.GetActualAccountByObjectView.as_view()),
     path('object/accounts/archive', views.GetArchiveAccountByObjectView.as_view()),
