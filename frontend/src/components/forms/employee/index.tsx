@@ -6,7 +6,7 @@ import OutlinedInput from '@mui/material/OutlinedInput'
 import Checkbox from '@mui/material/Checkbox'
 import ListItemText from '@mui/material/ListItemText'
 import { CustomDefaultButton } from '../../../styles/settings'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   useCreateAccountToObjectMutation,
   useGetAccountToObjectsQuery,
@@ -16,7 +16,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import { useGetAllObjectsQuery } from '../../../__data__/service/object.api'
 import { AccountToObjectCreate } from '../../../types/api'
 import { useGetAccountByIdQuery, useGetAllAccountsQuery } from '../../../__data__/service/account.api'
-
+import { sortData } from '../../../utils/sorting'
 
 // TODO вывод отстортировать по фамилиям
 // TODO сделать поиск
@@ -41,7 +41,7 @@ export const FormEmployee = () => {
     { isLoading: employeesUpdateLoading, isError: employeesUpdateError, isSuccess: employeesUpdateSuccess }
   ] = useUpdateAccountToObjectByIdMutation()
   const { data: accountDataById, refetch: refetchAccountDataById } = useGetAccountByIdQuery(id ?? '')
-  const { data: accountsData} = useGetAllAccountsQuery()
+  const { data: accountsData } = useGetAllAccountsQuery()
 
   const isEditMode = !!id
 
@@ -86,7 +86,7 @@ export const FormEmployee = () => {
         employeesUpdateMutation({ accountId: id, accountToObjectData: fields.object_ids })
         refetchAccountDataById()
       }
-      employeesMutation({accountId: fields.account_id, accountToObjectData: fields.object_ids})
+      employeesMutation({ accountId: fields.account_id, accountToObjectData: fields.object_ids })
     }
   }
 
@@ -129,6 +129,22 @@ export const FormEmployee = () => {
     }))
   }
 
+  const sortedAccounts = useMemo(() => {
+    if (accountsData) {
+      return sortData(accountsData, 'last_name')
+    } else {
+      return []
+    }
+  }, [accountsData])
+
+  const sortedObjects = useMemo(() => {
+    if (objectsData) {
+      return sortData(objectsData, 'name')
+    } else {
+      return []
+    }
+  }, [objectsData])
+
   const MenuProps = {
     PaperProps: {
       style: {
@@ -141,22 +157,22 @@ export const FormEmployee = () => {
   return (
     <>
       <TextField
-          id="account"
-          select
-          label="ФИО"
-          focused
-          required
-          disabled={isEditMode}
-          error={errors.account}
-          value={fields.account_id}
-          helperText={errors.account && 'Выберите учетную запись для закрепления.'}
-          sx={{ m: 1, width: '85%' }}
-          onChange={e => handleFieldChange('account_id', e.target.value)}
+        id="account"
+        select
+        label="ФИО"
+        focused
+        required
+        disabled={isEditMode}
+        error={errors.account}
+        value={fields.account_id}
+        helperText={errors.account && 'Выберите учетную запись для закрепления.'}
+        sx={{ m: 1, width: '85%' }}
+        onChange={e => handleFieldChange('account_id', e.target.value)}
       >
-        {accountsData?.map(account => (
-            <MenuItem key={account.id} value={account.id}>
-              <ListItemText primary={`${account.last_name} ${account.first_name} ${account.surname}`} />
-            </MenuItem>
+        {sortedAccounts?.map(account => (
+          <MenuItem key={account.id} value={account.id}>
+            <ListItemText primary={`${account.last_name} ${account.first_name} ${account.surname}`} />
+          </MenuItem>
         ))}
       </TextField>
       <FormControl sx={{ m: 1, width: '85%' }} focused required>
@@ -175,7 +191,7 @@ export const FormEmployee = () => {
           MenuProps={MenuProps}
           error={errors.object_ids}
         >
-          {objectsData?.map(object => (
+          {sortedObjects?.map(object => (
             <MenuItem key={object.id} value={object.name}>
               <Checkbox checked={objectName.indexOf(object.name) > -1} />
               <ListItemText primary={object.name} />
