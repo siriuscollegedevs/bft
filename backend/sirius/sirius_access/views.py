@@ -497,11 +497,11 @@ class GetAccountsObjectsView(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data=DB_ERROR) ## NOTE ошибка в транзакции
 
 
-class GetArchiveAccountsObjectsView(APIView):
+class GetArchiveAccountsObjectsView(GetAccountsObjectsView):
     status = 'outdated'
 
 
-class GetActualAccountsObjectsView(APIView):
+class GetActualAccountsObjectsView(GetAccountsObjectsView):
     status = 'active'
 
 
