@@ -15,12 +15,15 @@ import {
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetAllObjectsQuery } from '../../../__data__/service/object.api'
 import { AccountToObjectCreate } from '../../../types/api'
-import { useGetAccountByIdQuery } from '../../../__data__/service/account.api'
+import { useGetAccountByIdQuery, useGetAllAccountsQuery } from '../../../__data__/service/account.api'
+
+
+// TODO вывод отстортировать по фамилиям
+// TODO сделать поиск
+// TODO проверить с редактированием
 
 type Errors = {
-  first_name: boolean
-  surname: boolean
-  last_name: boolean
+  account: boolean
   object_ids: boolean
 }
 
@@ -38,20 +41,17 @@ export const FormEmployee = () => {
     { isLoading: employeesUpdateLoading, isError: employeesUpdateError, isSuccess: employeesUpdateSuccess }
   ] = useUpdateAccountToObjectByIdMutation()
   const { data: accountDataById, refetch: refetchAccountDataById } = useGetAccountByIdQuery(id ?? '')
+  const { data: accountsData} = useGetAllAccountsQuery()
 
   const isEditMode = !!id
 
   const [fields, setFields] = useState<AccountToObjectCreate>({
-    first_name: '',
-    surname: '',
-    last_name: '',
+    account_id: '',
     object_ids: []
   })
 
   const [errors, setErrors] = useState<Errors>({
-    first_name: false,
-    surname: false,
-    last_name: false,
+    account: false,
     object_ids: false
   })
 
@@ -63,9 +63,7 @@ export const FormEmployee = () => {
 
       setFields(prevFields => ({
         ...prevFields,
-        last_name: last_name || '',
-        first_name: first_name || '',
-        surname: surname || '',
+        account_id: id || '',
         object_ids: objectIds || []
       }))
 
@@ -73,18 +71,9 @@ export const FormEmployee = () => {
     }
   }, [isEditMode, accountDataById, currentAccountObjectsData])
 
-  const handleFieldChange = (field: keyof AccountToObjectCreate, value: string) => {
-    setFields(prevFields => ({
-      ...prevFields,
-      [field]: value
-    }))
-  }
-
   const handleSubmit = () => {
     const newErrors: Errors = {
-      first_name: false,
-      surname: false,
-      last_name: !fields.last_name.trim(),
+      account: !fields.account_id,
       object_ids: objectName.length === 0
     }
 
@@ -97,7 +86,7 @@ export const FormEmployee = () => {
         employeesUpdateMutation({ accountId: id, accountToObjectData: fields.object_ids })
         refetchAccountDataById()
       }
-      employeesMutation(fields)
+      employeesMutation({accountId: fields.account_id, accountToObjectData: fields.object_ids})
     }
   }
 
@@ -133,6 +122,13 @@ export const FormEmployee = () => {
     }
   }
 
+  const handleFieldChange = (field: keyof AccountToObjectCreate, value: string) => {
+    setFields(prevFields => ({
+      ...prevFields,
+      [field]: value
+    }))
+  }
+
   const MenuProps = {
     PaperProps: {
       style: {
@@ -145,38 +141,24 @@ export const FormEmployee = () => {
   return (
     <>
       <TextField
-        id="last_name"
-        label="Фамилия"
-        focused
-        variant="outlined"
-        sx={{ m: 1, width: '85%' }}
-        required
-        disabled={isEditMode}
-        error={!fields.last_name && errors.last_name}
-        helperText={!fields.last_name && errors.last_name && 'Это поле обязательно.'}
-        value={fields.last_name}
-        onChange={e => handleFieldChange('last_name', e.target.value)}
-      />
-      <TextField
-        id="first_name"
-        label="Имя"
-        focused
-        variant="outlined"
-        sx={{ m: 1, width: '85%' }}
-        disabled={isEditMode}
-        value={fields.first_name}
-        onChange={e => handleFieldChange('first_name', e.target.value)}
-      />
-      <TextField
-        id="surname"
-        label="Отчество"
-        focused
-        variant="outlined"
-        sx={{ m: 1, width: '85%' }}
-        disabled={isEditMode}
-        value={fields.surname}
-        onChange={e => handleFieldChange('surname', e.target.value)}
-      />
+          id="account"
+          select
+          label="ФИО"
+          focused
+          required
+          disabled={isEditMode}
+          error={errors.account}
+          value={fields.account_id}
+          helperText={errors.account && 'Выберите учетную запись для закрепления.'}
+          sx={{ m: 1, width: '85%' }}
+          onChange={e => handleFieldChange('account_id', e.target.value)}
+      >
+        {accountsData?.map(account => (
+            <MenuItem key={account.id} value={account.id}>
+              <ListItemText primary={`${account.last_name} ${account.first_name} ${account.surname}`} />
+            </MenuItem>
+        ))}
+      </TextField>
       <FormControl sx={{ m: 1, width: '85%' }} focused required>
         <InputLabel id="demo-multiple-checkbox-label" error={errors.object_ids}>
           Объект(-ы) Фонда
