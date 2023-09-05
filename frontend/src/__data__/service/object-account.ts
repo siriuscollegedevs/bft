@@ -1,6 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { baseQuery } from '../utils'
-import { AccountToObject, AccountToObjectCreate, AccountToObjectSearch, ObjectsMatch } from '../../types/api'
+import { AccountToObject, AccountToObjectSearch, ObjectsMatch } from '../../types/api'
 
 export const apiObjectsAccounts = createApi({
   reducerPath: 'apiObjectsAccounts',
@@ -15,15 +15,12 @@ export const apiObjectsAccounts = createApi({
     getAllAccountToObjectArchive: builder.query<AccountToObject[], void>({
       query: () => '/account_to_objects/archive'
     }),
-    createAccountToObject: builder.mutation<void, AccountToObjectCreate>({
-      query: (objectAccountData: AccountToObjectCreate) => ({
-        url: '/account_to_objects',
+    createAccountToObject: builder.mutation<void, { accountId: string; accountToObjectData: string[] }>({
+      query: ({ accountId, accountToObjectData }) => ({
+        url: `/account_to_objects/${accountId}`,
         method: 'POST',
         body: {
-          first_name: objectAccountData.first_name,
-          last_name: objectAccountData.last_name,
-          surname: objectAccountData.surname,
-          object_ids: objectAccountData.object_ids
+          object_ids: accountToObjectData
         }
       })
     }),

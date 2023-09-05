@@ -233,8 +233,6 @@ export type AccountToObjectSearch = {
 }
 
 export type AccountToObjectCreate = {
-  first_name?: string
-  surname?: string
-  last_name: string
+  account_id: string
   object_ids: string[]
 }

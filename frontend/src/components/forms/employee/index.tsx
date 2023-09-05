@@ -14,13 +14,12 @@ import {
 } from '../../../__data__/service/object-account'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useGetAllObjectsQuery } from '../../../__data__/service/object.api'
-import { AccountToObjectCreate } from '../../../types/api'
-import { useGetAccountByIdQuery } from '../../../__data__/service/account.api'
+import { Accounts, AccountToObjectCreate, Objects } from '../../../types/api'
+import { useGetAccountByIdQuery, useGetAllAccountsQuery } from '../../../__data__/service/account.api'
+import Autocomplete from '@mui/material/Autocomplete'
 
 type Errors = {
-  first_name: boolean
-  surname: boolean
-  last_name: boolean
+  account: boolean
   object_ids: boolean
 }
 
@@ -38,34 +37,49 @@ export const FormEmployee = () => {
     { isLoading: employeesUpdateLoading, isError: employeesUpdateError, isSuccess: employeesUpdateSuccess }
   ] = useUpdateAccountToObjectByIdMutation()
   const { data: accountDataById, refetch: refetchAccountDataById } = useGetAccountByIdQuery(id ?? '')
+  const { data: accountsData } = useGetAllAccountsQuery()
+
+  const [sortedAccountsData, setSortedAccountsData] = useState<Accounts[]>([])
+  const [sortedObjectsData, setSortedObjectsData] = useState<Objects[]>([])
+
+  useEffect(() => {
+    if (accountsData) {
+      const sortedData = [...accountsData].sort((a, b) => {
+        return a.last_name.localeCompare(b.last_name)
+      })
+      setSortedAccountsData(sortedData)
+    }
+  }, [accountsData])
+
+  useEffect(() => {
+    if (objectsData) {
+      const sortedData = [...objectsData].sort((a, b) => {
+        return a.name.localeCompare(b.name)
+      })
+      setSortedObjectsData(sortedData)
+    }
+  }, [objectsData])
 
   const isEditMode = !!id
 
   const [fields, setFields] = useState<AccountToObjectCreate>({
-    first_name: '',
-    surname: '',
-    last_name: '',
+    account_id: '',
     object_ids: []
   })
 
   const [errors, setErrors] = useState<Errors>({
-    first_name: false,
-    surname: false,
-    last_name: false,
+    account: false,
     object_ids: false
   })
 
   useEffect(() => {
     if (isEditMode && accountDataById && currentAccountObjectsData) {
-      const { last_name, first_name, surname } = accountDataById
       const objectIds = currentAccountObjectsData.map(object => object.id)
       const selectedObjectNames = currentAccountObjectsData.map(object => object.name)
 
       setFields(prevFields => ({
         ...prevFields,
-        last_name: last_name || '',
-        first_name: first_name || '',
-        surname: surname || '',
+        account_id: id || '',
         object_ids: objectIds || []
       }))
 
@@ -73,18 +87,9 @@ export const FormEmployee = () => {
     }
   }, [isEditMode, accountDataById, currentAccountObjectsData])
 
-  const handleFieldChange = (field: keyof AccountToObjectCreate, value: string) => {
-    setFields(prevFields => ({
-      ...prevFields,
-      [field]: value
-    }))
-  }
-
   const handleSubmit = () => {
     const newErrors: Errors = {
-      first_name: false,
-      surname: false,
-      last_name: !fields.last_name.trim(),
+      account: !fields.account_id,
       object_ids: objectName.length === 0
     }
 
@@ -97,7 +102,7 @@ export const FormEmployee = () => {
         employeesUpdateMutation({ accountId: id, accountToObjectData: fields.object_ids })
         refetchAccountDataById()
       }
-      employeesMutation(fields)
+      employeesMutation({ accountId: fields.account_id, accountToObjectData: fields.object_ids })
     }
   }
 
@@ -133,6 +138,13 @@ export const FormEmployee = () => {
     }
   }
 
+  const handleFieldChange = (field: keyof AccountToObjectCreate, value: string) => {
+    setFields(prevFields => ({
+      ...prevFields,
+      [field]: value
+    }))
+  }
+
   const MenuProps = {
     PaperProps: {
       style: {
@@ -144,38 +156,31 @@ export const FormEmployee = () => {
 
   return (
     <>
-      <TextField
-        id="last_name"
-        label="Фамилия"
-        focused
-        variant="outlined"
+      <Autocomplete
+        id="account"
+        options={sortedAccountsData}
+        getOptionLabel={(account) => {
+          const parts = [account.last_name, account.first_name, account.surname].filter(Boolean);
+          return parts.join(' ');
+        }}
+        value={sortedAccountsData.find(account => account.id === fields.account_id) || null}
+        onChange={(event, newValue) => {
+          handleFieldChange('account_id', newValue?.id || '')
+        }}
         sx={{ m: 1, width: '85%' }}
-        required
+        noOptionsText="Ничего не найдено."
         disabled={isEditMode}
-        error={!fields.last_name && errors.last_name}
-        helperText={!fields.last_name && errors.last_name && 'Это поле обязательно.'}
-        value={fields.last_name}
-        onChange={e => handleFieldChange('last_name', e.target.value)}
-      />
-      <TextField
-        id="first_name"
-        label="Имя"
-        focused
-        variant="outlined"
-        sx={{ m: 1, width: '85%' }}
-        disabled={isEditMode}
-        value={fields.first_name}
-        onChange={e => handleFieldChange('first_name', e.target.value)}
-      />
-      <TextField
-        id="surname"
-        label="Отчество"
-        focused
-        variant="outlined"
-        sx={{ m: 1, width: '85%' }}
-        disabled={isEditMode}
-        value={fields.surname}
-        onChange={e => handleFieldChange('surname', e.target.value)}
+        renderInput={params => (
+          <TextField
+            {...params}
+            label="ФИО"
+            focused
+            required
+            disabled={isEditMode}
+            error={errors.account}
+            helperText={errors.account && 'Выберите учетную запись для закрепления.'}
+          />
+        )}
       />
       <FormControl sx={{ m: 1, width: '85%' }} focused required>
         <InputLabel id="demo-multiple-checkbox-label" error={errors.object_ids}>
@@ -193,7 +198,7 @@ export const FormEmployee = () => {
           MenuProps={MenuProps}
           error={errors.object_ids}
         >
-          {objectsData?.map(object => (
+          {sortedObjectsData?.map(object => (
             <MenuItem key={object.id} value={object.name}>
               <Checkbox checked={objectName.indexOf(object.name) > -1} />
               <ListItemText primary={object.name} />
