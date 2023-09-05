@@ -159,7 +159,10 @@ export const FormEmployee = () => {
       <Autocomplete
         id="account"
         options={sortedAccountsData}
-        getOptionLabel={account => `${account.last_name} ${account.first_name} ${account.surname}`}
+        getOptionLabel={(account) => {
+          const parts = [account.last_name, account.first_name, account.surname].filter(Boolean);
+          return parts.join(' ');
+        }}
         value={sortedAccountsData.find(account => account.id === fields.account_id) || null}
         onChange={(event, newValue) => {
           handleFieldChange('account_id', newValue?.id || '')
