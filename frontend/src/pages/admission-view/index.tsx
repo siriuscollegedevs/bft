@@ -35,7 +35,7 @@ export const AdmissionViewPage = () => {
   const { data: historyAdmissionData, refetch: updateHistoryAdmissionData } = useGetAdmissionsHistoryByIdQuery(id ?? '')
 
   const search = useSelector((state: { search: SearchState }) => state.search)
-  const splitSearchQuery = search.searchFilter.split(' ')
+  const splitSearchQuery = search.searchFilter.split(/[ -./]+/)
   const [archive, setArchive] = useState(false)
   const [data, setData] = useState<AdmissionsHistory[]>(RecordsOfAdmissionData ?? [])
 
@@ -78,7 +78,8 @@ export const AdmissionViewPage = () => {
           item.surname?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
           item.last_name?.toLowerCase().startsWith(queryPart.toLowerCase()) ||
           item.from_date?.includes(queryPart) ||
-          item.to_date?.includes(queryPart)
+          item.to_date?.includes(queryPart) ||
+          item.note?.includes(queryPart)
       )
     }
   })
