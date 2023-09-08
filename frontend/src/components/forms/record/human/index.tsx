@@ -80,7 +80,12 @@ export const Human = () => {
   }
 
   const handleEndDateChange = (event: { target: { value: SetStateAction<string> } }) => {
-    setEndDate(event.target.value)
+    const newEndDate = event.target.value
+    setEndDate(newEndDate)
+
+    if (fields.type === RECORD_TYPE.for_once) {
+      setStartDate(newEndDate)
+    }
   }
 
   const handleChange = (event: SelectChangeEvent) => {
