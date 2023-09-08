@@ -32,19 +32,17 @@ export const App: React.FC = (): JSX.Element => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
   const refreshabilityCheck = useRefreshabilityCheck()
   const dispatch = useDispatch()
-  const location = useLocation()
+  const { setNewPage } = useComeback()
 
-  function backPageObserver() {
-    const { setNewPage } = useComeback()
-
-    setNewPage(location.pathname)
-  }
- 
   function Header() {
-    // const location = useLocation()
+    const location = useLocation()
     const isLoginRoute = location.pathname === '/'
     const isAccessRoute = location.pathname === '/navigation'
     const showBackButton = !isLoginRoute && !isAccessRoute
+
+    useEffect(() => {
+      setNewPage(location.pathname)
+    }, [location.pathname])
 
     return (
       <>
@@ -66,10 +64,6 @@ export const App: React.FC = (): JSX.Element => {
   useEffect(() => {
     refreshabilityCheck()
   })
-
-  useEffect(() => {
-    backPageObserver()
-  }, [])
 
   return (
     <>

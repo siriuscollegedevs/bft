@@ -1,13 +1,11 @@
-import { useDispatch, useSelector } from 'react-redux'
-import { Account } from '../../types/api'
+import { useDispatch } from 'react-redux'
 import { setPreviousPage } from '../../__data__/states/technical'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 
 export const useComeback = () => {
   const dispatch = useDispatch()
-  // const currentURL = useLocation().pathname
   const { id } = useParams<string>()
-  const pages = ['/', '']
+  const pages: string[] = []
 
   const checkCurrentURL = (currentURL: string) => {
     if (id !== undefined) {
@@ -23,18 +21,17 @@ export const useComeback = () => {
   }
 
   const setNewPage = (currentPage: string) => {
-    // if (!checkCurrentURL(currentPage)) {
-    //   pages[0] = pages[1]
-    //   pages[1] = currentPage
-    //   dispatch(setPreviousPage(currentPage))
-    // }
-    console.log(pages)
+    if (!checkCurrentURL(currentPage) && pages[1] !== currentPage) {
+      pages.push(currentPage)
+      if (pages.length > 2) {
+        pages.splice(0, pages.length - 2)
+      }
+      if (pages[0] !== currentPage) {
+        dispatch(setPreviousPage(pages[0]))
+      }
+      console.log(pages)
+    }
   }
 
-  const setComebackPage = (page: string) => {
-    dispatch(setPreviousPage(page))
-    return true
-  }
-
-  return { setComebackPage, setNewPage }
+  return { setNewPage }
 }
