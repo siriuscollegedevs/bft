@@ -7,7 +7,7 @@ export const useComeback = () => {
   const pathsWithID = [
     '/accounts/[^/]*$',
     '/objects/[^/]*$',
-    '/admissions/[^/]*$',
+    '/employees/[^/]*$',
     '/admissions/[^/]*/record/create$',
     '/admissions/[^/]*/record/edit$'
   ]
