@@ -8,6 +8,7 @@ export const useComeback = () => {
     '/accounts/[^/]*$',
     '/objects/[^/]*$',
     '/employees/[^/]*$',
+    '/admissions/[^/]*$',
     '/admissions/[^/]*/record/create$',
     '/admissions/[^/]*/record/edit$'
   ]
@@ -20,18 +21,33 @@ export const useComeback = () => {
   const checkCurrentURL = (currentURL: string) => {
     return (
       pathsWithID.some(isCurrentPathMatching) ||
-      ['/accounts/create', '/objects/create', '/employees/create'].includes(currentURL)
+      ['/accounts/create', '/objects/create', '/employees/create', 'admissions/create'].includes(currentURL)
     )
   }
 
-  const setNewPage = (currentPage: string) => {
-    if (!checkCurrentURL(currentPage) && pages[1] !== currentPage) {
-      pages.push(currentPage)
-      if (pages.length > 2) {
-        pages.splice(0, pages.length - 2)
+  const findSuccesURL = () => {
+    for (let index = pages.length - 1; index >= 0; index--) {
+      if (pages.length > 3) {
+        if (pages[index] !== pages[index - 2]) {
+          dispatch(setPreviousPage(pages[index - 1]))
+          return
+        } else {
+          dispatch(setPreviousPage(pages[index - 3]))
+          return
+        }
+      } else {
+        dispatch(setPreviousPage(pages[index - 1]))
+        return
       }
-      if (pages[0] !== currentPage) {
-        dispatch(setPreviousPage(pages[0]))
+    }
+  }
+
+  const setNewPage = (currentPage: string) => {
+    if (!checkCurrentURL(currentPage) && pages[pages.length - 1] !== currentPage) {
+      pages.push(currentPage)
+      findSuccesURL()
+      if (pages.length > 100) {
+        pages.splice(0, pages.length - 100)
       }
     }
   }
