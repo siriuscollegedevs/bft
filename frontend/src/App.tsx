@@ -27,6 +27,9 @@ import { AdmissionsHistory } from './pages/history/admissions'
 import { AdmissionCreate } from './pages/admission-ce/create'
 import { AdmissionViewEdit } from './pages/admission-ce/edit'
 import { useComeback } from './hooks/comeback'
+import { CurrentAccountId } from './__data__/states/account'
+import { Account, Objects } from './types/api'
+import { ACCOUNT_ROLES } from './__data__/consts/account-roles'
 
 export const App: React.FC = (): JSX.Element => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
@@ -36,8 +39,14 @@ export const App: React.FC = (): JSX.Element => {
 
   function Header() {
     const location = useLocation()
+    const intervalRole = useSelector(
+      (state: { currentAccount: CurrentAccountId & Account & { accountObjects: Objects[] } }) =>
+        state.currentAccount.role
+    )
     const isLoginRoute = location.pathname === '/'
     const isAccessRoute = location.pathname === '/navigation'
+    const isDirectories = location.pathname === '/directories'
+    const isDirectoriesForAdmin = isDirectories && intervalRole === ACCOUNT_ROLES.administrator.en
     const showBackButton = !isLoginRoute && !isAccessRoute
 
     useEffect(() => {
@@ -46,7 +55,7 @@ export const App: React.FC = (): JSX.Element => {
 
     return (
       <>
-        {showBackButton && <BackButton />}
+        {showBackButton && !isDirectoriesForAdmin && <BackButton />}
         {isLoginRoute ? <StaticHeader /> : <DynamicHeader />}
       </>
     )
