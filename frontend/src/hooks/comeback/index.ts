@@ -13,42 +13,32 @@ export const useComeback = () => {
     '/admissions/[^/]*/record/edit$'
   ]
 
-  const isCurrentPathMatching = (path: string) => {
+  const isPathMatching = (path: string, pathToCheck: string) => {
     const regex = new RegExp(`^${path}`)
-    return regex.test(location.pathname)
+    return regex.test(pathToCheck)
   }
 
-  const checkCurrentURL = (currentURL: string) => {
+  const checkCurrentURL = (pathToCheck: string) => {
     return (
-      pathsWithID.some(isCurrentPathMatching) ||
-      ['/accounts/create', '/objects/create', '/employees/create', 'admissions/create'].includes(currentURL)
+      pathsWithID.some(path => isPathMatching(path, pathToCheck)) ||
+      ['/accounts/create', '/objects/create', '/employees/create', '/admissions/create'].includes(pathToCheck)
     )
   }
 
-  const findSuccesURL = () => {
+  const findSuccesURL = (currentPage: string) => {
     for (let index = pages.length - 1; index >= 0; index--) {
-      if (pages.length > 3) {
-        if (pages[index] !== pages[index - 2]) {
-          dispatch(setPreviousPage(pages[index - 1]))
-          return
-        } else {
-          dispatch(setPreviousPage(pages[index - 3]))
-          return
-        }
-      } else {
-        dispatch(setPreviousPage(pages[index - 1]))
+      if (pages[index] !== currentPage && !checkCurrentURL(pages[index])) {
+        dispatch(setPreviousPage(pages[index]))
         return
       }
     }
   }
 
   const setNewPage = (currentPage: string) => {
-    if (!checkCurrentURL(currentPage) && pages[pages.length - 1] !== currentPage) {
-      pages.push(currentPage)
-      findSuccesURL()
-      if (pages.length > 100) {
-        pages.splice(0, pages.length - 100)
-      }
+    pages.push(currentPage)
+    findSuccesURL(currentPage)
+    if (pages.length > 100) {
+      pages.splice(0, pages.length - 100)
     }
   }
 
