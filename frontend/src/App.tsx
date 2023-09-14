@@ -39,15 +39,17 @@ export const App: React.FC = (): JSX.Element => {
 
   function Header() {
     const location = useLocation()
-    const intervalRole = useSelector(
+    const accountRole = useSelector(
       (state: { currentAccount: CurrentAccountId & Account & { accountObjects: Objects[] } }) =>
         state.currentAccount.role
     )
     const isLoginRoute = location.pathname === '/'
     const isAccessRoute = location.pathname === '/navigation'
     const isDirectories = location.pathname === '/directories'
-    const isDirectoriesForAdmin = isDirectories && intervalRole === ACCOUNT_ROLES.administrator.en
-    const showBackButton = !isLoginRoute && !isAccessRoute
+    const isAdmissions = location.pathname === '/admissions'
+    const isDirectoriesForAdmin = isDirectories && accountRole === ACCOUNT_ROLES.administrator.en
+    const isAdmissionsForSec = isAdmissions && accountRole === ACCOUNT_ROLES.security_officer.en
+    const showBackButton = !isLoginRoute && !isAccessRoute && !isDirectoriesForAdmin && !isAdmissionsForSec
 
     useEffect(() => {
       setNewPage(location.pathname)
@@ -55,7 +57,7 @@ export const App: React.FC = (): JSX.Element => {
 
     return (
       <>
-        {showBackButton && !isDirectoriesForAdmin && <BackButton />}
+        {showBackButton && <BackButton />}
         {isLoginRoute ? <StaticHeader /> : <DynamicHeader />}
       </>
     )
