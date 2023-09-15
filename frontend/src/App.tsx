@@ -26,7 +26,7 @@ import { ObjectsHistory } from './pages/history/objects'
 import { AdmissionsHistory } from './pages/history/admissions'
 import { AdmissionCreate } from './pages/admission-ce/create'
 import { AdmissionViewEdit } from './pages/admission-ce/edit'
-import { useComeback } from './hooks/comeback'
+// import { useComeback } from './hooks/comeback'
 import { CurrentAccountId } from './__data__/states/account'
 import { Account, Objects } from './types/api'
 import { ACCOUNT_ROLES } from './__data__/consts/account-roles'
@@ -35,7 +35,7 @@ export const App: React.FC = (): JSX.Element => {
   const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
   const refreshabilityCheck = useRefreshabilityCheck()
   const dispatch = useDispatch()
-  const { setNewPage } = useComeback()
+  // const { setNewPage } = useComeback()
 
   function Header() {
     const location = useLocation()
@@ -51,9 +51,9 @@ export const App: React.FC = (): JSX.Element => {
     const isAdmissionsForSec = isAdmissions && accountRole === ACCOUNT_ROLES.security_officer.en
     const showBackButton = !isLoginRoute && !isAccessRoute && !isDirectoriesForAdmin && !isAdmissionsForSec
 
-    useEffect(() => {
-      setNewPage(location.pathname)
-    }, [location.pathname])
+    // useEffect(() => {
+    //   setNewPage(location.pathname)
+    // }, [location.pathname])
 
     return (
       <>
@@ -88,6 +88,7 @@ export const App: React.FC = (): JSX.Element => {
 
             <Route path="/directories" element={<MainDirectories />} />
 
+            {/*  */}
             <Route path="/objects" element={<ObjectsPage />} />
             <Route path="/objects/archive" element={<ObjectsPage />} />
             <Route path="/objects/create" element={<FormEditDirectories />} />
@@ -104,12 +105,14 @@ export const App: React.FC = (): JSX.Element => {
             <Route path="/admissions/history/:id" element={<AdmissionsHistory />} />
             <Route path="/admissions/search" element={<AdmissionsAdvancedSearch />} />
 
+            {/*  */}
             <Route path="/employees" element={<EmployeesPage />} />
             <Route path="/employees/:id" element={<FormEditDirectories />} />
             <Route path="/employees/create" element={<FormEditDirectories />} />
             <Route path="/employees/archive" element={<EmployeesPage />} />
             <Route path="/employees/search" element={<EmployeeAdvancedSearch />} />
 
+            {/*  */}
             <Route path="/accounts" element={<AccountsPage />} />
             <Route path="/accounts/:id" element={<FormEditDirectories />} />
             <Route path="/accounts/create" element={<FormEditDirectories />} />

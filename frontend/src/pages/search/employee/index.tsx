@@ -5,7 +5,7 @@ import React, { useMemo, useState } from 'react'
 import { Account, AccountToObjectSearch, Objects } from '../../../types/api'
 import MenuItem from '@mui/material/MenuItem'
 import { SideBarContainer } from '../../../styles/sidebar'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { ButtonName } from '../../../components/shortcut-buttons'
 import { getButtonNames } from '../../../components/shortcut-buttons/button-names'
 import {
@@ -21,8 +21,11 @@ import { SearchTableContent } from '../../../components/search/search-table'
 import { MenuProps } from '../../../components/sidebar'
 import { sortData } from '../../../utils/sorting'
 import { SearchDialog } from '../../../components/search-dialog'
+import { setPreviousPage } from '../../../__data__/states/technical'
 
 export const EmployeeAdvancedSearch = () => {
+  const dispatch = useDispatch()
+  dispatch(setPreviousPage('/objects'))
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
   const [employeesMutation, { data: employeesData, isLoading: employeesDataLoading }] =
     useAccountToObjectSearchMutation()

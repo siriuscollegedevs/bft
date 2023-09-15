@@ -6,8 +6,12 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useMemo } from 'react'
 import { compareDates } from '../../../utils/sorting'
 import { useGetObjectHistoryByIdQuery } from '../../../__data__/service/object.api'
+import { useDispatch } from 'react-redux'
+import { setPreviousPage } from '../../../__data__/states/technical'
 
 export const ObjectsHistory = () => {
+  const dispatch = useDispatch()
+  dispatch(setPreviousPage('/objects'))
   const { id } = useParams()
   const {
     data: objectsHistoryData,

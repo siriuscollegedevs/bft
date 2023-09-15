@@ -3,10 +3,12 @@ import { RootState } from '../../../types/api'
 
 export type TechnicalState = {
   previousPage: string
+  startPage: string
 }
 
 const initialState: TechnicalState = {
-  previousPage: '/'
+  previousPage: '/',
+  startPage: '/'
 }
 
 const technicalSlice = createSlice({
@@ -16,13 +18,16 @@ const technicalSlice = createSlice({
     setPreviousPage: (state, action: PayloadAction<string>) => {
       state.previousPage = action.payload
     },
+    setStartPage: (state, action: PayloadAction<string>) => {
+      state.startPage = action.payload
+    },
     clearTechnical: () => {
       return { ...initialState }
     }
   }
 })
 
-export const { setPreviousPage, clearTechnical } = technicalSlice.actions
+export const { setPreviousPage, setStartPage, clearTechnical } = technicalSlice.actions
 export const technicalReducer = technicalSlice.reducer
 
 export const selectTechnical = (state: RootState) => state.technical

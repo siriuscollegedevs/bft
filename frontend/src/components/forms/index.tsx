@@ -9,10 +9,12 @@ import { FormEmployee } from './employee'
 import { useLocation, useParams } from 'react-router-dom'
 import { FormRecord } from './record'
 import { useGetRecordByIdQuery } from './../../__data__/service/record.api'
+import { useDispatch } from 'react-redux'
+import { setPreviousPage } from '../../__data__/states/technical'
 
 export const FormEditDirectories = () => {
   const location = useLocation()
-
+  const dispatch = useDispatch()
   const { id } = useParams<string>()
   const { data: recordData } = useGetRecordByIdQuery(id ?? '')
   const [gender, setGender] = useState('Человек')
@@ -86,10 +88,12 @@ export const FormEditDirectories = () => {
               }
             }}
           >
-            {location.pathname.startsWith(accountUrl) && <FormAccount />}
-            {location.pathname.startsWith(objectUrl) && <FormObject />}
-            {location.pathname.startsWith(employeeUrl) && <FormEmployee />}
-            {location.pathname.startsWith(recordUrl) && <FormRecord gender={gender} />}
+            {location.pathname.startsWith(accountUrl) && dispatch(setPreviousPage(accountUrl)) && <FormAccount />}
+            {location.pathname.startsWith(objectUrl) && dispatch(setPreviousPage(objectUrl)) && <FormObject />}
+            {location.pathname.startsWith(employeeUrl) && dispatch(setPreviousPage(employeeUrl)) && <FormEmployee />}
+            {location.pathname.startsWith(recordUrl) && dispatch(setPreviousPage(recordUrl)) && (
+              <FormRecord gender={gender} />
+            )}
           </Box>
         </CustomFormControl>
       </Container>

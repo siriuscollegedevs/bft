@@ -28,6 +28,12 @@ export const AdmissionCreate = () => {
     setSelectedObject(selected.map(obj => obj.id))
   }
 
+  const cuncelCreate = () => {
+    deleteAdmission(createAdmissionData ? createAdmissionData?.id : '')
+    dispatch(setShowObjectsSelector(true))
+    navigate('/admissions')
+  }
+
   useEffect(() => {
     if (selectedObject.length > 0) {
       createAdmission(selectedObject)
@@ -81,9 +87,7 @@ export const AdmissionCreate = () => {
             variant="contained"
             sx={{ marginRight: '4%' }}
             onClick={() => {
-              deleteAdmission(createAdmissionData ? createAdmissionData?.id : '')
-              dispatch(setShowObjectsSelector(true))
-              navigate('/admissions')
+              cuncelCreate()
             }}
           >
             Отмена

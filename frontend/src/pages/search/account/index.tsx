@@ -7,7 +7,7 @@ import { ACCOUNT_ROLES } from '../../../__data__/consts/account-roles'
 import MenuItem from '@mui/material/MenuItem'
 import { useAccountArchiveSearchMutation, useAccountSearchMutation } from '../../../__data__/service/account.api'
 import { SideBarContainer } from '../../../styles/sidebar'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { ButtonName } from '../../../components/shortcut-buttons'
 import { getButtonNames } from '../../../components/shortcut-buttons/button-names'
 import { renderGridItem } from '../renderGrid'
@@ -16,8 +16,11 @@ import { SearchContainer } from '../../../components/search/search-container'
 import { sortData } from '../../../utils/sorting'
 import { SearchDialog } from '../../../components/search-dialog'
 import Select, { SelectChangeEvent } from '@mui/material/Select'
+import { setPreviousPage } from '../../../__data__/states/technical'
 
 export const AccountAdvancedSearch = () => {
+  const dispatch = useDispatch()
+  dispatch(setPreviousPage('/accounts'))
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
   const [accountsMutation, { data: accountsData, isLoading: accountDataLoading }] = useAccountSearchMutation()
   const [accountsArchiveMutation, { data: accountsArchiveData, isLoading: accountArchiveLoading }] =

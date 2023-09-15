@@ -9,6 +9,7 @@ import { Account } from '../../types/api'
 import { useGetAccountToObjectsQuery } from '../../__data__/service/object-account'
 import { useEffect } from 'react'
 import { CurrentAccountId, setAccountObjects } from '../../__data__/states/account'
+import { setStartPage } from '../../__data__/states/technical'
 
 export const ButtonGroup = () => {
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
@@ -29,10 +30,17 @@ export const ButtonGroup = () => {
     switch (currentAccountRole) {
       case ACCOUNT_ROLES.administrator.en: {
         navigate('/directories')
+        dispatch(setStartPage('/directories'))
         break
       }
       case ACCOUNT_ROLES.security_officer.en: {
         navigate('/admissions')
+        dispatch(setStartPage('/admissions'))
+        break
+      }
+      default: {
+        dispatch(setStartPage('/navigation'))
+        break
       }
     }
   }, [currentAccountRole])
