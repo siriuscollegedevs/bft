@@ -8,6 +8,8 @@ pip install -r requirements.txt
 
 cd sirius
 
+python manage.py collectstatic --noinput
+
 migration_output=$(python manage.py migrate 2>&1)
 
 if [[ $migration_output == *"No migrations to apply."* ]]; then

@@ -19,7 +19,7 @@
 **/venv/
 **/node_modules/
 # *.env
-# **/static/
+**/static/
 
 # DB data #
 ################
