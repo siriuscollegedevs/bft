@@ -23,6 +23,7 @@ import {
 import { useDeleteMultipleRecordsMutation } from '../../../__data__/service/record.api'
 import { ButtonName } from '../../../components/shortcut-buttons'
 import { getButtonNames } from '../../../components/shortcut-buttons/button-names'
+import { EmptyAdmission } from '../../../components/admission-messages/is-empty'
 
 export const AdmissionViewEdit = () => {
   const { id } = useParams<string>()
@@ -127,7 +128,7 @@ export const AdmissionViewEdit = () => {
             />
           ) : (
             <Box sx={{ width: '90%', height: '100%' }}>
-              <p>Ничего не найдено, проверьте введенные данные.</p>
+              <EmptyAdmission />
             </Box>
           )}
         </Box>

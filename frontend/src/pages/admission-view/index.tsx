@@ -19,6 +19,7 @@ import { dateParser } from '../../utils/date-parser'
 import { RECORD_TYPE } from '../../__data__/consts/record'
 import { AdmissionsHistory } from '../../types/api'
 import { AdmissionTechnical } from '../../__data__/states/admission-technical'
+import { EmptyAdmission } from '../../components/admission-messages/is-empty'
 
 export const AdmissionViewPage = () => {
   const { id } = useParams<string>()
@@ -154,11 +155,7 @@ export const AdmissionViewPage = () => {
             data={filteredTableData}
           />
         ) : (
-          search.searchFilter.length > 0 && (
-            <Box sx={{ width: '90%' }}>
-              <p>Ничего не найдено, проверьте введенные данные.</p>
-            </Box>
-          )
+          search.searchFilter.length === 0 && <EmptyAdmission />
         )}
       </Box>
     </>

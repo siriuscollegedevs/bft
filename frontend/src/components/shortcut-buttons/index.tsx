@@ -156,13 +156,13 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
       } else if (location.pathname.includes('/admissions')) {
         setCancelType('запись')
         await updateRecordStatus({ recordId: id, recordStatus: { status: 'closed', reason: canceInputValue } })
-        // await admissionsMutation(idArray)
       } else {
         console.error('Unknown object type')
         return
       }
 
       closeCancelDialog()
+      window.location.reload()
     }
   }
 
@@ -186,13 +186,13 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
     } else if (location.pathname.includes('/admissions')) {
       setToRepayType('запись')
       await updateRecordStatus({ recordId: id, recordStatus: { status: 'closed', reason: '' } })
-      // await admissionsMutation(idArray)
     } else {
       console.error('Unknown object type')
       return
     }
 
     closeToRepayDialog()
+    window.location.reload()
   }
 
   const openDeleteDialog = () => {
