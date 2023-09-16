@@ -4,11 +4,7 @@ import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { RECORD_TYPE } from '../../../__data__/consts/record'
-import {
-  useGetRecordOfAdmissionsQuery,
-  useDeleteAdmissionsByIdMutation,
-  useGetAdmissionsHistoryByIdQuery
-} from '../../../__data__/service/admission.api'
+import { useGetRecordOfAdmissionsQuery, useDeleteAdmissionsByIdMutation } from '../../../__data__/service/admission.api'
 import { SearchState } from '../../../__data__/states/search'
 import { EntityTitle } from '../../../components/entity-title'
 import { SmartTable } from '../../../components/smart-table'
@@ -23,6 +19,7 @@ import {
 import { useDeleteMultipleRecordsMutation } from '../../../__data__/service/record.api'
 import { ButtonName } from '../../../components/shortcut-buttons'
 import { getButtonNames } from '../../../components/shortcut-buttons/button-names'
+import { setPreviousPage } from '../../../__data__/states/technical'
 
 export const AdmissionViewEdit = () => {
   const { id } = useParams<string>()
@@ -31,6 +28,7 @@ export const AdmissionViewEdit = () => {
   const isCreateFlag = useSelector(
     (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.isCreateFlag
   )
+  !isCreateFlag ? dispatch(setPreviousPage(`/admissions/view/${id}`)) : null
   const { data: recordsOfAdmissionData, refetch: updateRecordsOfAdmissionData } = useGetRecordOfAdmissionsQuery(
     id ?? ''
   )

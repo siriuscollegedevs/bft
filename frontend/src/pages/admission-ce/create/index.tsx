@@ -2,22 +2,25 @@ import { Button } from '@mui/material'
 import { Box } from '@mui/system'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useCreateAdmissionsMutation, useDeleteAdmissionsByIdMutation } from '../../../__data__/service/admission.api'
+import { useCreateAdmissionsMutation } from '../../../__data__/service/admission.api'
 import { EntityTitle } from '../../../components/entity-title'
 import { Objects } from '../../../types/api'
 import { EmptyAdmission } from '../../../components/admission-messages/is-empty'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   AdmissionTechnical,
-  setIsCreateFlag,
-  setShowObjectsSelector
+  setIdCreatedAdmissions,
+  setIsCreateFlag
 } from '../../../__data__/states/admission-technical'
 import { ObjectsSelector } from '../../../components/objects-selector'
+import { useCancelCreateAdmission } from '../../../hooks/cuncelCreate'
+import { setPreviousPage } from '../../../__data__/states/technical'
 
 export const AdmissionCreate = () => {
   const [createAdmission, { data: createAdmissionData }] = useCreateAdmissionsMutation()
-  const [deleteAdmission] = useDeleteAdmissionsByIdMutation()
   const dispatch = useDispatch()
+  dispatch(setPreviousPage('/admissions'))
+  const { cancelCreateAdmission } = useCancelCreateAdmission()
   const showObjectsSelector = useSelector(
     (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.showObjectsSelector
   )
@@ -28,17 +31,15 @@ export const AdmissionCreate = () => {
     setSelectedObject(selected.map(obj => obj.id))
   }
 
-  const cuncelCreate = () => {
-    deleteAdmission(createAdmissionData ? createAdmissionData?.id : '')
-    dispatch(setShowObjectsSelector(true))
-    navigate('/admissions')
-  }
-
   useEffect(() => {
     if (selectedObject.length > 0) {
       createAdmission(selectedObject)
     }
   }, [selectedObject])
+
+  useEffect(() => {
+    dispatch(setIdCreatedAdmissions(createAdmissionData?.id ?? '/'))
+  }, [createAdmissionData])
 
   return (
     <>
@@ -71,6 +72,7 @@ export const AdmissionCreate = () => {
             variant="contained"
             onClick={() => {
               dispatch(setIsCreateFlag(true))
+
               navigate(`/admissions/${createAdmissionData?.id}/record/create`, {
                 state: { id: createAdmissionData?.id }
               })
@@ -87,7 +89,7 @@ export const AdmissionCreate = () => {
             variant="contained"
             sx={{ marginRight: '4%' }}
             onClick={() => {
-              cuncelCreate()
+              cancelCreateAdmission(createAdmissionData ? createAdmissionData?.id : '')
             }}
           >
             Отмена
