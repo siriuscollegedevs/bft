@@ -28,7 +28,7 @@ import { AdmissionCreate } from './pages/admission-ce/create'
 import { AdmissionViewEdit } from './pages/admission-ce/edit'
 
 export const App: React.FC = (): JSX.Element => {
-  const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
+  const intervalIds = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
   const refreshabilityCheck = useRefreshabilityCheck()
   const dispatch = useDispatch()
 
@@ -50,7 +50,9 @@ export const App: React.FC = (): JSX.Element => {
     refreshabilityCheck()
 
     return () => {
-      clearInterval(intervalId)
+      intervalIds.forEach(intervalId => {
+        clearInterval(intervalId)
+      })
       dispatch(clearAuth())
     }
   }, [])

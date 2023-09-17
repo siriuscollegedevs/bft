@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import { useClearCookieQuery, useLoginMutation, useLogoutMutation } from '../../__data__/service/auth.api'
 import { useNavigate } from 'react-router-dom'
 import { LoginButton, PasswordTextField, SignInContainer, SignInTextField, TitleTypography } from '../../styles/login'
-import { clearAuth, setAccessToken, setLoginData } from '../../__data__/states/auth'
+import { clearAuth, setAccessToken, setIntervalId, setLoginData } from '../../__data__/states/auth'
 import { useDispatch } from 'react-redux'
 import { clearAccount, setAccountId } from '../../__data__/states/account'
 import { deleteCookie, getCookie } from '../../utils/cookie-parser'
@@ -51,10 +51,10 @@ export const LoginForm = () => {
           accessTokenUpdateInterval: response.access_exp,
           csrf: getCookie('csrftoken'),
           updateProcess: true,
-          intervalId: intervalId,
           login: true
         })
       )
+      dispatch(setIntervalId(intervalId))
 
       return response ? navigate('/navigation') : null
     } catch (error) {

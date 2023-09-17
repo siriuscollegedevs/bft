@@ -11,7 +11,7 @@ import {
   useDeleteAccountToObjectByIdMutation,
   useGetAllAccountToObjectQuery
 } from '../../__data__/service/object-account'
-import { SetStateAction, useState } from 'react'
+import { SetStateAction, useEffect, useState } from 'react'
 import { DeleteDialog } from '../delete-dialog'
 import { ToRepayDialog } from '../to-repay-dialog'
 import { useUpdateAdmissionStatusMutation, useGetAllAdmissionsMutation } from '../../__data__/service/admission.api'
@@ -19,6 +19,7 @@ import { useChangeRecordStatusByIdMutation } from '../../__data__/service/record
 import { useSelector } from 'react-redux'
 import { Objects } from '../../types/api'
 import { CanceledDialogShortcutVersion } from '../canceled-dialog/shortcut-version'
+import { useRefreshabilityCheck } from '../../hooks/refreshability-check'
 
 export type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
 
@@ -61,6 +62,7 @@ const iconMapping: IconMapping = {
 export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string }) => {
   const navigate = useNavigate()
   const location = useLocation()
+  const refreshabilityCheck = useRefreshabilityCheck()
 
   const [deleteAccountMutation] = useDeleteAccountByIdMutation()
   const [deleteObjectMutation] = useDeleteObjectByIdMutation()
@@ -232,6 +234,10 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
   if (buttonNames.length > 3) {
     return <h6>Error</h6>
   }
+
+  useEffect(() => {
+    refreshabilityCheck()
+  }, [])
 
   return (
     <>
