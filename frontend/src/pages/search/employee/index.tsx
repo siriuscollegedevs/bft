@@ -21,11 +21,8 @@ import { SearchTableContent } from '../../../components/search/search-table'
 import { MenuProps } from '../../../components/sidebar'
 import { sortData } from '../../../utils/sorting'
 import { SearchDialog } from '../../../components/search-dialog'
-import { setPreviousPage } from '../../../__data__/states/technical'
 
 export const EmployeeAdvancedSearch = () => {
-  const dispatch = useDispatch()
-  dispatch(setPreviousPage('/objects'))
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)
   const [employeesMutation, { data: employeesData, isLoading: employeesDataLoading }] =
     useAccountToObjectSearchMutation()

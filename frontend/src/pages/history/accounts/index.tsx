@@ -6,12 +6,8 @@ import { useParams } from 'react-router-dom'
 import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useMemo } from 'react'
 import { compareDates } from '../../../utils/sorting'
-import { setPreviousPage } from '../../../__data__/states/technical'
-import { useDispatch } from 'react-redux'
 
 export const AccountsHistory = () => {
-  const dispatch = useDispatch()
-  dispatch(setPreviousPage('/accounts'))
   const { id } = useParams()
   const {
     data: accountsHistoryData,

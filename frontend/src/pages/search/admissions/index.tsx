@@ -45,7 +45,7 @@ export const AdmissionsAdvancedSearch = () => {
   const handleCloseDialog = () => {
     setIsDialogOpen(false)
   }
-  
+
   const initialAdmissionData: SearchOfAdmissions = {
     car_number: '',
     car_brand: '',

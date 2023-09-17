@@ -8,7 +8,6 @@ import { useCancelCreateAdmission } from '../../hooks/cuncelCreate'
 
 export const BackButton = () => {
   const navigate = useNavigate()
-  const { id } = useParams()
   const location = useLocation()
   const { cancelCreateAdmission } = useCancelCreateAdmission()
   const previousPage = useSelector((state: { technical: TechnicalState }) => state.technical.previousPage)
@@ -21,7 +20,7 @@ export const BackButton = () => {
   )
 
   const goBack = () => {
-    if (location.pathname === `/admissions/history/${id}`) navigate(-1)
+    if (location.pathname.includes('/history') || location.pathname.includes('/search')) navigate(-1)
     if (
       location.pathname === '/admissions/create' ||
       (location.pathname === `/admissions/${idAdmission}` && createFlag)
