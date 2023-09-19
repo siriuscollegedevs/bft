@@ -5,6 +5,7 @@ import { authReducer } from '../states/auth'
 import { filterReducer } from '../states/filters'
 import { searchReducer } from '../states/search'
 import { admissionTechnicalReducer } from '../states/admission-technical'
+import { technicalReducer } from '../states/technical'
 
 export const accountPersistConfig = {
   key: 'currentAccount',
@@ -32,6 +33,11 @@ export const admissionTechnicalPersistConfig = {
   storage
 }
 
+export const technicalPersistConfig = {
+  key: 'technical',
+  storage
+}
+
 export const persistedAccountReducer = persistReducer(accountPersistConfig, accountReducer)
 export const persistedAuthReducer = persistReducer(authPersistConfig, authReducer)
 export const persistedFilterReducer = persistReducer(filterPersistConfig, filterReducer)
@@ -40,3 +46,4 @@ export const persistedadmissionTechnicalReducer = persistReducer(
   admissionTechnicalPersistConfig,
   admissionTechnicalReducer
 )
+export const persistedTechnicalReducer = persistReducer(technicalPersistConfig, technicalReducer)

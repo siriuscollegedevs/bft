@@ -7,15 +7,18 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { useLocation } from 'react-router-dom'
 import { useEffect, useMemo, useState } from 'react'
 import { Account } from '../../types/api'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { sortData } from '../../utils/sorting'
 import { SearchState } from '../../__data__/states/search'
 import { Box } from '@mui/system'
 import { getButtonNames } from '../../components/shortcut-buttons/button-names'
 import { ButtonName } from '../../components/shortcut-buttons'
 import { generateSidebarProps } from '../../components/sidebar/generate-sidebar-props'
+import { setPreviousPage } from '../../__data__/states/technical'
 
 export const ObjectsPage = () => {
+  const dispatch = useDispatch()
+  dispatch(setPreviousPage('/directories'))
   const location = useLocation()
   const isArchivePage = location.pathname === '/objects/archive'
   const search = useSelector((state: { search: SearchState }) => state.search)

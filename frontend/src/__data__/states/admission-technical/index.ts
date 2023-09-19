@@ -6,13 +6,15 @@ export type AdmissionTechnical = {
   idsOfCreatedAdmissions: string[]
   isCreateFlag: boolean
   admissionsArchive: string[]
+  idCreatedAdmissions: string
 }
 
 const initialState = {
   showObjectsSelector: true,
   idsOfCreatedAdmissions: [''],
   isCreateFlag: false,
-  admissionsArchive: ['']
+  admissionsArchive: [''],
+  idCreatedAdmissions: ''
 }
 
 const admissionTechnical = createSlice({
@@ -35,6 +37,9 @@ const admissionTechnical = createSlice({
     setAdmissionsArchive: (state, action: PayloadAction<string[]>) => {
       return { ...state, admissionsArchive: action.payload }
     },
+    setIdCreatedAdmissions: (state, action: PayloadAction<string>) => {
+      return { ...state, idCreatedAdmissions: action.payload }
+    },
     clearAdmissionTechnical: () => {
       return initialState
     }
@@ -46,6 +51,7 @@ export const {
   setIdsOfCreatedAdmissions,
   setIsCreateFlag,
   setAdmissionsArchive,
+  setIdCreatedAdmissions,
   clearAdmissionTechnical
 } = admissionTechnical.actions
 export const admissionTechnicalReducer = admissionTechnical.reducer
