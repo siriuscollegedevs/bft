@@ -16,10 +16,11 @@ import { DeleteDialog } from '../delete-dialog'
 import { ToRepayDialog } from '../to-repay-dialog'
 import { useUpdateAdmissionStatusMutation, useGetAllAdmissionsMutation } from '../../__data__/service/admission.api'
 import { useChangeRecordStatusByIdMutation } from '../../__data__/service/record.api'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Objects } from '../../types/api'
 import { CanceledDialogShortcutVersion } from '../canceled-dialog/shortcut-version'
 import { useRefreshabilityCheck } from '../../hooks/refreshability-check'
+import { setNeedUpdate } from '../../__data__/states/technical'
 
 export type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
 
@@ -62,6 +63,7 @@ const iconMapping: IconMapping = {
 export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string }) => {
   const navigate = useNavigate()
   const location = useLocation()
+  const dispatch = useDispatch()
   const refreshabilityCheck = useRefreshabilityCheck()
 
   const [deleteAccountMutation] = useDeleteAccountByIdMutation()
@@ -164,7 +166,7 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
       }
 
       closeCancelDialog()
-      window.location.reload()
+      dispatch(setNeedUpdate(true))
     }
   }
 
@@ -194,7 +196,7 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
     }
 
     closeToRepayDialog()
-    window.location.reload()
+    dispatch(setNeedUpdate(true))
   }
 
   const openDeleteDialog = () => {

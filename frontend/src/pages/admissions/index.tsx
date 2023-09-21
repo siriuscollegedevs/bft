@@ -16,13 +16,14 @@ import { useLocation } from 'react-router-dom'
 import { getButtonNames } from '../../components/shortcut-buttons/button-names'
 import { ButtonName } from '../../components/shortcut-buttons'
 import { setAdmissionsArchive } from '../../__data__/states/admission-technical'
-import { setPreviousPage } from '../../__data__/states/technical'
+import { TechnicalState, setNeedUpdate, setPreviousPage } from '../../__data__/states/technical'
 
 export const AdmissionsPage = () => {
   const dispatch = useDispatch()
   dispatch(setPreviousPage('/navigation'))
   const [admissionsMutation, { data: admissionsData, isLoading: admissionsLoading, isError }] =
     useGetAllAdmissionsMutation()
+  const needUpdate = useSelector((state: { technical: TechnicalState }) => state.technical.needUpdate)
   const currentAccountObjects = useSelector(
     (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
   )
@@ -79,6 +80,13 @@ export const AdmissionsPage = () => {
       }
     }
   }, [idArray, hasArchiveData, isArchivePage])
+
+  useEffect(() => {
+    if (idArray.length > 0 && needUpdate && hasData) {
+      admissionsMutation(idArray)
+      dispatch(setNeedUpdate(false))
+    }
+  }, [needUpdate])
 
   const sortedRows = useMemo(() => {
     if (data) {

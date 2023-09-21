@@ -19,14 +19,15 @@ import { dateParser } from '../../utils/date-parser'
 import { RECORD_TYPE } from '../../__data__/consts/record'
 import { AdmissionsHistory } from '../../types/api'
 import { AdmissionTechnical } from '../../__data__/states/admission-technical'
-import { setPreviousPage } from '../../__data__/states/technical'
+import { TechnicalState, setNeedUpdate, setPreviousPage } from '../../__data__/states/technical'
 import { EmptyAdmission } from '../../components/admission-messages/is-empty'
 
 export const AdmissionViewPage = () => {
   const { id } = useParams<string>()
-  const disputch = useDispatch()
-  disputch(setPreviousPage('/admissions'))
+  const dispatch = useDispatch()
+  dispatch(setPreviousPage('/admissions'))
   const navigate = useNavigate()
+  const needUpdate = useSelector((state: { technical: TechnicalState }) => state.technical.needUpdate)
   const admissionsArchiveIds = useSelector(
     (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.admissionsArchive
   )
@@ -54,6 +55,15 @@ export const AdmissionViewPage = () => {
     updateAdmissionData()
     updateHistoryAdmissionData()
   }, [id])
+
+  useEffect(() => {
+    if (needUpdate) {
+      updateRecordsOfAdmissionData()
+      updateAdmissionData()
+      updateHistoryAdmissionData()
+      dispatch(setNeedUpdate(false))
+    }
+  }, [needUpdate])
 
   const sortedData: AdmissionsHistory[] = useMemo(() => {
     if (data) {

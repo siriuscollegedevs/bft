@@ -19,13 +19,14 @@ import {
 import { useDeleteMultipleRecordsMutation } from '../../../__data__/service/record.api'
 import { ButtonName } from '../../../components/shortcut-buttons'
 import { getButtonNames } from '../../../components/shortcut-buttons/button-names'
-import { setPreviousPage } from '../../../__data__/states/technical'
+import { TechnicalState, setNeedUpdate, setPreviousPage } from '../../../__data__/states/technical'
 import { EmptyAdmission } from '../../../components/admission-messages/is-empty'
 
 export const AdmissionViewEdit = () => {
   const { id } = useParams<string>()
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const needUpdate = useSelector((state: { technical: TechnicalState }) => state.technical.needUpdate)
   const isCreateFlag = useSelector(
     (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.isCreateFlag
   )
@@ -48,6 +49,13 @@ export const AdmissionViewEdit = () => {
   useEffect(() => {
     updateRecordsOfAdmissionData()
   }, [id])
+
+  useEffect(() => {
+    if (needUpdate) {
+      updateRecordsOfAdmissionData()
+      dispatch(setNeedUpdate(false))
+    }
+  }, [needUpdate])
 
   const sortedData: AdmissionsHistory[] = useMemo(() => {
     if (recordsOfAdmissionData) {
