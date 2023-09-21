@@ -3,7 +3,7 @@ import { Sidebar } from '../../components/sidebar'
 import { SmartTable } from '../../components/smart-table'
 import { SideBarContainer } from '../../styles/sidebar'
 import { useLocation } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { Account } from '../../types/api'
 import { ACCOUNT_ROLES } from '../../__data__/consts/account-roles'
 import { useGetAllAccountsQuery, useGetAllArchiveAccountsQuery } from '../../__data__/service/account.api'
@@ -15,8 +15,11 @@ import { Box } from '@mui/system'
 import { getButtonNames } from '../../components/shortcut-buttons/button-names'
 import { ButtonName } from '../../components/shortcut-buttons'
 import { generateSidebarProps } from '../../components/sidebar/generate-sidebar-props'
+import { setPreviousPage } from '../../__data__/states/technical'
 
 export const AccountsPage = () => {
+  const dispatch = useDispatch()
+  dispatch(setPreviousPage('/directories'))
   const location = useLocation()
   const isArchivePage = location.pathname === '/accounts/archive'
   const currentAccountRole = useSelector((state: { currentAccount: Account }) => state.currentAccount.role)

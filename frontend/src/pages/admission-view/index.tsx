@@ -13,16 +13,19 @@ import {
 import { CanceledDialog } from '../../components/canceled-dialog'
 import { useEffect, useMemo, useState } from 'react'
 import { sortData } from '../../utils/sorting'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { SearchState } from '../../__data__/states/search'
 import { dateParser } from '../../utils/date-parser'
 import { RECORD_TYPE } from '../../__data__/consts/record'
 import { AdmissionsHistory } from '../../types/api'
 import { AdmissionTechnical } from '../../__data__/states/admission-technical'
+import { setPreviousPage } from '../../__data__/states/technical'
 import { EmptyAdmission } from '../../components/admission-messages/is-empty'
 
 export const AdmissionViewPage = () => {
   const { id } = useParams<string>()
+  const disputch = useDispatch()
+  disputch(setPreviousPage('/admissions'))
   const navigate = useNavigate()
   const admissionsArchiveIds = useSelector(
     (state: { admissionTechnical: AdmissionTechnical }) => state.admissionTechnical.admissionsArchive

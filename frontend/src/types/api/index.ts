@@ -3,6 +3,7 @@ import { AdmissionTechnical } from '../../__data__/states/admission-technical'
 import { AuthState } from '../../__data__/states/auth'
 import { FiltersState } from '../../__data__/states/filters'
 import { SearchState } from '../../__data__/states/search'
+import { TechnicalState } from '../../__data__/states/technical'
 
 export type Accounts = {
   id: string
@@ -208,6 +209,7 @@ export type RootState = {
   filters: FiltersState
   search: SearchState
   admissionTechnical: AdmissionTechnical
+  technical: TechnicalState
 }
 
 export type ObjectInArray = {

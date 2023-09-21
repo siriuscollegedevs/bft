@@ -4,8 +4,12 @@ import { CustomButton } from '../../styles/button-group'
 import { Container } from '@mui/material'
 import { ReactComponent as ArrowIcon } from '../../assets/arrow.svg'
 import { useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { setPreviousPage } from '../../__data__/states/technical'
 
 export const MainDirectories = () => {
+  const dispatch = useDispatch()
+  dispatch(setPreviousPage('/navigation'))
   const navigate = useNavigate()
   return (
     <>

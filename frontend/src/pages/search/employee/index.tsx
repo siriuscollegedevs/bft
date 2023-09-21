@@ -5,7 +5,7 @@ import React, { useMemo, useState } from 'react'
 import { Account, AccountToObjectSearch, Objects } from '../../../types/api'
 import MenuItem from '@mui/material/MenuItem'
 import { SideBarContainer } from '../../../styles/sidebar'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { ButtonName } from '../../../components/shortcut-buttons'
 import { getButtonNames } from '../../../components/shortcut-buttons/button-names'
 import {

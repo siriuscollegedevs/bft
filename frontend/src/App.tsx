@@ -26,6 +26,9 @@ import { ObjectsHistory } from './pages/history/objects'
 import { AdmissionsHistory } from './pages/history/admissions'
 import { AdmissionCreate } from './pages/admission-ce/create'
 import { AdmissionViewEdit } from './pages/admission-ce/edit'
+import { CurrentAccountId } from './__data__/states/account'
+import { Account, Objects } from './types/api'
+import { ACCOUNT_ROLES } from './__data__/consts/account-roles'
 
 export const App: React.FC = (): JSX.Element => {
   const intervalIds = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
@@ -34,9 +37,17 @@ export const App: React.FC = (): JSX.Element => {
 
   function Header() {
     const location = useLocation()
+    const accountRole = useSelector(
+      (state: { currentAccount: CurrentAccountId & Account & { accountObjects: Objects[] } }) =>
+        state.currentAccount.role
+    )
     const isLoginRoute = location.pathname === '/'
     const isAccessRoute = location.pathname === '/navigation'
-    const showBackButton = !isLoginRoute && !isAccessRoute
+    const isDirectories = location.pathname === '/directories'
+    const isAdmissions = location.pathname === '/admissions'
+    const isDirectoriesForAdmin = isDirectories && accountRole === ACCOUNT_ROLES.administrator.en
+    const isAdmissionsForSec = isAdmissions && accountRole === ACCOUNT_ROLES.security_officer.en
+    const showBackButton = !isLoginRoute && !isAccessRoute && !isDirectoriesForAdmin && !isAdmissionsForSec
 
     return (
       <>

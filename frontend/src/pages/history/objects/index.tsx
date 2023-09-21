@@ -6,7 +6,6 @@ import CircularProgress from '@mui/material/CircularProgress'
 import { useEffect, useMemo } from 'react'
 import { compareDates } from '../../../utils/sorting'
 import { useGetObjectHistoryByIdQuery } from '../../../__data__/service/object.api'
-
 export const ObjectsHistory = () => {
   const { id } = useParams()
   const {
