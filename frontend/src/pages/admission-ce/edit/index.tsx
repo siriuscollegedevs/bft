@@ -21,6 +21,7 @@ import { ButtonName } from '../../../components/shortcut-buttons'
 import { getButtonNames } from '../../../components/shortcut-buttons/button-names'
 import { TechnicalState, setNeedUpdate, setPreviousPage } from '../../../__data__/states/technical'
 import { EmptyAdmission } from '../../../components/admission-messages/is-empty'
+import { ResponseSnackBar } from '../../../components/response-snackbar'
 
 export const AdmissionViewEdit = () => {
   const { id } = useParams<string>()
@@ -92,6 +93,7 @@ export const AdmissionViewEdit = () => {
   return (
     <>
       <EntityTitle isSwitch={false} isSearchField={false} />
+      <ResponseSnackBar />
       <Box
         sx={{
           alignItems: 'center',

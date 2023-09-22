@@ -14,13 +14,12 @@ import {
 import { SetStateAction, useEffect, useState } from 'react'
 import { DeleteDialog } from '../delete-dialog'
 import { ToRepayDialog } from '../to-repay-dialog'
-import { useUpdateAdmissionStatusMutation, useGetAllAdmissionsMutation } from '../../__data__/service/admission.api'
+import { useUpdateAdmissionStatusMutation } from '../../__data__/service/admission.api'
 import { useChangeRecordStatusByIdMutation } from '../../__data__/service/record.api'
-import { useDispatch, useSelector } from 'react-redux'
-import { Objects } from '../../types/api'
+import { useDispatch } from 'react-redux'
 import { CanceledDialogShortcutVersion } from '../canceled-dialog/shortcut-version'
 import { useRefreshabilityCheck } from '../../hooks/refreshability-check'
-import { setNeedUpdate } from '../../__data__/states/technical'
+import { setNeedUpdate, setRequestStatus, setShowSnackBar } from '../../__data__/states/technical'
 
 export type ButtonName = 'edit' | 'history' | 'trash' | 'cancel' | 'toRepay'
 
@@ -73,12 +72,6 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
 
   const [updateAdmissionStatus] = useUpdateAdmissionStatusMutation()
   const [updateRecordStatus] = useChangeRecordStatusByIdMutation()
-
-  const currentAccountObjects = useSelector(
-    (state: { currentAccount: { accountObjects: Objects[] } }) => state.currentAccount.accountObjects
-  )
-  const [admissionsMutation] = useGetAllAdmissionsMutation()
-  const idArray: string[] = currentAccountObjects.map(object => object.id)
 
   const [isToRepayDialogOpen, setToRepayDialogOpen] = useState(false)
   const [toRepayType, setToRepayType] = useState('')
@@ -153,20 +146,33 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
     if (canceInputValue === '') {
       setCancelError(true)
     } else {
+      let res
       if (location.pathname === '/admissions') {
         setCancelType('заявку')
-        await updateAdmissionStatus({ admissionId: id, admissionData: { status: 'canceled', reason: canceInputValue } })
-        await admissionsMutation(idArray)
+        res = await updateAdmissionStatus({
+          admissionId: id,
+          admissionData: { status: 'canceled', reason: canceInputValue }
+        })
       } else if (location.pathname.includes('/admissions')) {
         setCancelType('запись')
-        await updateRecordStatus({ recordId: id, recordStatus: { status: 'closed', reason: canceInputValue } })
+        res = await updateRecordStatus({
+          recordId: id,
+          recordStatus: { status: 'canceled', reason: canceInputValue }
+        })
       } else {
         console.error('Unknown object type')
         return
       }
 
+      if ('error' in res) {
+        dispatch(setRequestStatus('error'))
+      } else {
+        dispatch(setRequestStatus('success'))
+      }
+
       closeCancelDialog()
       dispatch(setNeedUpdate(true))
+      dispatch(setShowSnackBar(true))
     }
   }
 
@@ -183,20 +189,27 @@ export const ShortcutButtons = ({ buttonNames, id }: ButtonNames & { id: string 
   }
 
   const handleToRepayConfirmed = async () => {
+    let res
     if (location.pathname === '/admissions') {
       setToRepayType('заявку')
-      await updateAdmissionStatus({ admissionId: id, admissionData: { status: 'closed', reason: '' } })
-      await admissionsMutation(idArray)
+      res = await updateAdmissionStatus({ admissionId: id, admissionData: { status: 'closed', reason: '' } })
     } else if (location.pathname.includes('/admissions')) {
       setToRepayType('запись')
-      await updateRecordStatus({ recordId: id, recordStatus: { status: 'closed', reason: '' } })
+      res = await updateRecordStatus({ recordId: id, recordStatus: { status: 'closed', reason: '' } })
     } else {
       console.error('Unknown object type')
       return
     }
 
+    if ('error' in res) {
+      dispatch(setRequestStatus('error'))
+    } else {
+      dispatch(setRequestStatus('success'))
+    }
+
     closeToRepayDialog()
     dispatch(setNeedUpdate(true))
+    dispatch(setShowSnackBar(true))
   }
 
   const openDeleteDialog = () => {

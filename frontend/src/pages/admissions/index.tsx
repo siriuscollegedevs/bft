@@ -17,6 +17,8 @@ import { getButtonNames } from '../../components/shortcut-buttons/button-names'
 import { ButtonName } from '../../components/shortcut-buttons'
 import { setAdmissionsArchive } from '../../__data__/states/admission-technical'
 import { TechnicalState, setNeedUpdate, setPreviousPage } from '../../__data__/states/technical'
+import { ResponseSnackBar } from '../../components/response-snackbar'
+import { EmptyAdmission } from '../../components/admission-messages/is-empty'
 
 export const AdmissionsPage = () => {
   const dispatch = useDispatch()
@@ -106,6 +108,8 @@ export const AdmissionsPage = () => {
     <>
       <EntityTitle isSearchField={true} isSwitch={true} />
 
+      <ResponseSnackBar />
+
       <SideBarContainer>
         {admissionsLoading || isError || admissionsArchiveLoading || admissionsArchiveError ? (
           <CircularProgress size={'55px'} sx={{ margin: 'auto' }} />
@@ -125,7 +129,7 @@ export const AdmissionsPage = () => {
                 {search.searchFilter.length > 0 ? (
                   <p>Ничего не найдено, проверьте введенные данные.</p>
                 ) : (
-                  <p>Пока тут нет данных.</p>
+                  <EmptyAdmission admission={true} />
                 )}
               </Box>
             )}

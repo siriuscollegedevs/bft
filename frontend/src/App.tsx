@@ -29,6 +29,7 @@ import { AdmissionViewEdit } from './pages/admission-ce/edit'
 import { CurrentAccountId } from './__data__/states/account'
 import { Account, Objects } from './types/api'
 import { ACCOUNT_ROLES } from './__data__/consts/account-roles'
+import { ResponseSnackBar } from './components/response-snackbar'
 
 export const App: React.FC = (): JSX.Element => {
   const intervalIds = useSelector((state: { auth: AuthState }) => state.auth.intervalId)

@@ -17,23 +17,27 @@ export const SmartTable = ({ buttonNames, size, data = {} }: ButtonNames & { siz
   switch (true) {
     case basicURLs.includes(currentURL):
       return (
-        <Basic
-          key={JSON.stringify(data)}
-          currentURL={currentURL as CurrentURL}
-          buttonNames={buttonNames}
-          size={size}
-          data={data}
-        />
+        <>
+          <Basic
+            key={JSON.stringify(data)}
+            currentURL={currentURL as CurrentURL}
+            buttonNames={buttonNames}
+            size={size}
+            data={data}
+          />
+        </>
       )
     case collapsibleURLs.some(url => currentURL.startsWith(url)):
       return (
-        <Collapsible
-          key={JSON.stringify(data)}
-          currentURL={currentURL as myURL}
-          buttonNames={buttonNames}
-          size={size}
-          data={data}
-        />
+        <>
+          <Collapsible
+            key={JSON.stringify(data)}
+            currentURL={currentURL as myURL}
+            buttonNames={buttonNames}
+            size={size}
+            data={data}
+          />
+        </>
       )
     default:
       return <h6>Error urls</h6>
