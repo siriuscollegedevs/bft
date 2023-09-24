@@ -8,14 +8,16 @@ import { clearDocumentTitle } from '../../utils/document-title'
 import { clearTechnical } from '../../__data__/states/technical'
 
 export const useLogout = () => {
-  const intervalId = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
+  const intervalIds = useSelector((state: { auth: AuthState }) => state.auth.intervalId)
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [logoutMutation] = useLogoutMutation()
 
   const logout = () => {
     try {
-      clearInterval(intervalId)
+      intervalIds.forEach(intervalId => {
+        clearInterval(intervalId)
+      })
       logoutMutation()
       dispatch(clearAccount())
       dispatch(clearAuth())

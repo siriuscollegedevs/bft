@@ -6,7 +6,7 @@ export type AuthState = {
   accessTokenUpdateInterval: number
   csrf: string
   updateProcess: boolean
-  intervalId: number | NodeJS.Timeout
+  intervalId: (number | NodeJS.Timeout | any)[]
   login: boolean
 }
 
@@ -15,7 +15,7 @@ const initialState: AuthState = {
   accessTokenUpdateInterval: 0,
   csrf: '',
   updateProcess: false,
-  intervalId: '' || 0,
+  intervalId: [0] || 0,
   login: false
 }
 
@@ -39,7 +39,11 @@ const authSlice = createSlice({
       return { ...state, updateProcess: action.payload }
     },
     setIntervalId: (state, action: PayloadAction<number | NodeJS.Timeout>) => {
-      return { ...state, intervalId: action.payload }
+      if (state.intervalId[0] === 0) {
+        state.intervalId[0] = action.payload
+      } else {
+        state.intervalId.push(action.payload)
+      }
     },
     clearAuth: () => {
       return { ...initialState }
